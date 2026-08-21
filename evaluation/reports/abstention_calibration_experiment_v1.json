@@ -1,0 +1,313 @@
+{
+  "report_id": "abstention_calibration_experiment_v1",
+  "dataset_hashes": {
+    "evaluation_v1": "afb5b2692aefe9e682a1483ce3ff86c885d0527de3a20d7a709fc9274d9f0245",
+    "evaluation_v2": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842"
+  },
+  "production_state": {
+    "prompt": "legal-rag-v2",
+    "changed": false,
+    "block6_changed": false,
+    "retrieval_changed": false,
+    "block5_changed": false,
+    "model_changed": false
+  },
+  "false_abstention_baseline": {
+    "case_count": 4,
+    "case_ids": [
+      "v2_bank_scope_ratios",
+      "v2_bank_below_80_measures",
+      "v2_civil_scope",
+      "v2_cross_document_effective_dates"
+    ],
+    "repeatability": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 3,
+        "INSUFFICIENT_EVIDENCE": 9
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.25,
+      "insufficient_rate": 0.75,
+      "citation_presence_rate": 0.25,
+      "citation_structural_validity_rate": 0.25,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.25,
+      "grounded_conversion_rate": 0.25,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 2620.5,
+      "mean_ttft_ms": 1635.7582223336067,
+      "mean_generation_ms": 2113.081568499183
+    },
+    "stable_case_ids": [
+      "v2_bank_scope_ratios",
+      "v2_bank_below_80_measures",
+      "v2_civil_scope"
+    ],
+    "stochastic_or_nonreproduced_case_ids": [
+      "v2_cross_document_effective_dates"
+    ],
+    "support_mode_counts": {
+      "COMPOSITIONAL": 1,
+      "CONDITIONAL": 1,
+      "DIRECT_MULTI": 1,
+      "DIRECT_SINGLE": 1
+    }
+  },
+  "successful_control_repeatability": {
+    "run_count": 18,
+    "unique_case_count": 6,
+    "status_counts": {
+      "ANSWERABLE": 18
+    },
+    "status_valid_rate": 1.0,
+    "answerable_rate": 1.0,
+    "insufficient_rate": 0.0,
+    "citation_presence_rate": 1.0,
+    "citation_structural_validity_rate": 1.0,
+    "missing_citation_rate": 0.0,
+    "invalid_citation_rate": 0.0,
+    "expected_source_match_rate": 1.0,
+    "grounded_conversion_rate": 1.0,
+    "unsupported_direct_answer_count": 0,
+    "mean_prompt_tokens": 2631.8333333333335,
+    "mean_ttft_ms": 876.2152619993786,
+    "mean_generation_ms": 2035.7111231666447
+  },
+  "unanswerable_repeatability": {
+    "run_count": 30,
+    "unique_case_count": 10,
+    "status_counts": {
+      "INSUFFICIENT_EVIDENCE": 30
+    },
+    "status_valid_rate": 1.0,
+    "answerable_rate": 0.0,
+    "insufficient_rate": 1.0,
+    "citation_presence_rate": 0.0,
+    "citation_structural_validity_rate": 0.0,
+    "missing_citation_rate": 0.0,
+    "invalid_citation_rate": 0.0,
+    "expected_source_match_rate": null,
+    "grounded_conversion_rate": null,
+    "unsupported_direct_answer_count": 0,
+    "mean_prompt_tokens": 3121.3,
+    "mean_ttft_ms": 932.4403713001326,
+    "mean_generation_ms": 1092.0737663000182
+  },
+  "best_diagnostic_variant": {
+    "variant": "combined",
+    "targeted": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 9,
+        "INSUFFICIENT_EVIDENCE": 3
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.75,
+      "insufficient_rate": 0.25,
+      "citation_presence_rate": 0.5,
+      "citation_structural_validity_rate": 0.5,
+      "missing_citation_rate": 0.25,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.5,
+      "grounded_conversion_rate": 0.5,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 2658.5,
+      "mean_ttft_ms": 976.5866459165409,
+      "mean_generation_ms": 3898.6733564164147
+    },
+    "full_answerable": {
+      "answerable_count": 55,
+      "answerable_accepted_rate": 0.9090909090909091,
+      "false_abstention_rate": 0.07272727272727272,
+      "citation_presence_rate": 0.8727272727272727,
+      "citation_structural_validity_rate": 0.8727272727272727,
+      "expected_source_match_rate": 0.8545454545454545,
+      "status_format_failure_count": 1,
+      "mean_generation_ms": 3366.93831254531
+    },
+    "unanswerable": {
+      "run_count": 10,
+      "unique_case_count": 10,
+      "status_counts": {
+        "INSUFFICIENT_EVIDENCE": 10
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.0,
+      "insufficient_rate": 1.0,
+      "citation_presence_rate": 0.0,
+      "citation_structural_validity_rate": 0.0,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": null,
+      "grounded_conversion_rate": null,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 3159.3,
+      "mean_ttft_ms": 2046.5816200001427,
+      "mean_generation_ms": 2249.74984449982
+    },
+    "prompt_tokens": {
+      "system_prompt_tokens": 382,
+      "system_prompt_token_delta": 38,
+      "mean_final_prompt_tokens": 2898.3846153846152,
+      "max_final_prompt_tokens": 4546,
+      "max_total_with_output_and_margin": 5090,
+      "context_limit": 32768,
+      "budget_guard_pass": true
+    }
+  },
+  "order_ablation": {
+    "current": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 3,
+        "INSUFFICIENT_EVIDENCE": 9
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.25,
+      "insufficient_rate": 0.75,
+      "citation_presence_rate": 0.25,
+      "citation_structural_validity_rate": 0.25,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.25,
+      "grounded_conversion_rate": 0.25,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 2620.5,
+      "mean_ttft_ms": 1635.7582223336067,
+      "mean_generation_ms": 2113.081568499183
+    },
+    "evidence_first": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 6,
+        "INSUFFICIENT_EVIDENCE": 6
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.5,
+      "insufficient_rate": 0.5,
+      "citation_presence_rate": 0.5,
+      "citation_structural_validity_rate": 0.5,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.5,
+      "grounded_conversion_rate": 0.5,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 2620.5,
+      "mean_ttft_ms": 997.9478294168681,
+      "mean_generation_ms": 2443.2664717496664
+    },
+    "grouped": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 3,
+        "INSUFFICIENT_EVIDENCE": 9
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.25,
+      "insufficient_rate": 0.75,
+      "citation_presence_rate": 0.25,
+      "citation_structural_validity_rate": 0.25,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.25,
+      "grounded_conversion_rate": 0.25,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 2620.5,
+      "mean_ttft_ms": 850.896050999836,
+      "mean_generation_ms": 1530.2230622498125
+    },
+    "material_effect": true
+  },
+  "minimal_evidence_ablation": {
+    "current_prompt": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 6,
+        "INSUFFICIENT_EVIDENCE": 6
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.5,
+      "insufficient_rate": 0.5,
+      "citation_presence_rate": 0.5,
+      "citation_structural_validity_rate": 0.5,
+      "missing_citation_rate": 0.0,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.5,
+      "grounded_conversion_rate": 0.5,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 738.75,
+      "mean_ttft_ms": 704.0015297507125,
+      "mean_generation_ms": 2092.152950917201
+    },
+    "best_variant": {
+      "run_count": 12,
+      "unique_case_count": 4,
+      "status_counts": {
+        "ANSWERABLE": 9,
+        "INSUFFICIENT_EVIDENCE": 3
+      },
+      "status_valid_rate": 1.0,
+      "answerable_rate": 0.75,
+      "insufficient_rate": 0.25,
+      "citation_presence_rate": 0.5,
+      "citation_structural_validity_rate": 0.5,
+      "missing_citation_rate": 0.25,
+      "invalid_citation_rate": 0.0,
+      "expected_source_match_rate": 0.5,
+      "grounded_conversion_rate": 0.5,
+      "unsupported_direct_answer_count": 0,
+      "mean_prompt_tokens": 776.75,
+      "mean_ttft_ms": 698.9852216662863,
+      "mean_generation_ms": 2340.243583416244
+    },
+    "context_distraction_supported": true
+  },
+  "remaining_false_abstentions": [
+    {
+      "case_id": "v2_civil_scope",
+      "likely_cause": "CONTEXT_DISTRACTION"
+    }
+  ],
+  "root_cause_observations": {
+    "prompt_over_conservatism": "SUPPORTED for two stable bank cases: every calibrated prompt changed status while all frozen unanswerable controls remained abstentions.",
+    "context_distraction": "SUPPORTED for v2_civil_scope only: combined prompt answered 3/3 with the minimal source but 0/3 with the full 4,049-token context.",
+    "evidence_ordering": "MATERIAL but case-specific: evidence-first changed the two bank cases to 3/3 grounded answers; grouped order did not improve the aggregate.",
+    "multi_evidence_synthesis": "SUPPORTED for v2_bank_scope_ratios; the parent anchor plus five distributed items became answerable under evidence-first/calibrated prompts.",
+    "hierarchy_child_correlation": "WEAK DESCRIPTIVE SIGNAL ONLY; one of four historical false cases required hierarchy children, and successful hierarchy-supported controls also exist.",
+    "model_capacity": "NOT DOMINANT: qwen3.5:9b produced grounded answers for three of four diagnostic cases under at least one safe prompt/presentation condition.",
+    "ground_truth_ambiguity": "No case was strong enough to exclude. The bank-scope minimal ablation required its selected parent anchor for legal-list interpretation; frozen evidence IDs were not changed."
+  },
+  "latency": {
+    "baseline_ttft_ms": 1783.8614352461614,
+    "diagnostic_ttft_ms": 1786.7987153455695,
+    "ttft_delta_ms": 2.937280099408099,
+    "baseline_generation_ms": 2562.912518230727,
+    "diagnostic_generation_ms": 3366.93831254531,
+    "generation_delta_ms": 804.025794314583,
+    "system_prompt_token_delta": 38
+  },
+  "recommendation": {
+    "target": "NO CHANGE",
+    "evidence": "Selected only after targeted repeats, all ten unanswerable safety controls, and a full 55-answerable fixed-context run.",
+    "expected_benefit": "Reduce complete-context false abstention while preserving evidence-only safety.",
+    "safety_risk": "Prompt calibration can over-answer partial evidence; frozen negatives remain a small safety sample.",
+    "architecture_impact": "NONE",
+    "confidence": "MEDIUM",
+    "production_change_authorized": false
+  },
+  "status": "MORE_DIAGNOSIS_REQUIRED",
+  "method_limits": [
+    "Expected-source citation match is a deterministic grounding signal, not semantic entailment proof.",
+    "No LLM judge or classifier was used; ambiguous semantic claims remain human-review items.",
+    "Prompt variants reuse a fixed real Block 4/Block 5 snapshot to isolate Block 6.",
+    "The frozen corpus has only ten unanswerable controls, so external safety generalization is not claimed."
+  ]
+}

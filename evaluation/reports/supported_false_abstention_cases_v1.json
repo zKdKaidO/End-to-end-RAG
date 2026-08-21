@@ -1,0 +1,3394 @@
+{
+  "report_id": "supported_false_abstention_cases_v1",
+  "dataset_sha256": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+  "production_prompt": "legal-rag-v2",
+  "derivation": "answerable=true AND complete acceptable evidence in frozen Block 5 selected evidence AND historical production status=INSUFFICIENT_EVIDENCE",
+  "case_count": 4,
+  "cases": [
+    {
+      "case_id": "v2_bank_scope_ratios",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư 40/2026/TT-NHNN điều chỉnh năm nhóm hạn chế, giới hạn và tỷ lệ an toàn chính nào?",
+      "expected_evidence_sets": [
+        [
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "30e14c4c-d8fd-4d68-9382-4d96bef43392"
+        ]
+      ],
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "source_reference": "Tỷ lệ an toàn vốn tối thiểu",
+      "dataset_notes": "Complete answer requires all five scope items.",
+      "manual_source_review": {
+        "support_mode": "DIRECT_MULTI",
+        "taxonomy": [
+          "EVIDENCE_PRESENT_BUT_DISTRIBUTED",
+          "MULTI_CHUNK_SYNTHESIS_REQUIRED",
+          "HIERARCHY_CHILD_SOURCE_CONFUSION",
+          "OVER_CONSERVATIVE_PROMPT_RULE",
+          "STATUS_PROTOCOL_BIAS"
+        ],
+        "human_review": "CLEAR_SUPPORT",
+        "rationale": "The five requested groups are stated verbatim across five selected chunks; four are hierarchy children and one is a retrieval anchor."
+      },
+      "selected_evidence": [
+        {
+          "source_id": "S1",
+          "chunk_id": "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "NGÂN HÀNG NHÀ NƯỚC CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nVIỆT NAM Độc lập - Tự do - Hạnh phúc\n\nSố: 40/2026/TT-NHNN Hà Nội, ngày 10 tháng 8 năm 2026\n\nTHÔNG TƯ\nQuy định các giới hạn, tỷ lệ bảo đảm an toàn trong hoạt động\ncủa quỹ tín dụng nhân dân\n\nCăn cứ Luật Ngân hàng Nhà nước Việt Nam số 46/2010/QH12;\nCăn cứ Luật Các tổ chức tín dụng số 32/2024/QH15 được sửa đổi, bổ sung\nbởi Luật số 96/2025/QH15;\nCăn cứ Luật Hợp tác xã số 17/2023/QH15;\nCăn cứ Nghị định số 26/2025/NĐ-CP của Chính phủ quy định chức năng,\nnhiệm vụ, quyền hạn và cơ cấu tổ chức của Ngân hàng Nhà nước Việt Nam được\nsửa đổi, bổ sung bởi Nghị định số 198/2026/NĐ-CP;\nTheo đề nghị của Cục trưởng Cục An toàn hệ thống các tổ chức tín dụng;\nThống đốc Ngân hàng Nhà nước Việt Nam ban hành Thông tư quy định các\ngiới hạn, tỷ lệ bảo đảm an toàn trong hoạt động của quỹ tín dụng nhân dân.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 1,
+          "context_candidate_order": 1,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "fusion_score": 0.01639344262295082,
+          "token_count": 343
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "1. Thông tư này quy định về các hạn chế, giới hạn, tỷ lệ bảo đảm an toàn\ntrong hoạt động của quỹ tín dụng nhân dân bao gồm:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 2,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 63
+        },
+        {
+          "source_id": "S3",
+          "chunk_id": "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "b) Tỷ lệ khả năng chi trả;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 3,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 38
+        },
+        {
+          "source_id": "S4",
+          "chunk_id": "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "c) Tỷ lệ nguồn vốn ngắn hạn được sử dụng để cho vay trung hạn và dài hạn;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 4,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 49
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "d) Hạn chế, giới hạn cho vay;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 5,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 39
+        },
+        {
+          "source_id": "S6",
+          "chunk_id": "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "đ) Tỷ lệ tổng mức nhận tiền gửi so với vốn chủ sở hữu.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 6,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 45
+        },
+        {
+          "source_id": "S7",
+          "chunk_id": "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Thông tư số 13/2024/TT-NHNN ngày 28 tháng 6 năm 2024 của Thống\nđốc Ngân hàng Nhà nước Việt Nam sửa đổi, bổ sung một số điều của Thông tư\nsố 32/2015/TT-NHNN ngày 31 tháng 12 năm 2015 của Thống đốc Ngân hàng\nNhà nước Việt Nam quy định các giới hạn, tỷ lệ bảo đảm an toàn trong hoạt động\ncủa quỹ tín dụng nhân dân.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 12,
+            "page_end": 12
+          },
+          "retrieval_final_rank": 3,
+          "context_candidate_order": 7,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 3,
+          "lexical_rank": null,
+          "fusion_score": 0.015873015873015872,
+          "token_count": 145
+        },
+        {
+          "source_id": "S8",
+          "chunk_id": "c4f0d74c-a06b-4e50-9303-c148f2899272",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "a) Thông tư số 32/2015/TT-NHNN ngày 31 tháng 12 năm 2015 của Thống\nđốc Ngân hàng Nhà nước Việt Nam quy định về các giới hạn, tỷ lệ bảo đảm an\ntoàn trong hoạt động của quỹ tín dụng nhân dân;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 12,
+            "page_end": 12
+          },
+          "retrieval_final_rank": 4,
+          "context_candidate_order": 8,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 4,
+          "lexical_rank": null,
+          "fusion_score": 0.015625,
+          "token_count": 97
+        },
+        {
+          "source_id": "S9",
+          "chunk_id": "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "a) Tỷ lệ an toàn vốn tối thiểu;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 5,
+          "context_candidate_order": 9,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "fusion_score": 0.015384615384615385,
+          "token_count": 39
+        },
+        {
+          "source_id": "S10",
+          "chunk_id": "46193291-fcb4-4458-8fa3-85dfbb321e59",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "c) Phương pháp cảnh báo sớm các nguy cơ làm giảm tỷ lệ an toàn vốn hoặc\nvi phạm tỷ lệ an toàn vốn tối thiểu;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": 6,
+          "context_candidate_order": 10,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 6,
+          "lexical_rank": null,
+          "fusion_score": 0.015151515151515152,
+          "token_count": 59
+        },
+        {
+          "source_id": "S11",
+          "chunk_id": "5965373c-7e11-4fe7-b179-42365b4eedc9",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "1. Quyết định việc quỹ tín dụng nhân dân phải duy trì các hạn chế, giới hạn,\ntỷ lệ bảo đảm an toàn theo quy định tại khoản 3 Điều 1 Thông tư này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": 7,
+          "context_candidate_order": 11,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 7,
+          "lexical_rank": null,
+          "fusion_score": 0.014925373134328358,
+          "token_count": 72
+        },
+        {
+          "source_id": "S12",
+          "chunk_id": "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "đ) Hướng dẫn, kiểm tra, kiểm soát, kiểm toán nội bộ đối với việc duy trì tỷ\nlệ an toàn vốn tối thiểu.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": 8,
+          "context_candidate_order": 12,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 8,
+          "lexical_rank": null,
+          "fusion_score": 0.014705882352941176,
+          "token_count": 60
+        },
+        {
+          "source_id": "S13",
+          "chunk_id": "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "3. Quy định nội bộ về quản lý tỷ lệ an toàn vốn tối thiểu, trong đó tối thiểu\nbao gồm các nội dung sau:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": 9,
+          "context_candidate_order": 13,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 9,
+          "lexical_rank": null,
+          "fusion_score": 0.014492753623188406,
+          "token_count": 59
+        },
+        {
+          "source_id": "S14",
+          "chunk_id": "14afd6dc-087d-4d5c-b5dc-ae1cb089e083",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "a) Quy định về cơ cấu tổ chức, phân cấp, ủy quyền, chức năng, nhiệm vụ\ncủa các cá nhân, bộ phận liên quan trong việc theo dõi và thực hiện các biện pháp\nđể đảm bảo duy trì tỷ lệ an toàn vốn tối thiểu;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 14,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 85
+        },
+        {
+          "source_id": "S15",
+          "chunk_id": "060cc781-36b0-4634-8b64-ff3458fb1469",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Quy trình, phương pháp theo dõi tỷ lệ an toàn vốn tối thiểu;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 15,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 47
+        },
+        {
+          "source_id": "S16",
+          "chunk_id": "d3083e78-7cde-4dd8-a8c1-dc9fedb7d64b",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "d) Phương án xử lý khi tỷ lệ an toàn vốn thấp hơn mức tối thiểu, tối thiểu\nbao gồm:\n(i) Các biện pháp tăng tỷ lệ an toàn vốn;\n(ii) Trách nhiệm, quyền hạn và sự phối hợp của các bộ phận, cá nhân trong\nviệc thực hiện phương án xử lý;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 16,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 98
+        },
+        {
+          "source_id": "S17",
+          "chunk_id": "e268e6d3-9f77-415a-b27e-7518a20a9254",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "Điều 8. Tỷ lệ an toàn vốn tối thiểu",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": 10,
+          "context_candidate_order": 17,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 10,
+          "lexical_rank": null,
+          "fusion_score": 0.014285714285714285,
+          "token_count": 41
+        },
+        {
+          "source_id": "S18",
+          "chunk_id": "e39582dd-80a7-491b-9712-4bcbb672bac8",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "1. Quỹ tín dụng nhân dân phải duy trì tỷ lệ an toàn vốn tối thiểu 8%.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 18,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "e268e6d3-9f77-415a-b27e-7518a20a9254",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 50
+        },
+        {
+          "source_id": "S19",
+          "chunk_id": "7ebf604f-0baf-41eb-a2c9-3a5862827197",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Tỷ lệ an toàn vốn tối thiểu được xác định bằng công thức sau:\n\nVốn tự có\nTỷ lệ an toàn vốn tối thiểu (%) = × 100\nTổng tài sản \"Có\" rủi ro\n\nTrong đó:\n- Vốn tự có được xác định theo quy định tại khoản 3 Điều này;\n- Tổng tài sản “Có” rủi ro là tổng giá trị các tài sản “Có” được xác định theo\nmức độ rủi ro quy định tại khoản 4 Điều này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 19,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "e268e6d3-9f77-415a-b27e-7518a20a9254",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 139
+        },
+        {
+          "source_id": "S20",
+          "chunk_id": "04437512-309a-475a-b020-073b8ce8f146",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "3. Vốn tự có bao gồm tổng Vốn cấp 1 và Vốn cấp 2 trừ đi Khoản phải trừ\nkhỏi vốn tự có tại thời điểm xác định vốn tự có, cụ thể:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 20,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "e268e6d3-9f77-415a-b27e-7518a20a9254",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 73
+        },
+        {
+          "source_id": "S21",
+          "chunk_id": "4975e6cd-6c11-4456-b90b-af50862d332d",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "4. Tài sản \"Có\" được phân nhóm theo các mức độ rủi ro như sau:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 21,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "e268e6d3-9f77-415a-b27e-7518a20a9254",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 49
+        }
+      ],
+      "expected_evidence_excerpts": [
+        {
+          "source_id": "S3",
+          "chunk_id": "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "b) Tỷ lệ khả năng chi trả;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 3,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 38
+        },
+        {
+          "source_id": "S4",
+          "chunk_id": "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "c) Tỷ lệ nguồn vốn ngắn hạn được sử dụng để cho vay trung hạn và dài hạn;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 4,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 49
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "d) Hạn chế, giới hạn cho vay;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 5,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 39
+        },
+        {
+          "source_id": "S6",
+          "chunk_id": "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "đ) Tỷ lệ tổng mức nhận tiền gửi so với vốn chủ sở hữu.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 6,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 45
+        },
+        {
+          "source_id": "S9",
+          "chunk_id": "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "a) Tỷ lệ an toàn vốn tối thiểu;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 5,
+          "context_candidate_order": 9,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "fusion_score": 0.015384615384615385,
+          "token_count": 39
+        }
+      ],
+      "context_ordering": [
+        "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+        "13566529-a241-4568-a651-b95a14bb0f9f",
+        "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+        "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+        "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+        "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+        "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+        "c4f0d74c-a06b-4e50-9303-c148f2899272",
+        "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+        "46193291-fcb4-4458-8fa3-85dfbb321e59",
+        "5965373c-7e11-4fe7-b179-42365b4eedc9",
+        "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+        "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+        "14afd6dc-087d-4d5c-b5dc-ae1cb089e083",
+        "060cc781-36b0-4634-8b64-ff3458fb1469",
+        "d3083e78-7cde-4dd8-a8c1-dc9fedb7d64b",
+        "e268e6d3-9f77-415a-b27e-7518a20a9254",
+        "e39582dd-80a7-491b-9712-4bcbb672bac8",
+        "7ebf604f-0baf-41eb-a2c9-3a5862827197",
+        "04437512-309a-475a-b020-073b8ce8f146",
+        "4975e6cd-6c11-4456-b90b-af50862d332d"
+      ],
+      "context_token_count": 1750,
+      "context_budget_tokens": 4096,
+      "prompt_tokens_historical": 2184,
+      "historical_model_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_answer": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+      "historical_citations": [],
+      "current_prompt_repeat_runs": [
+        {
+          "key": "legal-rag-v2|v2_bank_scope_ratios|current|1",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_scope_ratios",
+          "category": "MULTI_EVIDENCE",
+          "answerable": true,
+          "run_index": 1,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21"
+          ],
+          "selected_chunk_ids": [
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+            "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+            "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+            "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+            "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+            "c4f0d74c-a06b-4e50-9303-c148f2899272",
+            "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+            "46193291-fcb4-4458-8fa3-85dfbb321e59",
+            "5965373c-7e11-4fe7-b179-42365b4eedc9",
+            "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+            "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+            "14afd6dc-087d-4d5c-b5dc-ae1cb089e083",
+            "060cc781-36b0-4634-8b64-ff3458fb1469",
+            "d3083e78-7cde-4dd8-a8c1-dc9fedb7d64b",
+            "e268e6d3-9f77-415a-b27e-7518a20a9254",
+            "e39582dd-80a7-491b-9712-4bcbb672bac8",
+            "7ebf604f-0baf-41eb-a2c9-3a5862827197",
+            "04437512-309a-475a-b020-073b8ce8f146",
+            "4975e6cd-6c11-4456-b90b-af50862d332d"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 1750,
+          "prompt_tokens": 2184,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 2184,
+            "output_tokens": 11,
+            "total_tokens": 2195
+          },
+          "ttft_ms": 10485.282854999241,
+          "generation_ms": 10649.804506996588
+        },
+        {
+          "key": "legal-rag-v2|v2_bank_scope_ratios|current|2",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_scope_ratios",
+          "category": "MULTI_EVIDENCE",
+          "answerable": true,
+          "run_index": 2,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21"
+          ],
+          "selected_chunk_ids": [
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+            "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+            "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+            "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+            "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+            "c4f0d74c-a06b-4e50-9303-c148f2899272",
+            "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+            "46193291-fcb4-4458-8fa3-85dfbb321e59",
+            "5965373c-7e11-4fe7-b179-42365b4eedc9",
+            "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+            "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+            "14afd6dc-087d-4d5c-b5dc-ae1cb089e083",
+            "060cc781-36b0-4634-8b64-ff3458fb1469",
+            "d3083e78-7cde-4dd8-a8c1-dc9fedb7d64b",
+            "e268e6d3-9f77-415a-b27e-7518a20a9254",
+            "e39582dd-80a7-491b-9712-4bcbb672bac8",
+            "7ebf604f-0baf-41eb-a2c9-3a5862827197",
+            "04437512-309a-475a-b020-073b8ce8f146",
+            "4975e6cd-6c11-4456-b90b-af50862d332d"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 1750,
+          "prompt_tokens": 2184,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 2184,
+            "output_tokens": 11,
+            "total_tokens": 2195
+          },
+          "ttft_ms": 530.6231169997773,
+          "generation_ms": 688.9931779987819
+        },
+        {
+          "key": "legal-rag-v2|v2_bank_scope_ratios|current|3",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_scope_ratios",
+          "category": "MULTI_EVIDENCE",
+          "answerable": true,
+          "run_index": 3,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21"
+          ],
+          "selected_chunk_ids": [
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+            "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+            "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+            "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+            "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+            "c4f0d74c-a06b-4e50-9303-c148f2899272",
+            "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+            "46193291-fcb4-4458-8fa3-85dfbb321e59",
+            "5965373c-7e11-4fe7-b179-42365b4eedc9",
+            "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+            "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+            "14afd6dc-087d-4d5c-b5dc-ae1cb089e083",
+            "060cc781-36b0-4634-8b64-ff3458fb1469",
+            "d3083e78-7cde-4dd8-a8c1-dc9fedb7d64b",
+            "e268e6d3-9f77-415a-b27e-7518a20a9254",
+            "e39582dd-80a7-491b-9712-4bcbb672bac8",
+            "7ebf604f-0baf-41eb-a2c9-3a5862827197",
+            "04437512-309a-475a-b020-073b8ce8f146",
+            "4975e6cd-6c11-4456-b90b-af50862d332d"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 1750,
+          "prompt_tokens": 2184,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 2184,
+            "output_tokens": 11,
+            "total_tokens": 2195
+          },
+          "ttft_ms": 520.8852140021918,
+          "generation_ms": 678.2625109990477
+        }
+      ],
+      "context_position": {
+        "case_id": "v2_bank_scope_ratios",
+        "false_abstention": true,
+        "selected_count": 21,
+        "context_tokens": 1750,
+        "context_utilization": 0.42724609375,
+        "required_source_positions": [
+          9,
+          3,
+          4,
+          5,
+          6
+        ],
+        "approximate_prompt_token_positions": [
+          1271,
+          840,
+          881,
+          933,
+          975
+        ],
+        "first_relevant_source": 3,
+        "last_relevant_source": 9,
+        "irrelevant_before": 2,
+        "irrelevant_after": 12,
+        "required_candidate_origins": [
+          "RETRIEVAL",
+          "HIERARCHY_CHILD",
+          "HIERARCHY_CHILD",
+          "HIERARCHY_CHILD",
+          "HIERARCHY_CHILD"
+        ],
+        "has_hierarchy_required_evidence": true
+      }
+    },
+    {
+      "case_id": "v2_bank_below_80_measures",
+      "category": "PARTIAL_SUPPORT",
+      "question": "Khi giá trị thực của vốn điều lệ xuống dưới 80% vốn pháp định, chi nhánh Ngân hàng Nhà nước có thể áp dụng những nhóm biện pháp nào?",
+      "expected_evidence_sets": [
+        [
+          "31b2230f-aa0e-47e3-86a7-2c2f3d162c97"
+        ]
+      ],
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "source_reference": "giá trị thực của vốn điều lệ giảm xuống dưới 80% của mức vốn pháp định",
+      "dataset_notes": "One long chunk contains the measured list; answer quality still requires careful grounding.",
+      "manual_source_review": {
+        "support_mode": "CONDITIONAL",
+        "taxonomy": [
+          "LEGAL_EXCEPTION_OR_CONDITION",
+          "OVER_CONSERVATIVE_PROMPT_RULE",
+          "STATUS_PROTOCOL_BIAS"
+        ],
+        "human_review": "CLEAR_SUPPORT",
+        "rationale": "One selected chunk directly enumerates the measure groups and the below-80% condition; a qualified answer is possible without outside facts."
+      },
+      "selected_evidence": [
+        {
+          "source_id": "S1",
+          "chunk_id": "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Các biện pháp Ngân hàng Nhà nước chi nhánh Khu vực áp dụng để xử\nlý khi giá trị thực của vốn điều lệ của quỹ tín dụng nhân dân giảm thấp hơn mức\nvốn pháp định:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": 1,
+          "context_candidate_order": 1,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "fusion_score": 0.01639344262295082,
+          "token_count": 72
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "0297543e-678d-4927-b127-df8df7a82ae5",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "a) Đánh giá, kiểm tra, thanh tra hoặc yêu cầu quỹ tín dụng nhân dân thực\nhiện kiểm toán độc lập để xác định giá trị thực của vốn điều lệ tại phương án xử\nlý do quỹ tín dụng nhân dân báo cáo theo quy định tại khoản 1 Điều này;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 2,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 89
+        },
+        {
+          "source_id": "S3",
+          "chunk_id": "b4840ba2-673c-42af-9e3f-8f3150e4e9ab",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "c) Giám sát, thanh tra, kiểm tra việc tổ chức, triển khai thực hiện các biện\npháp tại phương án xử lý, bao gồm cả các biện pháp xử lý theo yêu cầu của Ngân\nhàng Nhà nước chi nhánh Khu vực;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 3,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 81
+        },
+        {
+          "source_id": "S4",
+          "chunk_id": "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "d) Tùy theo mức độ giảm giá trị thực của vốn điều lệ so với mức vốn pháp\nđịnh, Ngân hàng Nhà nước chi nhánh Khu vực quyết định cụ thể các biện pháp\nxử lý sau đây đối với quỹ tín dụng nhân dân:\n(i) Xem xét áp dụng các biện pháp khi giá trị thực của vốn điều lệ giảm\nxuống dưới 80% của mức vốn pháp định, bao gồm: Hạn chế chia lãi; Hạn chế việc\nmở rộng phạm vi, quy mô và địa bàn hoạt động; Hạn chế, đình chỉ, tạm đình chỉ\nmột số nội dung hoạt động; Yêu cầu Quỹ tín dụng nhân dân tăng vốn điều lệ;\nQuyết định giới hạn tăng trưởng tín dụng trong những trường hợp cần thiết bảo\nđảm an toàn cho quỹ tín dụng nhân dân và hệ thống các tổ chức tín dụng; Áp dụng\nmột hoặc một số tỷ lệ an toàn chặt chẽ hơn mức quy định;\n(ii) Xem xét áp dụng can thiệp sớm, kiểm soát đặc biệt, cơ cấu lại theo quy\nđịnh của pháp luật.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 4,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 252
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "932b1b44-40ae-44d4-958b-05230449c7ae",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Trong thời gian tối đa 30 ngày kể từ ngày giá trị thực của vốn điều lệ\ngiảm thấp hơn mức vốn pháp định, phải có văn bản báo cáo kèm phương án xử lý\nvà cam kết thực hiện phương án xử lý gửi trực tiếp hoặc qua dịch vụ bưu chính\ncho Ngân hàng Nhà nước chi nhánh Khu vực, trong đó tối thiểu phải có các nội\ndung sau:\n(i) Giá trị thực của vốn điều lệ theo quy định tại Điều 6 Thông tư này;\n(ii) Nguyên nhân giá trị thực của vốn điều lệ giảm thấp hơn mức vốn pháp\nđịnh;\n(iii) Các biện pháp bảo đảm giá trị thực của vốn điều lệ không thấp hơn\nmức vốn pháp định và duy trì các hạn chế, giới hạn, tỷ lệ bảo đảm an toàn trong\nhoạt động;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 5,
+            "page_end": 5
+          },
+          "retrieval_final_rank": 3,
+          "context_candidate_order": 5,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 3,
+          "lexical_rank": null,
+          "fusion_score": 0.015873015873015872,
+          "token_count": 203
+        },
+        {
+          "source_id": "S6",
+          "chunk_id": "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Việc xử lý trường hợp giá trị thực của vốn điều lệ giảm thấp hơn mức\nvốn pháp định.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 4,
+          "context_candidate_order": 6,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 4,
+          "lexical_rank": null,
+          "fusion_score": 0.015625,
+          "token_count": 53
+        },
+        {
+          "source_id": "S7",
+          "chunk_id": "e2c8222e-f180-407e-9e75-08eef8bbf896",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "Điều 7. Xử lý khi giá trị thực của vốn điều lệ giảm thấp hơn mức vốn\npháp định",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 5,
+            "page_end": 5
+          },
+          "retrieval_final_rank": 5,
+          "context_candidate_order": 7,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "fusion_score": 0.015384615384615385,
+          "token_count": 52
+        },
+        {
+          "source_id": "S8",
+          "chunk_id": "924006cf-616a-426c-9591-f7e7d37d20c4",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "1. Khi giá trị thực của vốn điều lệ của quỹ tín dụng nhân dân giảm thấp hơn\nmức vốn pháp định, quỹ tín dụng nhân dân phải:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 5,
+            "page_end": 5
+          },
+          "retrieval_final_rank": 6,
+          "context_candidate_order": 8,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 6,
+          "lexical_rank": null,
+          "fusion_score": 0.015151515151515152,
+          "token_count": 62
+        },
+        {
+          "source_id": "S9",
+          "chunk_id": "432f5e1d-c7fc-49ae-8119-7b61885e4253",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "c) Tổ chức triển khai thực hiện các biện pháp xử lý theo yêu cầu của Ngân\nhàng Nhà nước chi nhánh Khu vực (nếu có).",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 9,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "924006cf-616a-426c-9591-f7e7d37d20c4",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 60
+        },
+        {
+          "source_id": "S10",
+          "chunk_id": "bcfee01d-d09b-4ffc-b477-4def4a83406c",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "a) Xây dựng và triển khai thực hiện phương án xử lý để đảm bảo giá trị\nthực của vốn điều lệ tối thiểu bằng mức vốn pháp định;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 5,
+            "page_end": 5
+          },
+          "retrieval_final_rank": 7,
+          "context_candidate_order": 10,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 7,
+          "lexical_rank": null,
+          "fusion_score": 0.014925373134328358,
+          "token_count": 63
+        },
+        {
+          "source_id": "S11",
+          "chunk_id": "b6e32b7e-2d37-4ae0-bdcd-ba970e6ee943",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Thanh tra, kiểm tra, giám sát, thực hiện các biện pháp xử lý đối với các\nhành vi vi phạm của quỹ tín dụng nhân dân trên địa bàn trong việc thực hiện các\nquy định tại Thông tư này, bao gồm cả các biện pháp xử lý đối với trường hợp giá\ntrị thực của vốn điều lệ của quỹ tín dụng nhân dân thấp hơn mức vốn pháp định\nquy định tại khoản 2 Điều 7 Thông tư này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": 8,
+          "context_candidate_order": 11,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 8,
+          "lexical_rank": null,
+          "fusion_score": 0.014705882352941176,
+          "token_count": 127
+        },
+        {
+          "source_id": "S12",
+          "chunk_id": "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "3. Căn cứ kết quả giám sát, thanh tra, kiểm tra đối với quỹ tín dụng nhân\ndân, trong trường hợp cần thiết để bảo đảm an toàn trong hoạt động của quỹ tín\ndụng nhân dân, tùy theo tính chất, mức độ rủi ro, Ngân hàng Nhà nước chi nhánh\nKhu vực nơi quỹ tín dụng nhân dân đặt trụ sở chính (sau đây gọi là Ngân hàng\nNhà nước chi nhánh Khu vực) yêu cầu quỹ tín dụng nhân dân duy trì một hoặc\nmột số hạn chế, giới hạn, tỷ lệ bảo đảm an toàn chặt chẽ hơn so với mức quy định\ntại Thông tư này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 2
+          },
+          "retrieval_final_rank": 9,
+          "context_candidate_order": 12,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 9,
+          "lexical_rank": null,
+          "fusion_score": 0.014492753623188406,
+          "token_count": 161
+        },
+        {
+          "source_id": "S13",
+          "chunk_id": "ab568a7d-b862-4b3b-aebc-b5d37e75b2e0",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Yêu cầu sửa đổi, bổ sung, hoàn thiện các biện pháp xử lý của quỹ tín\ndụng nhân dân khi giá trị thực của vốn điều lệ thấp hơn mức vốn pháp định nêu\ntại phương án quy định tại khoản 1 Điều này trong trường hợp cần thiết;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": 10,
+          "context_candidate_order": 13,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 10,
+          "lexical_rank": null,
+          "fusion_score": 0.014285714285714285,
+          "token_count": 88
+        }
+      ],
+      "expected_evidence_excerpts": [
+        {
+          "source_id": "S4",
+          "chunk_id": "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "d) Tùy theo mức độ giảm giá trị thực của vốn điều lệ so với mức vốn pháp\nđịnh, Ngân hàng Nhà nước chi nhánh Khu vực quyết định cụ thể các biện pháp\nxử lý sau đây đối với quỹ tín dụng nhân dân:\n(i) Xem xét áp dụng các biện pháp khi giá trị thực của vốn điều lệ giảm\nxuống dưới 80% của mức vốn pháp định, bao gồm: Hạn chế chia lãi; Hạn chế việc\nmở rộng phạm vi, quy mô và địa bàn hoạt động; Hạn chế, đình chỉ, tạm đình chỉ\nmột số nội dung hoạt động; Yêu cầu Quỹ tín dụng nhân dân tăng vốn điều lệ;\nQuyết định giới hạn tăng trưởng tín dụng trong những trường hợp cần thiết bảo\nđảm an toàn cho quỹ tín dụng nhân dân và hệ thống các tổ chức tín dụng; Áp dụng\nmột hoặc một số tỷ lệ an toàn chặt chẽ hơn mức quy định;\n(ii) Xem xét áp dụng can thiệp sớm, kiểm soát đặc biệt, cơ cấu lại theo quy\nđịnh của pháp luật.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 6,
+            "page_end": 6
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 4,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 252
+        }
+      ],
+      "context_ordering": [
+        "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+        "0297543e-678d-4927-b127-df8df7a82ae5",
+        "b4840ba2-673c-42af-9e3f-8f3150e4e9ab",
+        "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+        "932b1b44-40ae-44d4-958b-05230449c7ae",
+        "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+        "e2c8222e-f180-407e-9e75-08eef8bbf896",
+        "924006cf-616a-426c-9591-f7e7d37d20c4",
+        "432f5e1d-c7fc-49ae-8119-7b61885e4253",
+        "bcfee01d-d09b-4ffc-b477-4def4a83406c",
+        "b6e32b7e-2d37-4ae0-bdcd-ba970e6ee943",
+        "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+        "ab568a7d-b862-4b3b-aebc-b5d37e75b2e0"
+      ],
+      "context_token_count": 1399,
+      "context_budget_tokens": 4096,
+      "prompt_tokens_historical": 1835,
+      "historical_model_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_answer": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+      "historical_citations": [],
+      "current_prompt_repeat_runs": [
+        {
+          "key": "legal-rag-v2|v2_bank_below_80_measures|current|1",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_below_80_measures",
+          "category": "PARTIAL_SUPPORT",
+          "answerable": true,
+          "run_index": 1,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13"
+          ],
+          "selected_chunk_ids": [
+            "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+            "0297543e-678d-4927-b127-df8df7a82ae5",
+            "b4840ba2-673c-42af-9e3f-8f3150e4e9ab",
+            "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "e2c8222e-f180-407e-9e75-08eef8bbf896",
+            "924006cf-616a-426c-9591-f7e7d37d20c4",
+            "432f5e1d-c7fc-49ae-8119-7b61885e4253",
+            "bcfee01d-d09b-4ffc-b477-4def4a83406c",
+            "b6e32b7e-2d37-4ae0-bdcd-ba970e6ee943",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "ab568a7d-b862-4b3b-aebc-b5d37e75b2e0"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1399,
+          "prompt_tokens": 1835,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1835,
+            "output_tokens": 11,
+            "total_tokens": 1846
+          },
+          "ttft_ms": 1264.5454180019442,
+          "generation_ms": 1421.6432989996974
+        },
+        {
+          "key": "legal-rag-v2|v2_bank_below_80_measures|current|2",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_below_80_measures",
+          "category": "PARTIAL_SUPPORT",
+          "answerable": true,
+          "run_index": 2,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13"
+          ],
+          "selected_chunk_ids": [
+            "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+            "0297543e-678d-4927-b127-df8df7a82ae5",
+            "b4840ba2-673c-42af-9e3f-8f3150e4e9ab",
+            "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "e2c8222e-f180-407e-9e75-08eef8bbf896",
+            "924006cf-616a-426c-9591-f7e7d37d20c4",
+            "432f5e1d-c7fc-49ae-8119-7b61885e4253",
+            "bcfee01d-d09b-4ffc-b477-4def4a83406c",
+            "b6e32b7e-2d37-4ae0-bdcd-ba970e6ee943",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "ab568a7d-b862-4b3b-aebc-b5d37e75b2e0"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1399,
+          "prompt_tokens": 1835,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1835,
+            "output_tokens": 11,
+            "total_tokens": 1846
+          },
+          "ttft_ms": 546.5717059996678,
+          "generation_ms": 704.3199979998462
+        },
+        {
+          "key": "legal-rag-v2|v2_bank_below_80_measures|current|3",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_bank_below_80_measures",
+          "category": "PARTIAL_SUPPORT",
+          "answerable": true,
+          "run_index": 3,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13"
+          ],
+          "selected_chunk_ids": [
+            "7e83f98a-6cd0-4d86-9596-f9868aa3ac7b",
+            "0297543e-678d-4927-b127-df8df7a82ae5",
+            "b4840ba2-673c-42af-9e3f-8f3150e4e9ab",
+            "31b2230f-aa0e-47e3-86a7-2c2f3d162c97",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "e2c8222e-f180-407e-9e75-08eef8bbf896",
+            "924006cf-616a-426c-9591-f7e7d37d20c4",
+            "432f5e1d-c7fc-49ae-8119-7b61885e4253",
+            "bcfee01d-d09b-4ffc-b477-4def4a83406c",
+            "b6e32b7e-2d37-4ae0-bdcd-ba970e6ee943",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "ab568a7d-b862-4b3b-aebc-b5d37e75b2e0"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1399,
+          "prompt_tokens": 1835,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1835,
+            "output_tokens": 11,
+            "total_tokens": 1846
+          },
+          "ttft_ms": 575.0705530008418,
+          "generation_ms": 730.7677159988089
+        }
+      ],
+      "context_position": {
+        "case_id": "v2_bank_below_80_measures",
+        "false_abstention": true,
+        "selected_count": 13,
+        "context_tokens": 1399,
+        "context_utilization": 0.341552734375,
+        "required_source_positions": [
+          4
+        ],
+        "approximate_prompt_token_positions": [
+          681
+        ],
+        "first_relevant_source": 4,
+        "last_relevant_source": 4,
+        "irrelevant_before": 3,
+        "irrelevant_after": 9,
+        "required_candidate_origins": [
+          "RETRIEVAL"
+        ],
+        "has_hierarchy_required_evidence": false
+      }
+    },
+    {
+      "case_id": "v2_civil_scope",
+      "category": "DOCUMENT_DISAMBIGUATION",
+      "question": "Văn bản hợp nhất 10/2026/VBHN-NĐ-BNV quy định phạm vi nào?",
+      "expected_evidence_sets": [
+        [
+          "7239888d-6b34-417a-bb1d-4da08ebb5b67"
+        ]
+      ],
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "source_reference": "quy định về tuyển dụng, sử dụng và quản lý công chức",
+      "dataset_notes": null,
+      "manual_source_review": {
+        "support_mode": "DIRECT_SINGLE",
+        "taxonomy": [
+          "LONG_CONTEXT_INSTRUCTION_FADING",
+          "EVIDENCE_ORDERING_EFFECT",
+          "OVER_CONSERVATIVE_PROMPT_RULE",
+          "STATUS_PROTOCOL_BIAS"
+        ],
+        "human_review": "CLEAR_SUPPORT",
+        "rationale": "S1 directly names the consolidated instrument and its scope; the remaining long context is mostly distractor material."
+      },
+      "selected_evidence": [
+        {
+          "source_id": "S1",
+          "chunk_id": "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": true,
+          "content_text": "VĂN BẢN HỢP NHẤT CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nSố: 10 /2026/VBHN-NĐ-BNV Độc lập - Tự do - Hạnh phúc\n\nHà Nội, ngày 14 tháng 8 năm 2026\n\nNGHỊ ĐỊNH\nQuy định về tuyển dụng, sử dụng và quản lý công chức\n\nNghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ\nquy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày\n01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi:\nNghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ\nsửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6\nnăm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công\nchức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026.\nCăn cứ Luật Tổ chức Chính phủ ngày 18 tháng 02 năm 2025;\nCăn cứ Luật Cán bộ, công chức ngày 24 tháng 6 năm 2025;\nTheo đề nghị của Bộ trưởng Bộ Nội vụ1;\nChính phủ ban hành Nghị định quy định về tuyển dụng, sử dụng và quản\nlý công chức.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 1,
+          "context_candidate_order": 1,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "fusion_score": 0.01639344262295082,
+          "token_count": 567
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "NGÂN HÀNG NHÀ NƯỚC CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nVIỆT NAM Độc lập - Tự do - Hạnh phúc\n\nSố: 40/2026/TT-NHNN Hà Nội, ngày 10 tháng 8 năm 2026\n\nTHÔNG TƯ\nQuy định các giới hạn, tỷ lệ bảo đảm an toàn trong hoạt động\ncủa quỹ tín dụng nhân dân\n\nCăn cứ Luật Ngân hàng Nhà nước Việt Nam số 46/2010/QH12;\nCăn cứ Luật Các tổ chức tín dụng số 32/2024/QH15 được sửa đổi, bổ sung\nbởi Luật số 96/2025/QH15;\nCăn cứ Luật Hợp tác xã số 17/2023/QH15;\nCăn cứ Nghị định số 26/2025/NĐ-CP của Chính phủ quy định chức năng,\nnhiệm vụ, quyền hạn và cơ cấu tổ chức của Ngân hàng Nhà nước Việt Nam được\nsửa đổi, bổ sung bởi Nghị định số 198/2026/NĐ-CP;\nTheo đề nghị của Cục trưởng Cục An toàn hệ thống các tổ chức tín dụng;\nThống đốc Ngân hàng Nhà nước Việt Nam ban hành Thông tư quy định các\ngiới hạn, tỷ lệ bảo đảm an toàn trong hoạt động của quỹ tín dụng nhân dân.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 2,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 343
+        },
+        {
+          "source_id": "S3",
+          "chunk_id": "0e4c09e1-e442-48f4-a386-b3ef04dec969",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "đ) Sử dụng, phân công, bố trí, kiểm tra, đánh giá, xây dựng phương án\nthay đổi vị trí việc làm xếp ngạch cao hơn; đào tạo, bồi dưỡng, thi đua, khen\nthưởng; tạm đình chỉ công tác, tạm đình chỉ chức vụ; thực hiện chế độ tiền\nlương, cho thôi việc, nghỉ hưu và các chế độ, chính sách khác;\n\n34 Điều này được sửa đổi, bổ sung theo quy định tại Điều 31 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ\nngày 01 tháng 8 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 54,
+            "page_end": 54
+          },
+          "retrieval_final_rank": 3,
+          "context_candidate_order": 3,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 3,
+          "lexical_rank": null,
+          "fusion_score": 0.015873015873015872,
+          "token_count": 353
+        },
+        {
+          "source_id": "S4",
+          "chunk_id": "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "Điều 1. Phạm vi điều chỉnh",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 4,
+          "context_candidate_order": 4,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 4,
+          "lexical_rank": null,
+          "fusion_score": 0.015625,
+          "token_count": 37
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "13566529-a241-4568-a651-b95a14bb0f9f",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "1. Thông tư này quy định về các hạn chế, giới hạn, tỷ lệ bảo đảm an toàn\ntrong hoạt động của quỹ tín dụng nhân dân bao gồm:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 5,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 63
+        },
+        {
+          "source_id": "S6",
+          "chunk_id": "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Việc xử lý trường hợp giá trị thực của vốn điều lệ giảm thấp hơn mức\nvốn pháp định.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 6,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 53
+        },
+        {
+          "source_id": "S7",
+          "chunk_id": "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "3. Căn cứ kết quả giám sát, thanh tra, kiểm tra đối với quỹ tín dụng nhân\ndân, trong trường hợp cần thiết để bảo đảm an toàn trong hoạt động của quỹ tín\ndụng nhân dân, tùy theo tính chất, mức độ rủi ro, Ngân hàng Nhà nước chi nhánh\nKhu vực nơi quỹ tín dụng nhân dân đặt trụ sở chính (sau đây gọi là Ngân hàng\nNhà nước chi nhánh Khu vực) yêu cầu quỹ tín dụng nhân dân duy trì một hoặc\nmột số hạn chế, giới hạn, tỷ lệ bảo đảm an toàn chặt chẽ hơn so với mức quy định\ntại Thông tư này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 1,
+            "page_end": 2
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 7,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 160
+        },
+        {
+          "source_id": "S8",
+          "chunk_id": "86532d17-b3a6-4663-824d-d66bff3e828a",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "4. Quỹ tín dụng nhân dân được kiểm soát đặc biệt không phải tuân thủ quy\nđịnh tại các Điều 136, 137, 138 và khoản 3 Điều 144 của Luật Các tổ chức tín\ndụng và các quy định liên quan tại Thông tư này.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 2,
+            "page_end": 2
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 8,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 95
+        },
+        {
+          "source_id": "S9",
+          "chunk_id": "9406cd83-efed-4c66-845b-f008e2f16d56",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "3. Trường hợp người được tiếp nhận vào làm công chức có thời gian công\ntác theo đúng quy định của pháp luật, có đóng bảo hiểm xã hội bắt buộc (nếu\nkhông liên tục mà chưa nhận trợ cấp bảo hiểm xã hội một lần hoặc chưa hưởng\nchế độ phục viên, xuất ngũ thì được cộng dồn), làm công việc phù hợp với yêu\ncầu về trình độ chuyên môn, nghiệp vụ của vị trí việc làm được tiếp nhận thì\n\n7 Điều này được sửa đổi, bổ sung theo quy định tại Điều 6 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày\n01 tháng 8 năm 2026.\n8 Điều này được sửa đổi, bổ sung theo quy định tại Điều 7 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày\n01 tháng 8 năm 2026.\nthời gian công tác đó được tính làm căn cứ xếp lương ở ngạch công chức tương\nứng theo vị trí việc làm được tiếp nhận.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 16,
+            "page_end": 17
+          },
+          "retrieval_final_rank": 5,
+          "context_candidate_order": 9,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "fusion_score": 0.015384615384615385,
+          "token_count": 444
+        },
+        {
+          "source_id": "S10",
+          "chunk_id": "e02400d2-80f5-404e-9337-22a787e192dd",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "a) Thống nhất quản lý công chức trên địa bàn tỉnh; thực hiện quản lý cán\nbộ trong cơ quan nhà nước trên địa bàn tỉnh theo phân cấp thẩm quyền quản lý;\n\n35 Điều này được sửa đổi, bổ sung theo quy định tại Điều 32 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ\nngày 01 tháng 8 năm 2026.\n36 Điều này được sửa đổi, bổ sung theo quy định tại Điều 33 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ\nngày 01 tháng 8 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 56,
+            "page_end": 56
+          },
+          "retrieval_final_rank": 6,
+          "context_candidate_order": 10,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 6,
+          "lexical_rank": null,
+          "fusion_score": 0.015151515151515152,
+          "token_count": 363
+        },
+        {
+          "source_id": "S11",
+          "chunk_id": "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "2. Chậm nhất đến ngày 01 tháng 7 năm 2027, các Bộ, ngành, cơ quan\ntrung ương, địa phương phải hoàn thành việc bố trí vào vị trí việc làm và xếp\nngạch tương ứng với vị trí việc làm đối với công chức được tuyển dụng trước\nngày Luật Cán bộ, công chức năm 2025 có hiệu lực thuộc phạm vi quản lý theo\n\n38 Các điều 35, 36 và 37 của Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày 01 tháng 8 năm 2026 quy\nđịnh như sau:\n“Điều 35. Điều khoản chuyển tiếp và áp dụng",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 58,
+            "page_end": 58
+          },
+          "retrieval_final_rank": 7,
+          "context_candidate_order": 11,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 7,
+          "lexical_rank": null,
+          "fusion_score": 0.014925373134328358,
+          "token_count": 374
+        },
+        {
+          "source_id": "S12",
+          "chunk_id": "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "6. Các giới hạn quy định tại điểm b khoản 1 Điều này không áp dụng đối\nvới:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 10,
+            "page_end": 10
+          },
+          "retrieval_final_rank": 8,
+          "context_candidate_order": 12,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 8,
+          "lexical_rank": null,
+          "fusion_score": 0.014705882352941176,
+          "token_count": 52
+        },
+        {
+          "source_id": "S13",
+          "chunk_id": "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "a) Khoản cho vay từ nguồn vốn ủy thác của tổ chức, cá nhân mà quỹ tín\ndụng nhân dân nhận ủy thác không chịu rủi ro;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 10,
+            "page_end": 10
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 13,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 62
+        },
+        {
+          "source_id": "S14",
+          "chunk_id": "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Các khoản cho vay được bảo đảm toàn bộ bằng tiền gửi tại chính quỹ tín\ndụng nhân dân.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 14,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 54
+        },
+        {
+          "source_id": "S15",
+          "chunk_id": "631d3b99-b80c-40d6-b08b-6e66758bb626",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "b) Trường hợp ngạch tương ứng với vị trí việc làm mới có hệ số lương\ncùng bậc cao hơn ngạch hiện giữ thì căn cứ vào hệ số lương cộng phụ cấp thâm\n\n10 Điều này được sửa đổi, bổ sung theo quy định tại Điều 9 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ\nngày 01 tháng 8 năm 2026.\nniên vượt khung (nếu có) đang hưởng để xếp vào hệ số lương bằng hoặc cao hơn\ngần nhất ở ngạch tương ứng với vị trí việc làm mới;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 20,
+            "page_end": 21
+          },
+          "retrieval_final_rank": 9,
+          "context_candidate_order": 15,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 9,
+          "lexical_rank": null,
+          "fusion_score": 0.014492753623188406,
+          "token_count": 343
+        },
+        {
+          "source_id": "S16",
+          "chunk_id": "44522c41-0190-4c0c-bce6-80efab7104b1",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "2. Tiêu chuẩn, điều kiện tiếp nhận:\nCăn cứ vào tỷ lệ công chức cần bố trí theo từng vị trí việc làm đã được\ncấp có thẩm quyền phê duyệt trong cơ quan sử dụng công chức, chỉ tiêu biên\nchế được giao và yêu cầu của vị trí việc làm cần tuyển, người đứng đầu cơ\nquan có thẩm quyền tuyển dụng quyết định tiếp nhận vào làm công chức đối\n\n4 Điều này được sửa đổi, bổ sung theo quy định tại Điều 3 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày\n01 tháng 8 năm 2026.\nvới các trường hợp quy định tại khoản 1 Điều này nếu đáp ứng các tiêu chuẩn,\nđiều kiện sau:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 9,
+            "page_end": 10
+          },
+          "retrieval_final_rank": 10,
+          "context_candidate_order": 16,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 10,
+          "lexical_rank": null,
+          "fusion_score": 0.014285714285714285,
+          "token_count": 377
+        },
+        {
+          "source_id": "S17",
+          "chunk_id": "cac2f5d7-1b59-44c0-9e3b-070c4b34e51a",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "a) Đáp ứng đủ tiêu chuẩn, điều kiện đăng ký dự tuyển công chức quy\nđịnh tại khoản 1 Điều 19 Luật Cán bộ, công chức số 80/2025/QH15;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 10,
+            "page_end": 10
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 17,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "44522c41-0190-4c0c-bce6-80efab7104b1",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 261
+        }
+      ],
+      "expected_evidence_excerpts": [
+        {
+          "source_id": "S1",
+          "chunk_id": "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": true,
+          "content_text": "VĂN BẢN HỢP NHẤT CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nSố: 10 /2026/VBHN-NĐ-BNV Độc lập - Tự do - Hạnh phúc\n\nHà Nội, ngày 14 tháng 8 năm 2026\n\nNGHỊ ĐỊNH\nQuy định về tuyển dụng, sử dụng và quản lý công chức\n\nNghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ\nquy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày\n01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi:\nNghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ\nsửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6\nnăm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công\nchức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026.\nCăn cứ Luật Tổ chức Chính phủ ngày 18 tháng 02 năm 2025;\nCăn cứ Luật Cán bộ, công chức ngày 24 tháng 6 năm 2025;\nTheo đề nghị của Bộ trưởng Bộ Nội vụ1;\nChính phủ ban hành Nghị định quy định về tuyển dụng, sử dụng và quản\nlý công chức.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 1,
+            "page_end": 1
+          },
+          "retrieval_final_rank": 1,
+          "context_candidate_order": 1,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "fusion_score": 0.01639344262295082,
+          "token_count": 567
+        }
+      ],
+      "context_ordering": [
+        "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+        "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+        "0e4c09e1-e442-48f4-a386-b3ef04dec969",
+        "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+        "13566529-a241-4568-a651-b95a14bb0f9f",
+        "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+        "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+        "86532d17-b3a6-4663-824d-d66bff3e828a",
+        "9406cd83-efed-4c66-845b-f008e2f16d56",
+        "e02400d2-80f5-404e-9337-22a787e192dd",
+        "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91",
+        "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+        "022d0872-1a53-43ba-bc11-a4474db0cea9",
+        "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+        "631d3b99-b80c-40d6-b08b-6e66758bb626",
+        "44522c41-0190-4c0c-bce6-80efab7104b1",
+        "cac2f5d7-1b59-44c0-9e3b-070c4b34e51a"
+      ],
+      "context_token_count": 4049,
+      "context_budget_tokens": 4096,
+      "prompt_tokens_historical": 4476,
+      "historical_model_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_answer": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+      "historical_citations": [],
+      "current_prompt_repeat_runs": [
+        {
+          "key": "legal-rag-v2|v2_civil_scope|current|1",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_civil_scope",
+          "category": "DOCUMENT_DISAMBIGUATION",
+          "answerable": true,
+          "run_index": 1,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17"
+          ],
+          "selected_chunk_ids": [
+            "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "0e4c09e1-e442-48f4-a386-b3ef04dec969",
+            "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "86532d17-b3a6-4663-824d-d66bff3e828a",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "e02400d2-80f5-404e-9337-22a787e192dd",
+            "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91",
+            "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+            "022d0872-1a53-43ba-bc11-a4474db0cea9",
+            "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+            "631d3b99-b80c-40d6-b08b-6e66758bb626",
+            "44522c41-0190-4c0c-bce6-80efab7104b1",
+            "cac2f5d7-1b59-44c0-9e3b-070c4b34e51a"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 4049,
+          "prompt_tokens": 4476,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 4476,
+            "output_tokens": 11,
+            "total_tokens": 4487
+          },
+          "ttft_ms": 2145.7311310005025,
+          "generation_ms": 2303.5957270003564
+        },
+        {
+          "key": "legal-rag-v2|v2_civil_scope|current|2",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_civil_scope",
+          "category": "DOCUMENT_DISAMBIGUATION",
+          "answerable": true,
+          "run_index": 2,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17"
+          ],
+          "selected_chunk_ids": [
+            "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "0e4c09e1-e442-48f4-a386-b3ef04dec969",
+            "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "86532d17-b3a6-4663-824d-d66bff3e828a",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "e02400d2-80f5-404e-9337-22a787e192dd",
+            "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91",
+            "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+            "022d0872-1a53-43ba-bc11-a4474db0cea9",
+            "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+            "631d3b99-b80c-40d6-b08b-6e66758bb626",
+            "44522c41-0190-4c0c-bce6-80efab7104b1",
+            "cac2f5d7-1b59-44c0-9e3b-070c4b34e51a"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 4049,
+          "prompt_tokens": 4476,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 4476,
+            "output_tokens": 11,
+            "total_tokens": 4487
+          },
+          "ttft_ms": 532.5677740001993,
+          "generation_ms": 690.9357699987595
+        },
+        {
+          "key": "legal-rag-v2|v2_civil_scope|current|3",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_civil_scope",
+          "category": "DOCUMENT_DISAMBIGUATION",
+          "answerable": true,
+          "run_index": 3,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17"
+          ],
+          "selected_chunk_ids": [
+            "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+            "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+            "0e4c09e1-e442-48f4-a386-b3ef04dec969",
+            "c02689a4-1596-45c9-86d9-d2f48e8247a0",
+            "13566529-a241-4568-a651-b95a14bb0f9f",
+            "9ec69474-9e90-4db5-8b84-1bd95977b3a0",
+            "1a51b6cd-f9ac-4cde-9065-a8bd90e60d74",
+            "86532d17-b3a6-4663-824d-d66bff3e828a",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "e02400d2-80f5-404e-9337-22a787e192dd",
+            "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91",
+            "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+            "022d0872-1a53-43ba-bc11-a4474db0cea9",
+            "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+            "631d3b99-b80c-40d6-b08b-6e66758bb626",
+            "44522c41-0190-4c0c-bce6-80efab7104b1",
+            "cac2f5d7-1b59-44c0-9e3b-070c4b34e51a"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD"
+          ],
+          "context_tokens": 4049,
+          "prompt_tokens": 4476,
+          "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+          "raw_status_marker_count": 1,
+          "answerability_status": "INSUFFICIENT_EVIDENCE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "",
+          "generation_status": "INSUFFICIENT_EVIDENCE",
+          "citation_validation": "PASS",
+          "citation_source_ids": [],
+          "mapped_chunk_ids": [],
+          "mapped_document_ids": [],
+          "invalid_citations": [],
+          "expected_source_complete": false,
+          "expected_source_recall": 0.0,
+          "grounded_conversion": false,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 4476,
+            "output_tokens": 11,
+            "total_tokens": 4487
+          },
+          "ttft_ms": 555.0856690024375,
+          "generation_ms": 711.7121950032015
+        }
+      ],
+      "context_position": {
+        "case_id": "v2_civil_scope",
+        "false_abstention": true,
+        "selected_count": 17,
+        "context_tokens": 4049,
+        "context_utilization": 0.988525390625,
+        "required_source_positions": [
+          1
+        ],
+        "approximate_prompt_token_positions": [
+          421
+        ],
+        "first_relevant_source": 1,
+        "last_relevant_source": 1,
+        "irrelevant_before": 0,
+        "irrelevant_after": 16,
+        "required_candidate_origins": [
+          "RETRIEVAL"
+        ],
+        "has_hierarchy_required_evidence": false
+      }
+    },
+    {
+      "case_id": "v2_cross_document_effective_dates",
+      "category": "MULTI_DOCUMENT_EVIDENCE",
+      "question": "So sánh ngày hiệu lực của Thông tư về thực hành công tác xã hội và Thông tư 40/2026/TT-NHNN: văn bản nào có hiệu lực trước?",
+      "expected_evidence_sets": [
+        [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+        ]
+      ],
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "source_reference": "có hiệu lực từ ngày 25 tháng 8 năm 2026",
+      "dataset_notes": "Requires two documents; social-work instrument is earlier.",
+      "manual_source_review": {
+        "support_mode": "COMPOSITIONAL",
+        "taxonomy": [
+          "EVIDENCE_PRESENT_BUT_DISTRIBUTED",
+          "MULTI_CHUNK_SYNTHESIS_REQUIRED",
+          "OVER_CONSERVATIVE_PROMPT_RULE",
+          "STATUS_PROTOCOL_BIAS"
+        ],
+        "human_review": "CLEAR_SUPPORT",
+        "rationale": "Two selected chunks provide the two dates; answering requires only comparing 25 August 2026 with 1 November 2026."
+      },
+      "selected_evidence": [
+        {
+          "source_id": "S1",
+          "chunk_id": "425f59be-f2fa-49f4-acb7-461cb0769b50",
+          "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "is_expected_evidence": false,
+          "content_text": "Điều 18. Điều khoản chuyển tiếp\nĐối với trường hợp người thực hành công tác xã hội đã được cấp Giấy xác\nnhận quá trình thực hành công tác xã hội theo quy định tại Nghị định số\n110/2024/NĐ-CP thì không phải thực hành lại. Người đang trong quá trình thực\nhành công tác xã hội trước ngày Thông tư này có hiệu lực thì tiếp tục thực hành\ntheo quy định tại Nghị định số 110/2024/NĐ-CP.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "29",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-07-06",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "page_start": 7,
+            "page_end": 8
+          },
+          "retrieval_final_rank": 1,
+          "context_candidate_order": 1,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "fusion_score": 0.01639344262295082,
+          "token_count": 130
+        },
+        {
+          "source_id": "S2",
+          "chunk_id": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "1. Thông tư này có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 2,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 56
+        },
+        {
+          "source_id": "S3",
+          "chunk_id": "fff91e5d-f828-4bc3-bf45-3471393dc391",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "Điều 15. Hiệu lực thi hành",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": 3,
+          "context_candidate_order": 3,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 3,
+          "lexical_rank": null,
+          "fusion_score": 0.015873015873015872,
+          "token_count": 38
+        },
+        {
+          "source_id": "S4",
+          "chunk_id": "cf3aa4e9-60ba-4c17-9b1d-8a986d101371",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "2. Thông tư này bãi bỏ:",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": null,
+          "context_candidate_order": 4,
+          "candidate_origin": "HIERARCHY_CHILD",
+          "hierarchy_relation": "DIRECT_CHILD",
+          "anchor_chunk_id": "fff91e5d-f828-4bc3-bf45-3471393dc391",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "fusion_score": null,
+          "token_count": 37
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "is_expected_evidence": true,
+          "content_text": "Điều 17. Hiệu lực thi hành\nThông tư này có hiệu lực từ ngày 25 tháng 8 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "29",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-07-06",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": 4,
+          "context_candidate_order": 5,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 4,
+          "lexical_rank": null,
+          "fusion_score": 0.015625,
+          "token_count": 50
+        },
+        {
+          "source_id": "S6",
+          "chunk_id": "932b1b44-40ae-44d4-958b-05230449c7ae",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": false,
+          "content_text": "b) Trong thời gian tối đa 30 ngày kể từ ngày giá trị thực của vốn điều lệ\ngiảm thấp hơn mức vốn pháp định, phải có văn bản báo cáo kèm phương án xử lý\nvà cam kết thực hiện phương án xử lý gửi trực tiếp hoặc qua dịch vụ bưu chính\ncho Ngân hàng Nhà nước chi nhánh Khu vực, trong đó tối thiểu phải có các nội\ndung sau:\n(i) Giá trị thực của vốn điều lệ theo quy định tại Điều 6 Thông tư này;\n(ii) Nguyên nhân giá trị thực của vốn điều lệ giảm thấp hơn mức vốn pháp\nđịnh;\n(iii) Các biện pháp bảo đảm giá trị thực của vốn điều lệ không thấp hơn\nmức vốn pháp định và duy trì các hạn chế, giới hạn, tỷ lệ bảo đảm an toàn trong\nhoạt động;",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 5,
+            "page_end": 5
+          },
+          "retrieval_final_rank": 5,
+          "context_candidate_order": 6,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "fusion_score": 0.015384615384615385,
+          "token_count": 203
+        },
+        {
+          "source_id": "S7",
+          "chunk_id": "ff57c879-4c67-4a7b-b550-6c2b373955be",
+          "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "is_expected_evidence": false,
+          "content_text": "1. Tổ chức hoạt động hướng dẫn thực hành theo nội dung và kế hoạch che_06/07/2026\nhướng dẫn thực hành của cơ sở. Phap\nVu2. Trong thời gian 03 ngày làm việc, kể từ ngày người thực hành được cấp\ngiấythuxác nhận quá trình thực hành công tác xã hội, cơ sở thực hành công tác xã hội\nphải gửi cơ quan chuyên môn về y tế thuộc Ủy ban nhân dân cấp tỉnh danh sách\ncác đối tượng đã được cấp giấy xác nhận quá trình thực hành công tác xã hội để\ntheo dõi, quản lý hoạt động hướng dẫn thực hành và đăng tải trên Trang thông tinvanthu.pc_Van điện tử của cơ sở các thông tin người thực hành, bao gồm cả người hướng dẫn thực\nhành và thời gian người đó thực hành tại cơ sở (Họ và tên; ngày, tháng, năm sinh;\nđơn vị công tác; thời gian thực hành).",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "29",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-07-06",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": 6,
+          "context_candidate_order": 7,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 6,
+          "lexical_rank": null,
+          "fusion_score": 0.015151515151515152,
+          "token_count": 225
+        },
+        {
+          "source_id": "S8",
+          "chunk_id": "9406cd83-efed-4c66-845b-f008e2f16d56",
+          "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+          "is_expected_evidence": false,
+          "content_text": "3. Trường hợp người được tiếp nhận vào làm công chức có thời gian công\ntác theo đúng quy định của pháp luật, có đóng bảo hiểm xã hội bắt buộc (nếu\nkhông liên tục mà chưa nhận trợ cấp bảo hiểm xã hội một lần hoặc chưa hưởng\nchế độ phục viên, xuất ngũ thì được cộng dồn), làm công việc phù hợp với yêu\ncầu về trình độ chuyên môn, nghiệp vụ của vị trí việc làm được tiếp nhận thì\n\n7 Điều này được sửa đổi, bổ sung theo quy định tại Điều 6 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày\n01 tháng 8 năm 2026.\n8 Điều này được sửa đổi, bổ sung theo quy định tại Điều 7 Nghị định số 300/2026/NĐ-CP, có hiệu lực kể từ ngày\n01 tháng 8 năm 2026.\nthời gian công tác đó được tính làm căn cứ xếp lương ở ngạch công chức tương\nứng theo vị trí việc làm được tiếp nhận.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "10",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-14",
+            "title": "Quy định về tuyển dụng, sử dụng và quản lý công chức Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 7 năm 2025, được sửa đổi, bổ sung bởi: Nghị định số 300/2026/NĐ-CP ngày 29 tháng 7 năm 2026 của Chính phủ sửa đổi, bổ sung một số điều của Nghị định số 170/2025/NĐ-CP ngày 30 tháng 6 năm 2025 của Chính phủ quy định về tuyển dụng, sử dụng và quản lý công chức, có hiệu lực kể từ ngày 01 tháng 8 năm 2026."
+          },
+          "provenance_json": {
+            "document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+            "page_start": 16,
+            "page_end": 17
+          },
+          "retrieval_final_rank": 7,
+          "context_candidate_order": 8,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 7,
+          "lexical_rank": null,
+          "fusion_score": 0.014925373134328358,
+          "token_count": 444
+        },
+        {
+          "source_id": "S9",
+          "chunk_id": "5face032-faa3-4b38-a5c8-35072a34adda",
+          "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "is_expected_evidence": false,
+          "content_text": "1. Cơ sở tổ chức việc thực hành công tác xã hội được thực hiện theo Điều\n36 Nghị định số 110/2024/NĐ-CP.\nTrường hợp có nhiều người hướng dẫn thực hành cho một người thực hành 17:03:43 thì người đứng đầu cơ sở thực hành công tác xã hội phải phân công rõ phạm vi\nhướng dẫn và thời gian hướng dẫn thực hành cụ thể của từng người hướng dẫn\nthực hành. Người hướng dẫn thực hành hướng dẫn nội dung nào thì phải nhận xét\ntheo nội dung đó. che_06/07/2026",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "29",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-07-06",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "page_start": 3,
+            "page_end": 3
+          },
+          "retrieval_final_rank": 8,
+          "context_candidate_order": 9,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 8,
+          "lexical_rank": null,
+          "fusion_score": 0.014705882352941176,
+          "token_count": 154
+        },
+        {
+          "source_id": "S10",
+          "chunk_id": "ad2b6c16-2402-449d-8272-319bf04b9814",
+          "document_id": "bf832384-1b13-47f1-9abf-c076b73c04ba",
+          "is_expected_evidence": false,
+          "content_text": "1. Nghị định này có hiệu lực thi hành kể từ ngày 25 tháng 5 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "135/2026/NĐ-CP",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-04-07",
+            "title": "Quy định cơ chế, chính sách ưu đãi, ưu tiên cho đơn vị điều độ hệ thống điện quốc gia và đơn vị điều hành giao dịch thị trường điện"
+          },
+          "provenance_json": {
+            "document_id": "bf832384-1b13-47f1-9abf-c076b73c04ba",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": 9,
+          "context_candidate_order": 10,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 9,
+          "lexical_rank": null,
+          "fusion_score": 0.014492753623188406,
+          "token_count": 89
+        },
+        {
+          "source_id": "S11",
+          "chunk_id": "463defd9-a7c4-4dd2-93f8-8bc52406644c",
+          "document_id": "b010e4a9-0718-46c5-8841-a040c016139c",
+          "is_expected_evidence": false,
+          "content_text": "1. Nghị định này có hiệu lực thi hành kể từ ngày 25 tháng 5 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "135/2026/NĐ-CP",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-04-07",
+            "title": "Quy định cơ chế, chính sách ưu đãi, ưu tiên cho đơn vị điều độ hệ thống điện quốc gia và đơn vị điều hành giao dịch thị trường điện"
+          },
+          "provenance_json": {
+            "document_id": "b010e4a9-0718-46c5-8841-a040c016139c",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": 10,
+          "context_candidate_order": 11,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 10,
+          "lexical_rank": null,
+          "fusion_score": 0.014285714285714285,
+          "token_count": 89
+        }
+      ],
+      "expected_evidence_excerpts": [
+        {
+          "source_id": "S2",
+          "chunk_id": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+          "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "is_expected_evidence": true,
+          "content_text": "1. Thông tư này có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "40/2026/TT-NHNN",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-08-10",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+            "page_start": 11,
+            "page_end": 11
+          },
+          "retrieval_final_rank": 2,
+          "context_candidate_order": 2,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 2,
+          "lexical_rank": null,
+          "fusion_score": 0.016129032258064516,
+          "token_count": 56
+        },
+        {
+          "source_id": "S5",
+          "chunk_id": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "is_expected_evidence": true,
+          "content_text": "Điều 17. Hiệu lực thi hành\nThông tư này có hiệu lực từ ngày 25 tháng 8 năm 2026.",
+          "metadata_json": {
+            "document_type": "Nghị định",
+            "document_number": "29",
+            "issuing_authority": "Chính phủ",
+            "issued_date": "2026-07-06",
+            "title": null
+          },
+          "provenance_json": {
+            "document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "page_start": 7,
+            "page_end": 7
+          },
+          "retrieval_final_rank": 4,
+          "context_candidate_order": 5,
+          "candidate_origin": "RETRIEVAL",
+          "hierarchy_relation": null,
+          "anchor_chunk_id": null,
+          "dense_rank": 4,
+          "lexical_rank": null,
+          "fusion_score": 0.015625,
+          "token_count": 50
+        }
+      ],
+      "context_ordering": [
+        "425f59be-f2fa-49f4-acb7-461cb0769b50",
+        "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+        "fff91e5d-f828-4bc3-bf45-3471393dc391",
+        "cf3aa4e9-60ba-4c17-9b1d-8a986d101371",
+        "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+        "932b1b44-40ae-44d4-958b-05230449c7ae",
+        "ff57c879-4c67-4a7b-b550-6c2b373955be",
+        "9406cd83-efed-4c66-845b-f008e2f16d56",
+        "5face032-faa3-4b38-a5c8-35072a34adda",
+        "ad2b6c16-2402-449d-8272-319bf04b9814",
+        "463defd9-a7c4-4dd2-93f8-8bc52406644c"
+      ],
+      "context_token_count": 1545,
+      "context_budget_tokens": 4096,
+      "prompt_tokens_historical": 1987,
+      "historical_model_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_status": "INSUFFICIENT_EVIDENCE",
+      "historical_public_answer": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+      "historical_citations": [],
+      "current_prompt_repeat_runs": [
+        {
+          "key": "legal-rag-v2|v2_cross_document_effective_dates|current|1",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_cross_document_effective_dates",
+          "category": "MULTI_DOCUMENT_EVIDENCE",
+          "answerable": true,
+          "run_index": 1,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11"
+          ],
+          "selected_chunk_ids": [
+            "425f59be-f2fa-49f4-acb7-461cb0769b50",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+            "fff91e5d-f828-4bc3-bf45-3471393dc391",
+            "cf3aa4e9-60ba-4c17-9b1d-8a986d101371",
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "ff57c879-4c67-4a7b-b550-6c2b373955be",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "5face032-faa3-4b38-a5c8-35072a34adda",
+            "ad2b6c16-2402-449d-8272-319bf04b9814",
+            "463defd9-a7c4-4dd2-93f8-8bc52406644c"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1545,
+          "prompt_tokens": 1987,
+          "raw_provider_text": "[STATUS: ANSWERABLE]\nThông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "raw_status_marker_count": 1,
+          "answerability_status": "ANSWERABLE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "Thông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "generation_status": "COMPLETED",
+          "citation_validation": "PASS",
+          "citation_source_ids": [
+            "S5",
+            "S2"
+          ],
+          "mapped_chunk_ids": [
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+          ],
+          "mapped_document_ids": [
+            "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "78e54e57-fc2e-47b2-919c-c7120776226d"
+          ],
+          "invalid_citations": [],
+          "expected_source_complete": true,
+          "expected_source_recall": 1.0,
+          "grounded_conversion": true,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1987,
+            "output_tokens": 96,
+            "total_tokens": 2083
+          },
+          "ttft_ms": 1339.7754189973057,
+          "generation_ms": 2768.2524339979864
+        },
+        {
+          "key": "legal-rag-v2|v2_cross_document_effective_dates|current|2",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_cross_document_effective_dates",
+          "category": "MULTI_DOCUMENT_EVIDENCE",
+          "answerable": true,
+          "run_index": 2,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11"
+          ],
+          "selected_chunk_ids": [
+            "425f59be-f2fa-49f4-acb7-461cb0769b50",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+            "fff91e5d-f828-4bc3-bf45-3471393dc391",
+            "cf3aa4e9-60ba-4c17-9b1d-8a986d101371",
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "ff57c879-4c67-4a7b-b550-6c2b373955be",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "5face032-faa3-4b38-a5c8-35072a34adda",
+            "ad2b6c16-2402-449d-8272-319bf04b9814",
+            "463defd9-a7c4-4dd2-93f8-8bc52406644c"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1545,
+          "prompt_tokens": 1987,
+          "raw_provider_text": "[STATUS: ANSWERABLE]\nThông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "raw_status_marker_count": 1,
+          "answerability_status": "ANSWERABLE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "Thông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "generation_status": "COMPLETED",
+          "citation_validation": "PASS",
+          "citation_source_ids": [
+            "S5",
+            "S2"
+          ],
+          "mapped_chunk_ids": [
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+          ],
+          "mapped_document_ids": [
+            "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "78e54e57-fc2e-47b2-919c-c7120776226d"
+          ],
+          "invalid_citations": [],
+          "expected_source_complete": true,
+          "expected_source_recall": 1.0,
+          "grounded_conversion": true,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1987,
+            "output_tokens": 96,
+            "total_tokens": 2083
+          },
+          "ttft_ms": 583.3504430011089,
+          "generation_ms": 2014.4390419991396
+        },
+        {
+          "key": "legal-rag-v2|v2_cross_document_effective_dates|current|3",
+          "prompt_label": "legal-rag-v2",
+          "case_id": "v2_cross_document_effective_dates",
+          "category": "MULTI_DOCUMENT_EVIDENCE",
+          "answerable": true,
+          "run_index": 3,
+          "evidence_order": "current",
+          "selected_source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11"
+          ],
+          "selected_chunk_ids": [
+            "425f59be-f2fa-49f4-acb7-461cb0769b50",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+            "fff91e5d-f828-4bc3-bf45-3471393dc391",
+            "cf3aa4e9-60ba-4c17-9b1d-8a986d101371",
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "932b1b44-40ae-44d4-958b-05230449c7ae",
+            "ff57c879-4c67-4a7b-b550-6c2b373955be",
+            "9406cd83-efed-4c66-845b-f008e2f16d56",
+            "5face032-faa3-4b38-a5c8-35072a34adda",
+            "ad2b6c16-2402-449d-8272-319bf04b9814",
+            "463defd9-a7c4-4dd2-93f8-8bc52406644c"
+          ],
+          "selected_candidate_origins": [
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "HIERARCHY_CHILD",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL",
+            "RETRIEVAL"
+          ],
+          "context_tokens": 1545,
+          "prompt_tokens": 1987,
+          "raw_provider_text": "[STATUS: ANSWERABLE]\nThông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "raw_status_marker_count": 1,
+          "answerability_status": "ANSWERABLE",
+          "answerability_validation": "PASS",
+          "public_answer_text": "Thông tư về thực hành công tác xã hội có hiệu lực từ ngày 25 tháng 8 năm 2026 [S5]. Thông tư 40/2026/TT-NHNN có hiệu lực thi hành kể từ ngày 01 tháng 11 năm 2026 [S2]. Do đó, Thông tư về thực hành công tác xã hội có hiệu lực trước.",
+          "generation_status": "COMPLETED",
+          "citation_validation": "PASS",
+          "citation_source_ids": [
+            "S5",
+            "S2"
+          ],
+          "mapped_chunk_ids": [
+            "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+            "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+          ],
+          "mapped_document_ids": [
+            "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+            "78e54e57-fc2e-47b2-919c-c7120776226d"
+          ],
+          "invalid_citations": [],
+          "expected_source_complete": true,
+          "expected_source_recall": 1.0,
+          "grounded_conversion": true,
+          "unsupported_direct_answer": false,
+          "finish_reason": "stop",
+          "provider_usage": {
+            "input_tokens": 1987,
+            "output_tokens": 96,
+            "total_tokens": 2083
+          },
+          "ttft_ms": 549.6093689980626,
+          "generation_ms": 1994.2524449979828
+        }
+      ],
+      "context_position": {
+        "case_id": "v2_cross_document_effective_dates",
+        "false_abstention": true,
+        "selected_count": 11,
+        "context_tokens": 1545,
+        "context_utilization": 0.377197265625,
+        "required_source_positions": [
+          5,
+          2
+        ],
+        "approximate_prompt_token_positions": [
+          709,
+          569
+        ],
+        "first_relevant_source": 2,
+        "last_relevant_source": 5,
+        "irrelevant_before": 1,
+        "irrelevant_after": 6,
+        "required_candidate_origins": [
+          "RETRIEVAL",
+          "RETRIEVAL"
+        ],
+        "has_hierarchy_required_evidence": false
+      }
+    }
+  ],
+  "semantic_review_policy": "Evidence is shown side by side. Manual classifications are diagnostic and do not alter frozen ground truth; no LLM judge was used."
+}

@@ -1,0 +1,934 @@
+{
+  "report_id": "multi_evidence_strategy_comparison_v1",
+  "dataset_sha256": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+  "strategies": {
+    "BASELINE_TOP10": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 10,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.4666666666666667
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 10,
+        "average_selected_count": 9.981818181818182,
+        "average_context_tokens": 2096.2181818181816,
+        "average_budget_utilization": 0.5117720170454545,
+        "budget_exhaustion_count": 0,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 1146.5198280002369
+      },
+      "replay_latency_ms": 1.6286439995383262
+    },
+    "WIDER_RRF_TOP15": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 15,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.4666666666666667
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 15,
+        "average_selected_count": 13.909090909090908,
+        "average_context_tokens": 2733.490909090909,
+        "average_budget_utilization": 0.6673561789772727,
+        "budget_exhaustion_count": 20,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 1907.8116959999534
+      },
+      "replay_latency_ms": 1.7653049999353243
+    },
+    "WIDER_RRF_TOP20": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 20,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.55
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 20,
+        "average_selected_count": 16.854545454545455,
+        "average_context_tokens": 3165.3818181818183,
+        "average_budget_utilization": 0.7727982954545455,
+        "budget_exhaustion_count": 23,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 2594.3687089993546
+      },
+      "replay_latency_ms": 1.6641620004520519
+    },
+    "WIDER_RRF_TOP30": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 29.963636363636365,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.5944444444444444
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 29.963636363636365,
+        "average_selected_count": 21.69090909090909,
+        "average_context_tokens": 3733.890909090909,
+        "average_budget_utilization": 0.9115944602272728,
+        "budget_exhaustion_count": 34,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 3582.677022000098
+      },
+      "replay_latency_ms": 2.0790839998880983
+    },
+    "WIDER_RRF_TOP50": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 38.78181818181818,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.7462962962962963
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 38.78181818181818,
+        "average_selected_count": 23.436363636363637,
+        "average_context_tokens": 3919.3636363636365,
+        "average_budget_utilization": 0.9568758877840909,
+        "budget_exhaustion_count": 50,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 4004.100395999558
+      },
+      "replay_latency_ms": 1.988766999602376
+    },
+    "H1_PARENT": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 15.981818181818182,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7090909090909091,
+        "hit_at_5": 0.7818181818181819,
+        "hit_at_10": 0.8363636363636363,
+        "mrr": 0.6895454545454546,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4388888888888889,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.4666666666666667
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9347826086956522,
+          "mrr": 0.813768115942029
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 15.981818181818182,
+        "average_selected_count": 14.618181818181819,
+        "average_context_tokens": 2538.672727272727,
+        "average_budget_utilization": 0.6197931463068181,
+        "budget_exhaustion_count": 19,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 1805.5542889997014
+      },
+      "replay_latency_ms": 2.0327789998191292
+    },
+    "H2_CHILDREN": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 13.363636363636363,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.9090909090909091,
+        "hit_at_10": 0.9272727272727272,
+        "mrr": 0.7216883116883117,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.6666666666666666,
+          "partial_at_10": 0.2222222222222222,
+          "average_recall_at_10": 0.8111111111111111,
+          "complete_in_candidate_list": 0.6666666666666666,
+          "average_recall_in_candidate_list": 0.8111111111111111
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9782608695652174,
+          "mrr": 0.8335403726708075
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 13.363636363636363,
+        "average_selected_count": 12.636363636363637,
+        "average_context_tokens": 2416.7454545454543,
+        "average_budget_utilization": 0.5900257457386363,
+        "budget_exhaustion_count": 11,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.6666666666666666,
+        "elapsed_ms": 1603.5389250000662
+      },
+      "replay_latency_ms": 1.7215179996128427
+    },
+    "H3_SIBLINGS": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 26.327272727272728,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7818181818181819,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7145454545454546,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9636363636363636,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.4444444444444444,
+          "partial_at_10": 0.2222222222222222,
+          "average_recall_at_10": 0.5666666666666667,
+          "complete_in_candidate_list": 0.6666666666666666,
+          "average_recall_in_candidate_list": 0.6666666666666666
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9347826086956522,
+          "mrr": 0.8318840579710145
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 26.327272727272728,
+        "average_selected_count": 20.236363636363638,
+        "average_context_tokens": 3153.909090909091,
+        "average_budget_utilization": 0.7699973366477273,
+        "budget_exhaustion_count": 24,
+        "retrieved_but_dropped_count": 1,
+        "multi_evidence_context_complete_rate": 0.5555555555555556,
+        "elapsed_ms": 2737.233663000552
+      },
+      "replay_latency_ms": 2.1503540001504007
+    },
+    "H4_SAME_ARTICLE": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 25.963636363636365,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7272727272727273,
+        "hit_at_5": 0.7636363636363637,
+        "hit_at_10": 0.8363636363636363,
+        "mrr": 0.6930735930735931,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.5277777777777778,
+          "complete_in_candidate_list": 0.5555555555555556,
+          "average_recall_in_candidate_list": 0.6333333333333333
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9347826086956522,
+          "mrr": 0.8146997929606625
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 25.963636363636365,
+        "average_selected_count": 19.418181818181818,
+        "average_context_tokens": 2994.2727272727275,
+        "average_budget_utilization": 0.7310236150568182,
+        "budget_exhaustion_count": 22,
+        "retrieved_but_dropped_count": 1,
+        "multi_evidence_context_complete_rate": 0.4444444444444444,
+        "elapsed_ms": 2478.5498930004906
+      },
+      "replay_latency_ms": 2.004172999477305
+    },
+    "H5_ADJACENT_UNIT": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 23.818181818181817,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7090909090909091,
+        "hit_at_5": 0.7818181818181819,
+        "hit_at_10": 0.8727272727272727,
+        "mrr": 0.6987012987012987,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9636363636363636,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.5555555555555556,
+          "average_recall_at_10": 0.587037037037037,
+          "complete_in_candidate_list": 0.5555555555555556,
+          "average_recall_in_candidate_list": 0.6925925925925926
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9782608695652174,
+          "mrr": 0.8159937888198757
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 23.818181818181817,
+        "average_selected_count": 19.145454545454545,
+        "average_context_tokens": 3030.018181818182,
+        "average_budget_utilization": 0.7397505326704545,
+        "budget_exhaustion_count": 23,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.5555555555555556,
+        "elapsed_ms": 2523.1042240002353
+      },
+      "replay_latency_ms": 2.2438750002038432
+    },
+    "H6_PARENT_CHILDREN": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 18.818181818181817,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.6909090909090909,
+        "hit_at_5": 0.8181818181818182,
+        "hit_at_10": 0.9272727272727272,
+        "mrr": 0.7035281385281386,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.6666666666666666,
+          "partial_at_10": 0.2222222222222222,
+          "average_recall_at_10": 0.7888888888888889,
+          "complete_in_candidate_list": 0.6666666666666666,
+          "average_recall_in_candidate_list": 0.7888888888888889
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9782608695652174,
+          "mrr": 0.8194099378881987
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 18.818181818181817,
+        "average_selected_count": 16.327272727272728,
+        "average_context_tokens": 2674.5272727272727,
+        "average_budget_utilization": 0.6529607599431818,
+        "budget_exhaustion_count": 21,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.6666666666666666,
+        "elapsed_ms": 2032.6260729998467
+      },
+      "replay_latency_ms": 1.7643410001255688
+    },
+    "H7_ARTICLE_ADJACENT": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 27.90909090909091,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7090909090909091,
+        "hit_at_5": 0.7818181818181819,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.6888888888888889,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9636363636363636,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.4444444444444444,
+          "partial_at_10": 0.2222222222222222,
+          "average_recall_at_10": 0.5833333333333334,
+          "complete_in_candidate_list": 0.6666666666666666,
+          "average_recall_in_candidate_list": 0.6888888888888889
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9347826086956522,
+          "mrr": 0.8049516908212561
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 27.90909090909091,
+        "average_selected_count": 20.836363636363636,
+        "average_context_tokens": 3122.1272727272726,
+        "average_budget_utilization": 0.7622381036931818,
+        "budget_exhaustion_count": 24,
+        "retrieved_but_dropped_count": 1,
+        "multi_evidence_context_complete_rate": 0.5555555555555556,
+        "elapsed_ms": 2840.0998719998825
+      },
+      "replay_latency_ms": 2.098281999678875
+    },
+    "COVERAGE_AWARE_TOP10": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 10,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7454545454545455,
+        "hit_at_5": 0.8363636363636363,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.7086868686868687,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9818181818181818,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.3333333333333333,
+          "partial_at_10": 0.3333333333333333,
+          "average_recall_at_10": 0.4666666666666667,
+          "complete_in_candidate_list": 0.3333333333333333,
+          "average_recall_in_candidate_list": 0.4666666666666667
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9565217391304348,
+          "mrr": 0.8321256038647343
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 10,
+        "average_selected_count": 9.981818181818182,
+        "average_context_tokens": 2084.7818181818184,
+        "average_budget_utilization": 0.5089799360795455,
+        "budget_exhaustion_count": 0,
+        "retrieved_but_dropped_count": 0,
+        "multi_evidence_context_complete_rate": 0.3333333333333333,
+        "elapsed_ms": 1176.114668000082
+      },
+      "replay_latency_ms": 1.5389820000564214
+    },
+    "H7_PLUS_WIDER15": {
+      "retrieval": {
+        "case_count": 55,
+        "average_candidate_count": 37.09090909090909,
+        "hit_at_1": 0.6363636363636364,
+        "hit_at_3": 0.7090909090909091,
+        "hit_at_5": 0.7818181818181819,
+        "hit_at_10": 0.8545454545454545,
+        "mrr": 0.6888888888888889,
+        "document_hit_at_1": 0.9636363636363636,
+        "document_hit_at_3": 0.9636363636363636,
+        "document_hit_at_5": 0.9818181818181818,
+        "document_hit_at_10": 0.9818181818181818,
+        "wrong_document_rate": 0.01818181818181818,
+        "multi_evidence": {
+          "case_count": 9,
+          "complete_at_10": 0.4444444444444444,
+          "partial_at_10": 0.2222222222222222,
+          "average_recall_at_10": 0.5833333333333334,
+          "complete_in_candidate_list": 0.6666666666666666,
+          "average_recall_in_candidate_list": 0.6888888888888889
+        },
+        "single_evidence": {
+          "case_count": 46,
+          "hit_at_1": 0.7608695652173914,
+          "hit_at_10": 0.9347826086956522,
+          "mrr": 0.8049516908212561
+        }
+      },
+      "context": {
+        "case_count": 55,
+        "average_input_candidate_count": 37.09090909090909,
+        "average_selected_count": 25.90909090909091,
+        "average_context_tokens": 3643.890909090909,
+        "average_budget_utilization": 0.8896218039772728,
+        "budget_exhaustion_count": 34,
+        "retrieved_but_dropped_count": 1,
+        "multi_evidence_context_complete_rate": 0.5555555555555556,
+        "elapsed_ms": 3837.6026310006637
+      },
+      "replay_latency_ms": 2.138693999768293
+    }
+  },
+  "best_strategy": "H2_CHILDREN",
+  "reranker": {
+    "justified_by_complete_candidate_coverage": false,
+    "model_tested": "NONE",
+    "reason": "Existing candidate pools contain no additional complete acceptable evidence set beyond baseline Top-10; downloading a reranker cannot raise complete multi-evidence recall.",
+    "perfect_reranker_complete_ceiling": 0.3333333333333333,
+    "alone_sufficient": "NO",
+    "cross_document_performance": "NOT_TESTED",
+    "intra_document_performance": "NOT_TESTED"
+  },
+  "generation_replay": {
+    "case_count": 6,
+    "cases": [
+      {
+        "case_id": "v2_social_scope",
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "answer_text": "Thông tư về thực hành công tác xã hội quy định chi tiết ba nhóm nội dung sau của Nghị định 110/2024/NĐ-CP:\n1. Thực hành công tác xã hội tại điểm b khoản 1 Điều 45 [S2].\n2. Cập nhật kiến thức công tác xã hội tại Điều 34 [S3].\n3. Hướng dẫn xây dựng khung chương trình đào tạo, bồi dưỡng cập nhật kiến thức công tác xã hội tại khoản 2 Điều 37 [S4].",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [
+          "36343b2e-1725-4697-877b-9e33526db4d2",
+          "db824433-8240-447b-89a8-0d20a1a88349",
+          "69bf65cc-80b1-41d1-86a3-8714b13f2924"
+        ],
+        "invalid_citations": [],
+        "expected_source_match": true,
+        "multi_evidence_citation_recall": 1.0,
+        "ttft_ms": 10185.27165299929,
+        "generation_ms": 12041.885656999511,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 1940,
+          "output_tokens": 122,
+          "total_tokens": 2062
+        }
+      },
+      {
+        "case_id": "v2_social_applicable_groups",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "answerability_status": "INSUFFICIENT_EVIDENCE",
+        "answer_text": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [],
+        "invalid_citations": [],
+        "expected_source_match": false,
+        "multi_evidence_citation_recall": 0.0,
+        "ttft_ms": 1430.863620999844,
+        "generation_ms": 1590.3322960002697,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 2470,
+          "output_tokens": 11,
+          "total_tokens": 2481
+        }
+      },
+      {
+        "case_id": "v2_social_practice_content",
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "answer_text": "Nội dung thực hành công tác xã hội bao gồm các nhóm năng lực và kỹ năng sau:\n- Đạo đức nghề nghiệp công tác xã hội [S3].\n- Năng lực, trình độ chuyên môn về công tác xã hội [S4].\n- Kỹ năng thực hành về công tác xã hội [S5].\n- Kỹ năng truyền thông, vận động nguồn lực, kết nối thực hiện các hoạt động công tác xã hội [S1].\n- Kỹ năng phối hợp thực hiện các hoạt động công tác xã hội [S1].\n- Kỹ năng cung cấp, thực hiện các dịch vụ công tác xã hội có yêu cầu đơn giản về lý thuyết, phương pháp và kỹ năng thực hành theo sự phân công gồm: tư vấn, tham vấn, trị liệu, phục hồi chức năng, giáo dục, đàm phán, hoà giải, tuyên truyền [S10].\n- Kỹ năng thực hiện quy trình cung cấp dịch vụ công tác xã hội bao gồm: Tiếp nhận, thu thập thông tin và đánh giá nhu cầu trợ giúp của đối tượng; Xây dựng kế hoạch trợ giúp đối với đối tượng; Thực hiện kế hoạch trợ giúp đối tượng; Theo dõi, rà soát, đánh giá và điều chỉnh kế hoạch trợ giúp; Kết thúc quá trình trợ giúp và lưu trữ hồ sơ [S7].\n- Kỹ năng thực hiện các hoạt động chuyên môn phòng ngừa, can thiệp, trị liệu, chăm sóc, phục hồi, hỗ trợ phát triển, tư vấn, tham vấn, hỗ trợ tâm lý và các hoạt động công tác xã hội khác trong phạm vi nội dung thực hành [S11].",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [
+          "77d1986c-82a4-4ef3-a215-08e1c2250d9d",
+          "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+          "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d",
+          "4d0db85b-6496-47f8-a336-af7cec513cef",
+          "0b2b4b29-e108-47c8-8bc1-3a774fa455da",
+          "98d4b7c3-ae85-4422-8abd-d18fb2962fc2"
+        ],
+        "invalid_citations": [],
+        "expected_source_match": true,
+        "multi_evidence_citation_recall": 1.0,
+        "ttft_ms": 1169.0539180008273,
+        "generation_ms": 6322.303780000766,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 1553,
+          "output_tokens": 340,
+          "total_tokens": 1893
+        }
+      },
+      {
+        "case_id": "v2_social_effective_transition",
+        "status": "INSUFFICIENT_EVIDENCE",
+        "answerability_status": "INSUFFICIENT_EVIDENCE",
+        "answer_text": "Bằng chứng được cung cấp không đủ để trả lời câu hỏi.",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [],
+        "invalid_citations": [],
+        "expected_source_match": false,
+        "multi_evidence_citation_recall": 0.0,
+        "ttft_ms": 1361.0499260003053,
+        "generation_ms": 1520.7971159998124,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 2254,
+          "output_tokens": 11,
+          "total_tokens": 2265
+        }
+      },
+      {
+        "case_id": "v2_bank_scope_ratios",
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "answer_text": "Thông tư 40/2026/TT-NHNN điều chỉnh năm nhóm hạn chế, giới hạn và tỷ lệ an toàn chính là: a) Tỷ lệ an toàn vốn tối thiểu [S3]; b) Tỷ lệ khả năng chi trả [S4]; c) Tỷ lệ nguồn vốn ngắn hạn được sử dụng để cho vay trung hạn và dài hạn [S5]; d) Hạn chế, giới hạn cho vay [S6] và đ) Hướng dẫn, kiểm tra, kiểm soát, kiểm toán nội bộ đối với việc duy trì tỷ lệ an toàn vốn tối thiểu [S11].",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "39bf860e-d459-48a5-ac28-17380c5cf9c5"
+        ],
+        "invalid_citations": [],
+        "expected_source_match": false,
+        "multi_evidence_citation_recall": 0.8,
+        "ttft_ms": 1377.336180000384,
+        "generation_ms": 3425.973907000298,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 2135,
+          "output_tokens": 135,
+          "total_tokens": 2270
+        }
+      },
+      {
+        "case_id": "v2_bank_loan_limit_exceptions",
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "answer_text": "Các trường hợp không áp dụng giới hạn cho vay tại điểm b khoản 1 Điều 12 là: a) Khoản cho vay từ nguồn vốn ủy thác của tổ chức, cá nhân mà quỹ tín dụng nhân dân nhận ủy thác không chịu rủi ro [S3]; b) Các khoản cho vay được bảo đảm toàn bộ bằng tiền gửi tại chính quỹ tín dụng nhân dân [S4].",
+        "citation_validation": "PASS",
+        "cited_chunk_ids": [
+          "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "e57b1bc6-2105-4404-bda1-4472cf6e2574"
+        ],
+        "invalid_citations": [],
+        "expected_source_match": true,
+        "multi_evidence_citation_recall": 1.0,
+        "ttft_ms": 1619.0885830001207,
+        "generation_ms": 2975.0242410000283,
+        "finish_reason": "stop",
+        "usage": {
+          "input_tokens": 3053,
+          "output_tokens": 89,
+          "total_tokens": 3142
+        }
+      }
+    ],
+    "answerable_rate": 0.6666666666666666,
+    "false_abstention_rate": 0.3333333333333333,
+    "citation_presence_rate": 0.6666666666666666,
+    "expected_source_match_rate": 0.5,
+    "latency": {
+      "ttft": {
+        "count": 6,
+        "mean_ms": 2857.110646833462,
+        "p50_ms": 1404.099900500114,
+        "p95_ms": 10185.27165299929
+      },
+      "generation": {
+        "count": 6,
+        "mean_ms": 4646.052832833448,
+        "p50_ms": 3200.499074000163,
+        "p95_ms": 12041.885656999511
+      }
+    }
+  },
+  "failure_taxonomy_counts": {
+    "DENSE_REPRESENTATION_MISS": 7,
+    "LEGAL_HIERARCHY_FRAGMENTATION": 12,
+    "INTRA_DOCUMENT_RANKING_FAILURE": 16,
+    "LEXICAL_CANDIDATE_MISS": 7,
+    "CANDIDATE_GENERATION_MISS": 7,
+    "MULTIPLE": 16,
+    "FUSION_RANKING_MISS": 9,
+    "FINAL_TOP_K_CUTOFF": 9
+  },
+  "wrong_document_analysis": [
+    {
+      "case_id": "v2_bank_board_loan_threshold",
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "expected_document_candidate_count": 0,
+      "expected_document_present_in_pool": false,
+      "expected_chunk_present_in_pool": false,
+      "expected_chunk_metadata": [
+        {
+          "document_type": "Nghị định",
+          "document_number": "40/2026/TT-NHNN",
+          "issuing_authority": "Chính phủ",
+          "issued_date": "2026-08-10",
+          "title": null
+        }
+      ],
+      "hierarchy_can_recover_before_document_selection": false,
+      "classification": "CANDIDATE_GENERATION_DOCUMENT_DISCRIMINATION"
+    }
+  ],
+  "near_duplicate_competition": {
+    "v2_social_scope": {
+      "top_10_near_duplicate_pairs": [],
+      "top_20_near_duplicate_pairs": []
+    },
+    "v2_social_applicable_groups": {
+      "top_10_near_duplicate_pairs": [],
+      "top_20_near_duplicate_pairs": []
+    },
+    "v2_social_practice_content": {
+      "top_10_near_duplicate_pairs": [],
+      "top_20_near_duplicate_pairs": [
+        {
+          "left": "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "right": "9eb7ba0c-4a83-451d-8722-5e0258350908",
+          "jaccard": 0.8181818181818182
+        }
+      ]
+    },
+    "v2_social_effective_transition": {
+      "top_10_near_duplicate_pairs": [],
+      "top_20_near_duplicate_pairs": []
+    },
+    "v2_bank_scope_ratios": {
+      "top_10_near_duplicate_pairs": [],
+      "top_20_near_duplicate_pairs": []
+    },
+    "v2_bank_loan_limit_exceptions": {
+      "top_10_near_duplicate_pairs": [
+        {
+          "left": "3eb658b7-ecf8-4e7e-a04e-f709eed2e4ab",
+          "right": "9f866b06-cf8b-46fe-a3c2-7f9e23ffc3d7",
+          "jaccard": 0.8571428571428571
+        }
+      ],
+      "top_20_near_duplicate_pairs": [
+        {
+          "left": "3eb658b7-ecf8-4e7e-a04e-f709eed2e4ab",
+          "right": "9f866b06-cf8b-46fe-a3c2-7f9e23ffc3d7",
+          "jaccard": 0.8571428571428571
+        },
+        {
+          "left": "3eb658b7-ecf8-4e7e-a04e-f709eed2e4ab",
+          "right": "fcc37fd1-8c9b-4ba0-a249-5f3d466987be",
+          "jaccard": 0.8571428571428571
+        },
+        {
+          "left": "9f866b06-cf8b-46fe-a3c2-7f9e23ffc3d7",
+          "right": "fcc37fd1-8c9b-4ba0-a249-5f3d466987be",
+          "jaccard": 0.8571428571428571
+        }
+      ]
+    }
+  },
+  "single_evidence_protection": {
+    "BASELINE_TOP10": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "WIDER_RRF_TOP15": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "WIDER_RRF_TOP20": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "WIDER_RRF_TOP30": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "WIDER_RRF_TOP50": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "H1_PARENT": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9347826086956522,
+      "mrr": 0.813768115942029
+    },
+    "H2_CHILDREN": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9782608695652174,
+      "mrr": 0.8335403726708075
+    },
+    "H3_SIBLINGS": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9347826086956522,
+      "mrr": 0.8318840579710145
+    },
+    "H4_SAME_ARTICLE": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9347826086956522,
+      "mrr": 0.8146997929606625
+    },
+    "H5_ADJACENT_UNIT": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9782608695652174,
+      "mrr": 0.8159937888198757
+    },
+    "H6_PARENT_CHILDREN": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9782608695652174,
+      "mrr": 0.8194099378881987
+    },
+    "H7_ARTICLE_ADJACENT": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9347826086956522,
+      "mrr": 0.8049516908212561
+    },
+    "COVERAGE_AWARE_TOP10": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9565217391304348,
+      "mrr": 0.8321256038647343
+    },
+    "H7_PLUS_WIDER15": {
+      "case_count": 46,
+      "hit_at_1": 0.7608695652173914,
+      "hit_at_10": 0.9347826086956522,
+      "mrr": 0.8049516908212561
+    }
+  }
+}

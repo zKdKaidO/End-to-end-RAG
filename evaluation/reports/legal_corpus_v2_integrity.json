@@ -1,0 +1,543 @@
+{
+  "report_id": "legal_corpus_v2_integrity",
+  "generated_at": "2026-08-19T12:29:43.892989+00:00",
+  "integrity_pass": true,
+  "summary": {
+    "supplied_pdf_count": 5,
+    "ready_count": 3,
+    "excluded_count": 2,
+    "successfully_ingested": 3,
+    "failed_ingestion_count": 0,
+    "total_pages": 105,
+    "total_legal_units": 951,
+    "total_chunks": 965,
+    "total_indexes": 965,
+    "average_chunks_per_document": 321.6666666666667,
+    "min_chunks_per_document": 121,
+    "max_chunks_per_document": 692
+  },
+  "documents": [
+    {
+      "document_key": "social_work_practice_2026",
+      "source_type": "THONG_TU",
+      "document_title": "Quy định về thực hành công tác xã hội và cập nhật kiến thức công tác xã hội",
+      "legal_document_number": null,
+      "legal_domain": "Công tác xã hội",
+      "effective_date": "2026-08-25",
+      "notes": "The source number/date fields are blank in the supplied text-native draft; no number was inferred from filename.",
+      "filename": "Thong tu quy dinh thuc hanh cong tac xa hoi va cap nhat kien thuc cong.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Thong tu quy dinh thuc hanh cong tac xa hoi va cap nhat kien thuc cong.pdf",
+      "file_size": 1469636,
+      "sha256": "1700c0adc6938fe21bbfa2be46c6dd6eeaeec3fe6ed49c88da0a598f4639c0ba",
+      "readable_pdf": true,
+      "page_count": 18,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 33196,
+      "non_whitespace_character_count": 25013,
+      "pages_with_text": 18,
+      "classification": "READY",
+      "error": null,
+      "ingestion_document_id": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+      "stored_filename": "Thong tu quy dinh thuc hanh cong tac xa hoi va cap nhat kien thuc cong.pdf",
+      "ingestion_status": "COMPLETED",
+      "processing_status": "COMPLETED",
+      "indexing_status": "COMPLETED",
+      "document_status": "COMPLETED",
+      "legal_unit_count": 115,
+      "chunk_count": 121,
+      "index_count": 121,
+      "frozen_index_count": 121,
+      "lexical_index_count": 121,
+      "reconstruction_count": 1,
+      "missing_provenance_count": 0,
+      "ingestion_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:22:32.565065",
+        "finished_at": null
+      },
+      "processing_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": null,
+        "finished_at": "2026-08-19T12:22:33.314012+00:00"
+      },
+      "indexing_job": {
+        "status": "COMPLETED",
+        "current_stage": "FINALIZE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:24:50.441842+00:00",
+        "finished_at": "2026-08-19T12:25:13.920953+00:00"
+      },
+      "integrity_pass": true,
+      "integrity_errors": []
+    },
+    {
+      "document_key": "people_credit_fund_safety_40_2026",
+      "source_type": "THONG_TU",
+      "document_title": "Quy định các giới hạn, tỷ lệ bảo đảm an toàn trong hoạt động của quỹ tín dụng nhân dân",
+      "legal_document_number": "40/2026/TT-NHNN",
+      "legal_domain": "An toàn hoạt động quỹ tín dụng nhân dân",
+      "effective_date": "2026-11-01",
+      "notes": null,
+      "filename": "Thông tư 40.2026.TT-NHNN.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Thông tư 40.2026.TT-NHNN.pdf",
+      "file_size": 504579,
+      "sha256": "80286aaa15cdd95f3ce554ee12d5a5c9c94303953093df5057561c9fea72dfb0",
+      "readable_pdf": true,
+      "page_count": 21,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 33886,
+      "non_whitespace_character_count": 24926,
+      "pages_with_text": 21,
+      "classification": "READY",
+      "error": null,
+      "ingestion_document_id": "78e54e57-fc2e-47b2-919c-c7120776226d",
+      "stored_filename": "=?utf-8?B?VGjDtG5nIHTGsCA0MC4yMDI2LlRULU5ITk4ucGRm?=",
+      "ingestion_status": "COMPLETED",
+      "processing_status": "COMPLETED",
+      "indexing_status": "COMPLETED",
+      "document_status": "COMPLETED",
+      "legal_unit_count": 150,
+      "chunk_count": 152,
+      "index_count": 152,
+      "frozen_index_count": 152,
+      "lexical_index_count": 152,
+      "reconstruction_count": 1,
+      "missing_provenance_count": 0,
+      "ingestion_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:22:32.666814",
+        "finished_at": null
+      },
+      "processing_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": null,
+        "finished_at": "2026-08-19T12:22:33.628445+00:00"
+      },
+      "indexing_job": {
+        "status": "COMPLETED",
+        "current_stage": "FINALIZE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:24:50.515097+00:00",
+        "finished_at": "2026-08-19T12:25:36.769684+00:00"
+      },
+      "integrity_pass": true,
+      "integrity_errors": []
+    },
+    {
+      "document_key": "civil_servants_consolidated_10_2026",
+      "source_type": "VAN_BAN_HOP_NHAT",
+      "document_title": "Quy định về tuyển dụng, sử dụng và quản lý công chức",
+      "legal_document_number": "10/2026/VBHN-NĐ-BNV",
+      "legal_domain": "Tuyển dụng, sử dụng và quản lý công chức",
+      "effective_date": null,
+      "notes": "Consolidates Nghị định 170/2025/NĐ-CP (effective 2025-07-01) as amended by Nghị định 300/2026/NĐ-CP (effective 2026-08-01); one single effective date is not assigned to the consolidated instrument.",
+      "filename": "VBHN 10.2026.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\VBHN 10.2026.pdf",
+      "file_size": 984068,
+      "sha256": "80855c15b8f935a271e9bdbac0e74b009d0c036d29212f391da884e9431d0e58",
+      "readable_pdf": true,
+      "page_count": 66,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 157065,
+      "non_whitespace_character_count": 118381,
+      "pages_with_text": 66,
+      "classification": "READY",
+      "error": null,
+      "ingestion_document_id": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+      "stored_filename": "VBHN 10.2026.pdf",
+      "ingestion_status": "COMPLETED",
+      "processing_status": "COMPLETED",
+      "indexing_status": "COMPLETED",
+      "document_status": "COMPLETED",
+      "legal_unit_count": 686,
+      "chunk_count": 692,
+      "index_count": 692,
+      "frozen_index_count": 692,
+      "lexical_index_count": 692,
+      "reconstruction_count": 1,
+      "missing_provenance_count": 0,
+      "ingestion_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:22:32.702590",
+        "finished_at": null
+      },
+      "processing_job": {
+        "status": "COMPLETED",
+        "current_stage": "DONE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": null,
+        "finished_at": "2026-08-19T12:22:35.274587+00:00"
+      },
+      "indexing_job": {
+        "status": "COMPLETED",
+        "current_stage": "FINALIZE",
+        "error_stage": null,
+        "error_type": null,
+        "error_message": null,
+        "created_at": "2026-08-19T12:24:50.529774+00:00",
+        "finished_at": "2026-08-19T12:26:46.761749+00:00"
+      },
+      "integrity_pass": true,
+      "integrity_errors": []
+    }
+  ],
+  "excluded_files": [
+    {
+      "filename": "104.2026.TT-BQP.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\104.2026.TT-BQP.pdf",
+      "file_size": 337077,
+      "sha256": "fef9526df3f657025bc418ea82e49af0698bd1480f4e7d4b52a3ebea5ae92134",
+      "readable_pdf": true,
+      "page_count": 5,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": false,
+      "extracted_character_count": 4,
+      "non_whitespace_character_count": 0,
+      "pages_with_text": 0,
+      "classification": "TEXT_TOO_SPARSE_OR_SCAN_LIKE",
+      "error": null
+    },
+    {
+      "filename": "Nghị-định-273-2026-NĐ-CP.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Nghị-định-273-2026-NĐ-CP.pdf",
+      "file_size": 6885589,
+      "sha256": "2c1f68426dd84536917975fa2cc0e4cc502ab7791edc9a0a4e115ebc1c61c5bc",
+      "readable_pdf": true,
+      "page_count": 67,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": false,
+      "extracted_character_count": 66,
+      "non_whitespace_character_count": 0,
+      "pages_with_text": 0,
+      "classification": "TEXT_TOO_SPARSE_OR_SCAN_LIKE",
+      "error": null
+    }
+  ],
+  "diversity": {
+    "document_domains": [
+      "An toàn hoạt động quỹ tín dụng nhân dân",
+      "Công tác xã hội",
+      "Tuyển dụng, sử dụng và quản lý công chức"
+    ],
+    "observations": [
+      "Three distinct domains are present: social work practice, people-credit-fund safety, and civil-service management.",
+      "All three documents contain repeated structural identifiers such as Điều 1, Điều 2, khoản 1, and effective-date clauses, supporting document-disambiguation and same-article-number tests.",
+      "The consolidated civil-service instrument contains many amendment footnotes and repeated effective-date language, supporting near-duplicate/ambiguity stress cases within one document.",
+      "The corpus supports cross-document terminology stress (authority, applicability, reporting, effective date), but does not provide a defensible substantive rule that inherently requires combining two different legal domains.",
+      "The three documents differ strongly in length (121, 152, and 692 chunks), enabling scale and deeper-rank stress without manufacturing categories."
+    ],
+    "multi_document_ground_truth_supported": false,
+    "same_article_number_supported": true,
+    "document_disambiguation_supported": true,
+    "near_duplicate_stress_supported": true
+  },
+  "duplicates": {
+    "duplicate_pdf_sha256": [],
+    "exact_duplicate_chunk_groups": [
+      {
+        "content_hash": "22d2829bec92909131bfb3893fd99196",
+        "copies": 3,
+        "chunk_ids": [
+          "38fba676-21e8-40d5-ae6a-339609deb371",
+          "b93bd24d-7ded-472e-ace5-a4ed097160ec",
+          "dc4f0c01-5a57-4b3a-a6f4-113b20cb8867"
+        ],
+        "document_ids": [
+          "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+          "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+        ]
+      },
+      {
+        "content_hash": "0afb03f848f12b366297b173a47f3dee",
+        "copies": 2,
+        "chunk_ids": [
+          "be6e7183-d34c-43c2-9df4-1682691ca585",
+          "ec81bbfe-b290-44ea-a77f-6d7f2a1b839d"
+        ],
+        "document_ids": [
+          "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+        ]
+      },
+      {
+        "content_hash": "34ccc1f60ec0144579b6987fa6ecea32",
+        "copies": 2,
+        "chunk_ids": [
+          "ad111ea4-b3f8-4998-9d8e-f26a57edd60e",
+          "e2bc123f-2d28-450a-b4f2-96cb27caef7e"
+        ],
+        "document_ids": [
+          "78e54e57-fc2e-47b2-919c-c7120776226d",
+          "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+        ]
+      },
+      {
+        "content_hash": "c4537c18942a67a24f01b3eec9916de2",
+        "copies": 2,
+        "chunk_ids": [
+          "d3d1b9db-cacc-4a93-8c69-fba71ca8244b",
+          "e3004146-f9cd-4194-bd14-6ec4576934a3"
+        ],
+        "document_ids": [
+          "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+        ]
+      }
+    ],
+    "potential_cross_document_near_duplicates": [
+      {
+        "chunk_a": "38fba676-21e8-40d5-ae6a-339609deb371",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "dc4f0c01-5a57-4b3a-a6f4-113b20cb8867",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9801666748424523
+      },
+      {
+        "chunk_a": "dc4f0c01-5a57-4b3a-a6f4-113b20cb8867",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "38fba676-21e8-40d5-ae6a-339609deb371",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9801666748424523
+      },
+      {
+        "chunk_a": "ad111ea4-b3f8-4998-9d8e-f26a57edd60e",
+        "document_a": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "chunk_b": "e2bc123f-2d28-450a-b4f2-96cb27caef7e",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9723238398449725
+      },
+      {
+        "chunk_a": "e2bc123f-2d28-450a-b4f2-96cb27caef7e",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "ad111ea4-b3f8-4998-9d8e-f26a57edd60e",
+        "document_b": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "cosine_similarity": 0.9723238398449725
+      },
+      {
+        "chunk_a": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+        "document_b": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "cosine_similarity": 0.9696908900233877
+      },
+      {
+        "chunk_a": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+        "document_a": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "chunk_b": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9696908900233877
+      },
+      {
+        "chunk_a": "af89c0dc-a78f-47f5-b30f-76ab846a2119",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "e2bc123f-2d28-450a-b4f2-96cb27caef7e",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9659384549966255
+      },
+      {
+        "chunk_a": "2d3bf540-d6c2-4361-89c8-5876083f43d1",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9649617384385583
+      },
+      {
+        "chunk_a": "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "ebc81c2d-d039-4339-ac82-a7a60894cee4",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9640357515790627
+      },
+      {
+        "chunk_a": "ebc81c2d-d039-4339-ac82-a7a60894cee4",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9640357515790627
+      },
+      {
+        "chunk_a": "fbb59a42-1217-47d1-85c9-41c440381bab",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+        "document_b": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "cosine_similarity": 0.9603854727630214
+      },
+      {
+        "chunk_a": "0462b993-47a0-4197-9569-efce61ab7679",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "fff91e5d-f828-4bc3-bf45-3471393dc391",
+        "document_b": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "cosine_similarity": 0.9587447047233582
+      },
+      {
+        "chunk_a": "fff91e5d-f828-4bc3-bf45-3471393dc391",
+        "document_a": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "chunk_b": "0462b993-47a0-4197-9569-efce61ab7679",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9587447047233582
+      },
+      {
+        "chunk_a": "3163b4b2-c327-4f78-bfab-e237fe1e11c6",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "a630c470-4545-4f91-9ab6-d38fc75c04ac",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9565483357579525
+      },
+      {
+        "chunk_a": "a630c470-4545-4f91-9ab6-d38fc75c04ac",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "3163b4b2-c327-4f78-bfab-e237fe1e11c6",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9565483357579525
+      },
+      {
+        "chunk_a": "4bdeb0b9-8de5-4a0e-a88d-77e6d45ed611",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "a630c470-4545-4f91-9ab6-d38fc75c04ac",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9562850050586524
+      },
+      {
+        "chunk_a": "834f1e78-29f9-4bf1-8f32-6e9a978b5883",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "a630c470-4545-4f91-9ab6-d38fc75c04ac",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9558579921722412
+      },
+      {
+        "chunk_a": "138e2fbf-f8a0-446e-a804-ac18aa0991ef",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "b5d4ed5c-0914-4e73-97af-d655047006bb",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9543934491638291
+      },
+      {
+        "chunk_a": "b5d4ed5c-0914-4e73-97af-d655047006bb",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "138e2fbf-f8a0-446e-a804-ac18aa0991ef",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9543934491638291
+      },
+      {
+        "chunk_a": "b93bd24d-7ded-472e-ace5-a4ed097160ec",
+        "document_a": "78e54e57-fc2e-47b2-919c-c7120776226d",
+        "chunk_b": "38fba676-21e8-40d5-ae6a-339609deb371",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.953119703569467
+      },
+      {
+        "chunk_a": "398c8c21-cf27-41ce-ab5f-381d713fcc72",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "e2bc123f-2d28-450a-b4f2-96cb27caef7e",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9511707483326497
+      },
+      {
+        "chunk_a": "670c0470-70bf-4ac0-8520-13743ae51e24",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "b5d4ed5c-0914-4e73-97af-d655047006bb",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9508070379014606
+      },
+      {
+        "chunk_a": "e00d9602-f1ae-4557-bb34-bda5cc702e65",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "38fba676-21e8-40d5-ae6a-339609deb371",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.950219580491858
+      },
+      {
+        "chunk_a": "45c13f80-86df-4082-82de-296085dca3f3",
+        "document_a": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "chunk_b": "834f1e78-29f9-4bf1-8f32-6e9a978b5883",
+        "document_b": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "cosine_similarity": 0.9494251042947128
+      },
+      {
+        "chunk_a": "f0419d46-e372-40bd-8a64-4d2c97627cad",
+        "document_a": "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25",
+        "chunk_b": "398c8c21-cf27-41ce-ab5f-381d713fcc72",
+        "document_b": "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "cosine_similarity": 0.9492716223435644
+      }
+    ],
+    "near_duplicate_method": "Nearest cross-document embedding cosine similarity >= 0.92; diagnostic signal only, not legal equivalence."
+  },
+  "infrastructure": {
+    "public_table_count": 10,
+    "public_tables": [
+      "alembic_version",
+      "chunk_indexes",
+      "chunks",
+      "document_pages",
+      "document_processing_jobs",
+      "document_reconstructions",
+      "documents",
+      "indexing_jobs",
+      "ingestion_jobs",
+      "legal_units"
+    ],
+    "chunk_index_indexes": [
+      {
+        "indexname": "chunk_indexes_chunk_id_key",
+        "indexdef": "CREATE UNIQUE INDEX chunk_indexes_chunk_id_key ON public.chunk_indexes USING btree (chunk_id)"
+      },
+      {
+        "indexname": "chunk_indexes_pkey",
+        "indexdef": "CREATE UNIQUE INDEX chunk_indexes_pkey ON public.chunk_indexes USING btree (id)"
+      },
+      {
+        "indexname": "ix_chunk_indexes_document_id",
+        "indexdef": "CREATE INDEX ix_chunk_indexes_document_id ON public.chunk_indexes USING btree (document_id)"
+      },
+      {
+        "indexname": "ix_chunk_indexes_embedding",
+        "indexdef": "CREATE INDEX ix_chunk_indexes_embedding ON public.chunk_indexes USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')"
+      },
+      {
+        "indexname": "ix_chunk_indexes_lexical_tsv",
+        "indexdef": "CREATE INDEX ix_chunk_indexes_lexical_tsv ON public.chunk_indexes USING gin (lexical_tsv)"
+      }
+    ],
+    "database_size_bytes": 41500007
+  },
+  "frozen_contract": {
+    "embedding_model": "intfloat/multilingual-e5-base",
+    "embedding_dimension": 768,
+    "index_version": "block3-v1",
+    "schema_changed": false
+  }
+}

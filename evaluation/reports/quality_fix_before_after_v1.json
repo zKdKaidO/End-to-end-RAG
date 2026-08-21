@@ -1,0 +1,1181 @@
+{
+  "report_id": "quality_fix_before_after_v1",
+  "dataset_sha256": "afb5b2692aefe9e682a1483ce3ff86c885d0527de3a20d7a709fc9274d9f0245",
+  "dataset_changed": false,
+  "before": {
+    "retrieval": {
+      "hit_at_1": 0.8518518518518519,
+      "hit_at_3": 0.9259259259259259,
+      "hit_at_5": 0.9259259259259259,
+      "hit_at_10": 0.9259259259259259,
+      "mrr": 0.8888888888888888
+    },
+    "context": {
+      "expected_evidence_retention": 1.0,
+      "retrieved_expected_case_count": 25,
+      "retrieved_but_dropped_count": 0
+    },
+    "generation": {
+      "answer_produced_rate": 1.0,
+      "citation_presence_rate": 0.8888888888888888,
+      "citation_structural_validity_rate": 0.8888888888888888,
+      "expected_source_citation_match_rate": 0.8148148148148148,
+      "invalid_citation_rate": 0.0,
+      "missing_citation_rate": 0.1111111111111111
+    },
+    "unanswerable": {
+      "correct_abstention_rate": 0.0,
+      "unsupported_answer_rate": 1.0,
+      "completed_with_warning_count": 4
+    },
+    "latency": {
+      "retrieval_ms": {
+        "count": 32,
+        "mean_ms": 41.98609781246887,
+        "p50_ms": 40.612040500491275,
+        "p95_ms": 50.83128299884265
+      },
+      "context_ms": {
+        "count": 32,
+        "mean_ms": 18.422908906131852,
+        "p50_ms": 17.59635099733714,
+        "p95_ms": 32.49105799841345
+      },
+      "ttft_ms": {
+        "count": 32,
+        "mean_ms": 608.4186686872499,
+        "p50_ms": 601.3515670001652,
+        "p95_ms": 642.874141001812
+      },
+      "generation_ms": {
+        "count": 32,
+        "mean_ms": 3084.569148499895,
+        "p50_ms": 2869.3949449989304,
+        "p95_ms": 5536.566876002325
+      },
+      "total_ms": {
+        "count": 32,
+        "mean_ms": 3401.81156359381,
+        "p50_ms": 2933.876724999209,
+        "p95_ms": 5792.300330998842
+      }
+    },
+    "lexical": {
+      "non_empty_count": 0,
+      "non_empty_rate": 0.0,
+      "non_empty_case_ids": [],
+      "expected_solution_hit_count": 0,
+      "expected_solution_hit_rate": 0.0
+    }
+  },
+  "after": {
+    "retrieval": {
+      "hit_at_1": 0.8518518518518519,
+      "hit_at_3": 0.9259259259259259,
+      "hit_at_5": 0.9259259259259259,
+      "hit_at_10": 0.9259259259259259,
+      "mrr": 0.8888888888888888
+    },
+    "context": {
+      "expected_evidence_retention": 1.0,
+      "retrieved_expected_case_count": 25,
+      "retrieved_but_dropped_count": 0
+    },
+    "generation": {
+      "answer_produced_rate": 1.0,
+      "citation_presence_rate": 0.9629629629629629,
+      "citation_structural_validity_rate": 1.0,
+      "expected_source_citation_match_rate": 0.8518518518518519,
+      "invalid_citation_rate": 0.0,
+      "missing_citation_rate": 0.0
+    },
+    "unanswerable": {
+      "correct_abstention_rate": 1.0,
+      "unsupported_answer_rate": 0.0,
+      "completed_with_warning_count": 0
+    },
+    "latency": {
+      "retrieval_ms": {
+        "count": 32,
+        "mean_ms": 47.01026471872183,
+        "p50_ms": 45.68517600000632,
+        "p95_ms": 63.1183030000102
+      },
+      "context_ms": {
+        "count": 32,
+        "mean_ms": 17.244707375056123,
+        "p50_ms": 17.623899000000165,
+        "p95_ms": 22.04564300018319
+      },
+      "ttft_ms": {
+        "count": 32,
+        "mean_ms": 1080.3632679061366,
+        "p50_ms": 1172.9222290000507,
+        "p95_ms": 1342.3320689998945
+      },
+      "generation_ms": {
+        "count": 32,
+        "mean_ms": 2137.260181437455,
+        "p50_ms": 1929.5448264999777,
+        "p95_ms": 3509.7091980001096
+      },
+      "total_ms": {
+        "count": 32,
+        "mean_ms": 2448.504885812568,
+        "p50_ms": 1997.624463000193,
+        "p95_ms": 6532.311272999777
+      }
+    },
+    "lexical": {
+      "non_empty_count": 6,
+      "non_empty_rate": 0.1875,
+      "non_empty_case_ids": [
+        "headquarters_infrastructure_filter",
+        "oda_project_priority",
+        "non_oda_grants",
+        "government_loan_guarantee",
+        "after_tax_profit_use",
+        "ministry_approves_list"
+      ],
+      "expected_solution_hit_count": 6,
+      "expected_solution_hit_rate": 0.2222222222222222
+    }
+  },
+  "multi_evidence": {
+    "applicable_entities_multi": {
+      "before": [
+        {
+          "chunk_id": "e9e217b3-268a-4fbf-9d4f-a33de58b1110",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "final_rank": null
+        },
+        {
+          "chunk_id": "88d71393-ec3f-4bc1-be9d-72f50be0fd45",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "final_rank": null
+        },
+        {
+          "chunk_id": "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "final_rank": 5
+        }
+      ],
+      "after": [
+        {
+          "chunk_id": "e9e217b3-268a-4fbf-9d4f-a33de58b1110",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "final_rank": null
+        },
+        {
+          "chunk_id": "88d71393-ec3f-4bc1-be9d-72f50be0fd45",
+          "dense_rank": null,
+          "lexical_rank": null,
+          "final_rank": null
+        },
+        {
+          "chunk_id": "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+          "dense_rank": 5,
+          "lexical_rank": null,
+          "final_rank": 5
+        }
+      ]
+    },
+    "national_dispatcher_role": {
+      "before": [
+        {
+          "chunk_id": "123a2580-3ab8-42d6-aa50-c796fc691baa",
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "final_rank": 1
+        },
+        {
+          "chunk_id": "14dcae3b-7755-440d-bb08-f0ea08c3563c",
+          "dense_rank": 13,
+          "lexical_rank": null,
+          "final_rank": null
+        }
+      ],
+      "after": [
+        {
+          "chunk_id": "123a2580-3ab8-42d6-aa50-c796fc691baa",
+          "dense_rank": 1,
+          "lexical_rank": null,
+          "final_rank": 1
+        },
+        {
+          "chunk_id": "14dcae3b-7755-440d-bb08-f0ea08c3563c",
+          "dense_rank": 13,
+          "lexical_rank": null,
+          "final_rank": null
+        }
+      ]
+    }
+  },
+  "answerable_false_negatives_after": [
+    "ministry_approves_list"
+  ],
+  "citation_stability": {
+    "nsmo_definition": [
+      {
+        "run": 1,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      },
+      {
+        "run": 2,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      },
+      {
+        "run": 3,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      }
+    ],
+    "domestic_expert_pay_cap": [
+      {
+        "run": 1,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      },
+      {
+        "run": 2,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      },
+      {
+        "run": 3,
+        "status": "COMPLETED",
+        "answerability_status": "ANSWERABLE",
+        "citation_validation": "PASS",
+        "citation_ids": [
+          "S1"
+        ],
+        "invalid_citations": []
+      }
+    ]
+  },
+  "prompt_measurement": {
+    "legal_rag_v1_tokens": 1630,
+    "legal_rag_v2_tokens": 1823,
+    "overhead_tokens": 193,
+    "budget_total": 2367,
+    "model_context_limit": 32768,
+    "budget_guard_pass": true,
+    "tokenizer_shared_instance": true,
+    "context_vi_token_count": 2
+  },
+  "selected_lexical_strategy": {
+    "name": "strict websearch first; safe four-rarest-corpus-lexeme conjunction fallback",
+    "selection_evidence": {
+      "lexical_non_empty_rate": 0.1875,
+      "lexical_expected_solution_rate": 0.2222222222222222,
+      "average_candidate_count": 0.21875,
+      "average_latency_ms": 3.9490802187316376,
+      "hit_at_1": 0.8518518518518519,
+      "hit_at_3": 0.9259259259259259,
+      "hit_at_5": 0.9259259259259259,
+      "hit_at_10": 0.9259259259259259,
+      "mrr": 0.8888888888888888,
+      "multi_evidence": [
+        {
+          "case_id": "applicable_entities_multi",
+          "answerable": true,
+          "category": "MULTI_EVIDENCE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "60f5801d-7d95-40b4-b1e9-90dd1260dd90",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "14dcae3b-7755-440d-bb08-f0ea08c3563c"
+          ],
+          "expected_rank": null,
+          "rr": 0.0,
+          "latency_ms": 2.881595999951969
+        },
+        {
+          "case_id": "national_dispatcher_role",
+          "answerable": true,
+          "category": "MULTI_EVIDENCE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "e9e217b3-268a-4fbf-9d4f-a33de58b1110",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "2851c158-aff0-44c1-9526-df907299d251"
+          ],
+          "expected_rank": null,
+          "rr": 0.0,
+          "latency_ms": 4.252365999946051
+        }
+      ],
+      "cases": [
+        {
+          "case_id": "scope_direct",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "9ab66b53-663f-4642-9190-d80a6f61997d",
+            "60f5801d-7d95-40b4-b1e9-90dd1260dd90",
+            "749da3f5-6394-476a-b99f-44400d7c115b",
+            "993f9dc0-6cce-4b64-b941-0d9d74763147",
+            "f2d1cb68-7796-4a19-a2e2-04e857740343",
+            "9f5e20ba-61af-4f1d-9ee8-6aa8a3cab585",
+            "1f40648f-42b1-4a17-8858-d3c3024ee510",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "b9237b2e-31c5-47ac-8fe7-57595be42fdf",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8"
+          ],
+          "expected_rank": 2,
+          "rr": 0.5,
+          "latency_ms": 16.237199999977747
+        },
+        {
+          "case_id": "applicable_entities_multi",
+          "answerable": true,
+          "category": "MULTI_EVIDENCE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "60f5801d-7d95-40b4-b1e9-90dd1260dd90",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "14dcae3b-7755-440d-bb08-f0ea08c3563c"
+          ],
+          "expected_rank": null,
+          "rr": 0.0,
+          "latency_ms": 2.881595999951969
+        },
+        {
+          "case_id": "nsmo_definition",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "2851c158-aff0-44c1-9526-df907299d251",
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b",
+            "f1a28b76-e9f0-4a8b-83f6-59374c0fc98d",
+            "88d71393-ec3f-4bc1-be9d-72f50be0fd45",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "ea21d5a1-92e7-4863-8619-5db9a4b0217f",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.9288240000132646
+        },
+        {
+          "case_id": "national_dispatcher_role",
+          "answerable": true,
+          "category": "MULTI_EVIDENCE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "e9e217b3-268a-4fbf-9d4f-a33de58b1110",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "2851c158-aff0-44c1-9526-df907299d251"
+          ],
+          "expected_rank": null,
+          "rr": 0.0,
+          "latency_ms": 4.252365999946051
+        },
+        {
+          "case_id": "modernization_principle",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "b345594b-9fd4-4d24-97ad-257b0f5df2b0",
+            "bc958182-732b-4fa9-a5c0-79dc75282032",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "fd3f2bd6-3f66-4167-8efb-542078559d9b",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "749da3f5-6394-476a-b99f-44400d7c115b",
+            "3bed5a7c-a0a1-43e5-b6ed-3ec6a67611cf",
+            "dd8abf92-4c4a-473c-8e6d-3fa8625da484",
+            "b9237b2e-31c5-47ac-8fe7-57595be42fdf",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.372366000097827
+        },
+        {
+          "case_id": "human_resource_benefits",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.177824999715085
+        },
+        {
+          "case_id": "worker_rights_security",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "c45e3d45-7183-42c5-8d65-9917878e1f6d",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.9867600003162806
+        },
+        {
+          "case_id": "benefit_cost_accounting",
+          "answerable": true,
+          "category": "DEEPER_RANK",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328",
+            "abdf4475-fa62-47bd-83a7-36aec6df506a",
+            "9f5e20ba-61af-4f1d-9ee8-6aa8a3cab585",
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "9667c02d-ef15-4ac9-8ce7-1e41fa0122e4"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.098205999525817
+        },
+        {
+          "case_id": "headquarters_infrastructure_filter",
+          "answerable": true,
+          "category": "DOCUMENT_FILTER",
+          "lexical_count": 2,
+          "lexical_ids": [
+            "ea21d5a1-92e7-4863-8619-5db9a4b0217f",
+            "5296ee36-1e31-42ef-a152-7850d13f15ba"
+          ],
+          "lexical_scores": [
+            0.00625,
+            0.005263158
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "ea21d5a1-92e7-4863-8619-5db9a4b0217f",
+            "5296ee36-1e31-42ef-a152-7850d13f15ba",
+            "e9e217b3-268a-4fbf-9d4f-a33de58b1110",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "fd3f2bd6-3f66-4167-8efb-542078559d9b",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "f688f717-2d7c-465e-905f-338fa064168b",
+            "dd8abf92-4c4a-473c-8e6d-3fa8625da484"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 2.596888000425679
+        },
+        {
+          "case_id": "cybersecurity_infrastructure",
+          "answerable": true,
+          "category": "KEYWORD_IDENTIFIER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "3bed5a7c-a0a1-43e5-b6ed-3ec6a67611cf",
+            "bc958182-732b-4fa9-a5c0-79dc75282032",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "39a22902-005b-4733-abb2-b9524ddcb829",
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "fd3f2bd6-3f66-4167-8efb-542078559d9b",
+            "dd8abf92-4c4a-473c-8e6d-3fa8625da484",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "749da3f5-6394-476a-b99f-44400d7c115b"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.6372019999362237
+        },
+        {
+          "case_id": "oda_project_priority",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 1,
+          "lexical_ids": [
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4"
+          ],
+          "lexical_scores": [
+            0.005882353
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "7da489f6-8090-4d00-8ed7-86fccb2c7fde",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "abdf4475-fa62-47bd-83a7-36aec6df506a"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.6619570000766544
+        },
+        {
+          "case_id": "land_lease_no_auction",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "f1a28b76-e9f0-4a8b-83f6-59374c0fc98d",
+            "5296ee36-1e31-42ef-a152-7850d13f15ba",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "88d71393-ec3f-4bc1-be9d-72f50be0fd45",
+            "d5227ce1-cff9-492b-b542-5022be73931d"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.660942999886174
+        },
+        {
+          "case_id": "oda_capital_source",
+          "answerable": true,
+          "category": "KEYWORD_IDENTIFIER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "7da489f6-8090-4d00-8ed7-86fccb2c7fde",
+            "abdf4475-fa62-47bd-83a7-36aec6df506a",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "aa911e85-ccd4-4799-adda-2f5d51155bb6",
+            "00428e4c-508d-4c2f-98b6-e6b2617f98ee",
+            "53a2dd91-1e8f-4071-a904-ff1f83cf76f1",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.642163999757031
+        },
+        {
+          "case_id": "non_oda_grants",
+          "answerable": true,
+          "category": "DEEPER_RANK",
+          "lexical_count": 1,
+          "lexical_ids": [
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f"
+          ],
+          "lexical_scores": [
+            0.0025
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "7da489f6-8090-4d00-8ed7-86fccb2c7fde",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "aa911e85-ccd4-4799-adda-2f5d51155bb6",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "1bcf57c2-823e-448d-b228-638094100edb"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.884164000282908
+        },
+        {
+          "case_id": "government_loan_guarantee",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 1,
+          "lexical_ids": [
+            "bfae2ca5-6855-4583-83db-841870e5a379"
+          ],
+          "lexical_scores": [
+            0.0037037039
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "7da489f6-8090-4d00-8ed7-86fccb2c7fde",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "53a2dd91-1e8f-4071-a904-ff1f83cf76f1",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.8241260003815114
+        },
+        {
+          "case_id": "minimum_charter_capital",
+          "answerable": true,
+          "category": "KEYWORD_IDENTIFIER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "4e2d6ec4-55a0-4467-a200-e221d7e5e0ac",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "2851c158-aff0-44c1-9526-df907299d251"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.172544000539347
+        },
+        {
+          "case_id": "debt_over_three_times",
+          "answerable": true,
+          "category": "DEEPER_RANK",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "4e2d6ec4-55a0-4467-a200-e221d7e5e0ac",
+            "9667c02d-ef15-4ac9-8ce7-1e41fa0122e4",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.7325289999898814
+        },
+        {
+          "case_id": "after_tax_profit_use",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 1,
+          "lexical_ids": [
+            "4e2d6ec4-55a0-4467-a200-e221d7e5e0ac"
+          ],
+          "lexical_scores": [
+            0.009090909
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "4e2d6ec4-55a0-4467-a200-e221d7e5e0ac",
+            "aa911e85-ccd4-4799-adda-2f5d51155bb6",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "d5227ce1-cff9-492b-b542-5022be73931d",
+            "53a2dd91-1e8f-4071-a904-ff1f83cf76f1",
+            "00428e4c-508d-4c2f-98b6-e6b2617f98ee",
+            "7da489f6-8090-4d00-8ed7-86fccb2c7fde",
+            "9667c02d-ef15-4ac9-8ce7-1e41fa0122e4",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.447954999955982
+        },
+        {
+          "case_id": "land_assets_capital",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "4e2d6ec4-55a0-4467-a200-e221d7e5e0ac",
+            "f1a28b76-e9f0-4a8b-83f6-59374c0fc98d",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.92487599992819
+        },
+        {
+          "case_id": "domestic_expert_pay_cap",
+          "answerable": true,
+          "category": "KEYWORD_IDENTIFIER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "14dcae3b-7755-440d-bb08-f0ea08c3563c",
+            "f2e31a1b-b8f9-4ebb-95ef-6f93566028e5",
+            "00428e4c-508d-4c2f-98b6-e6b2617f98ee",
+            "53a2dd91-1e8f-4071-a904-ff1f83cf76f1",
+            "ac4ac0ec-5c9b-4fad-8155-f169f6c4f12a",
+            "b487af78-9ec4-4f2e-98cb-0a2bbd0a332a",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328",
+            "9667c02d-ef15-4ac9-8ce7-1e41fa0122e4"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.607207000186463
+        },
+        {
+          "case_id": "additional_income_filter",
+          "answerable": true,
+          "category": "DOCUMENT_FILTER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "b487af78-9ec4-4f2e-98cb-0a2bbd0a332a",
+            "00428e4c-508d-4c2f-98b6-e6b2617f98ee"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.118942999662977
+        },
+        {
+          "case_id": "supplementary_retirement",
+          "answerable": true,
+          "category": "SEMANTIC_PARAPHRASE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "c45e3d45-7183-42c5-8d65-9917878e1f6d",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "b487af78-9ec4-4f2e-98cb-0a2bbd0a332a",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "a2938526-154c-46fa-812c-ca4be5e42fc5"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.342887000348128
+        },
+        {
+          "case_id": "liability_correct_procedure",
+          "answerable": true,
+          "category": "DEEPER_RANK",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820",
+            "956cafca-c7e0-4b2d-b9a9-23365a8a9af9",
+            "c45e3d45-7183-42c5-8d65-9917878e1f6d",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "ac499a6f-b6fc-407a-8de2-f3607017944f",
+            "e14d63ba-3882-43ad-b7b0-22cbebe5248c",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "ec777336-15be-4698-8a21-6b6ba94cfaba",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8"
+          ],
+          "expected_rank": 2,
+          "rr": 0.5,
+          "latency_ms": 4.292082999654667
+        },
+        {
+          "case_id": "ministry_approves_list",
+          "answerable": true,
+          "category": "DIRECT_FACT",
+          "lexical_count": 1,
+          "lexical_ids": [
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef"
+          ],
+          "lexical_scores": [
+            0.004761905
+          ],
+          "lexical_expected_solution": true,
+          "final_ids": [
+            "6c815bcf-52d2-44ca-a974-f7dd82d82eef",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "749da3f5-6394-476a-b99f-44400d7c115b",
+            "fd3f2bd6-3f66-4167-8efb-542078559d9b",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "9ab66b53-663f-4642-9190-d80a6f61997d"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.164205000051879
+        },
+        {
+          "case_id": "city_land_responsibility",
+          "answerable": true,
+          "category": "KEYWORD_IDENTIFIER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "5296ee36-1e31-42ef-a152-7850d13f15ba",
+            "f1a28b76-e9f0-4a8b-83f6-59374c0fc98d",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "aa94940b-7ed8-48e2-a634-5423a3aaef8e",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "d5227ce1-cff9-492b-b542-5022be73931d",
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "ea21d5a1-92e7-4863-8619-5db9a4b0217f"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 3.4955589999299264
+        },
+        {
+          "case_id": "annual_report_deadline",
+          "answerable": true,
+          "category": "DEEPER_RANK",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "642f394d-0dbb-4e95-9ef7-a676e1209d5f",
+            "9ab66b53-663f-4642-9190-d80a6f61997d",
+            "9f5e20ba-61af-4f1d-9ee8-6aa8a3cab585",
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "749da3f5-6394-476a-b99f-44400d7c115b",
+            "b487af78-9ec4-4f2e-98cb-0a2bbd0a332a",
+            "ac499a6f-b6fc-407a-8de2-f3607017944f",
+            "1f40648f-42b1-4a17-8858-d3c3024ee510",
+            "6e49fa3a-b16e-4cab-8cea-c12cc4f2ced1",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 4.519083999639406
+        },
+        {
+          "case_id": "effective_date_filter",
+          "answerable": true,
+          "category": "DOCUMENT_FILTER",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": false,
+          "final_ids": [
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "9ab66b53-663f-4642-9190-d80a6f61997d",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "118586b0-33dd-4ce8-9919-aba2efd5a2cd",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "14dcae3b-7755-440d-bb08-f0ea08c3563c",
+            "9667c02d-ef15-4ac9-8ce7-1e41fa0122e4",
+            "1f40648f-42b1-4a17-8858-d3c3024ee510",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "642f394d-0dbb-4e95-9ef7-a676e1209d5f"
+          ],
+          "expected_rank": 1,
+          "rr": 1.0,
+          "latency_ms": 2.49399899985292
+        },
+        {
+          "case_id": "corporate_tax_rate_absent",
+          "answerable": false,
+          "category": "UNANSWERABLE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": null,
+          "final_ids": [
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "9ab66b53-663f-4642-9190-d80a6f61997d",
+            "00428e4c-508d-4c2f-98b6-e6b2617f98ee",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "2851c158-aff0-44c1-9526-df907299d251",
+            "53a2dd91-1e8f-4071-a904-ff1f83cf76f1",
+            "d5227ce1-cff9-492b-b542-5022be73931d",
+            "abdf4475-fa62-47bd-83a7-36aec6df506a"
+          ],
+          "expected_rank": null,
+          "rr": null,
+          "latency_ms": 2.817701999902056
+        },
+        {
+          "case_id": "administrative_fine_absent",
+          "answerable": false,
+          "category": "UNANSWERABLE",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": null,
+          "final_ids": [
+            "67e38280-1017-4f93-b9ac-179a4a0db565",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+            "642f394d-0dbb-4e95-9ef7-a676e1209d5f",
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "c7c23b8f-e543-4c6b-b069-695f30d6c022",
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "e14d63ba-3882-43ad-b7b0-22cbebe5248c",
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8"
+          ],
+          "expected_rank": null,
+          "rr": null,
+          "latency_ms": 2.335213999685948
+        },
+        {
+          "case_id": "retail_electricity_price_absent",
+          "answerable": false,
+          "category": "OUT_OF_CORPUS",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": null,
+          "final_ids": [
+            "76cce61d-99aa-4e26-8cf9-74ed41353463",
+            "e3e6bd37-81aa-470c-bbc1-4e596ce51b81",
+            "5a5aeeb5-ce90-41de-837c-332bd208f897",
+            "9ab66b53-663f-4642-9190-d80a6f61997d",
+            "525ff655-b131-4375-8ead-0740eaa65957",
+            "88d71393-ec3f-4bc1-be9d-72f50be0fd45",
+            "2851c158-aff0-44c1-9526-df907299d251",
+            "6cdbbffe-98e1-4d7f-870f-ce1d369e7046",
+            "123a2580-3ab8-42d6-aa50-c796fc691baa",
+            "3f7bfb6a-9d4c-4115-9fbd-c9b0a452f30b"
+          ],
+          "expected_rank": null,
+          "rr": null,
+          "latency_ms": 2.4035479996200593
+        },
+        {
+          "case_id": "maternity_leave_absent",
+          "answerable": false,
+          "category": "OUT_OF_CORPUS",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": null,
+          "final_ids": [
+            "a2938526-154c-46fa-812c-ca4be5e42fc5",
+            "1bcf57c2-823e-448d-b228-638094100edb",
+            "ec777336-15be-4698-8a21-6b6ba94cfaba",
+            "c45e3d45-7183-42c5-8d65-9917878e1f6d",
+            "14dcae3b-7755-440d-bb08-f0ea08c3563c",
+            "b487af78-9ec4-4f2e-98cb-0a2bbd0a332a",
+            "e14d63ba-3882-43ad-b7b0-22cbebe5248c",
+            "46ea4b72-f1e5-46c6-96d9-fbf317f9b9a8",
+            "ac499a6f-b6fc-407a-8de2-f3607017944f",
+            "32b30c2b-9ac9-46f9-9c70-60e869d4c820"
+          ],
+          "expected_rank": null,
+          "rr": null,
+          "latency_ms": 2.3005340003692254
+        },
+        {
+          "case_id": "renewable_license_absent",
+          "answerable": false,
+          "category": "OUT_OF_CORPUS",
+          "lexical_count": 0,
+          "lexical_ids": [],
+          "lexical_scores": [],
+          "lexical_expected_solution": null,
+          "final_ids": [
+            "0210460d-1df2-497b-8dfa-662c87bcd136",
+            "56a9f913-4fb8-4b95-b90f-4e7f04b9e945",
+            "3a16c7b5-6d12-4d34-b432-ef5078eee0c9",
+            "7ef3b873-84ef-414f-9615-b341cb94f1cc",
+            "b5ffcc91-2a3c-4b9d-98ff-f57f4c1a53a4",
+            "db8ea6e4-5401-4fd9-b867-28faf56d3328",
+            "8b3f9a09-d190-4c38-8b2f-c5e3cc689f2f",
+            "1a6b7744-8a26-4f62-8eca-207bdd065151",
+            "bfae2ca5-6855-4583-83db-841870e5a379",
+            "ccc02a68-e8d3-442c-9dca-fa2d4de42bbf"
+          ],
+          "expected_rank": null,
+          "rr": null,
+          "latency_ms": 2.359110999805125
+        }
+      ]
+    },
+    "rejected_safe_or": {
+      "lexical_non_empty_rate": 1.0,
+      "lexical_expected_solution_rate": 0.9629629629629629,
+      "average_candidate_count": 48.9375,
+      "average_latency_ms": 25.047064968688915,
+      "hit_at_1": 0.6296296296296297,
+      "hit_at_3": 0.8888888888888888,
+      "hit_at_5": 0.9259259259259259,
+      "hit_at_10": 0.9259259259259259,
+      "mrr": 0.7685185185185185
+    }
+  },
+  "full_regression": {
+    "collected": 182,
+    "passed": 182,
+    "failed": 0,
+    "warnings": 8,
+    "duration_seconds": 87.58
+  },
+  "known_limitations": [
+    "One answerable case (ministry_approves_list) now safely abstains because the selected action chunk omits the responsible authority and the separate Điều 9 heading chunk is absent from final context.",
+    "Both multi-evidence failures remain unchanged; Top-K and reranking were intentionally not modified.",
+    "The wrong-source case remains PLAUSIBLE_ALTERNATIVE_EVIDENCE pending human legal review.",
+    "The evaluation corpus contains one substantive legal document, so generalization remains unmeasured."
+  ]
+}

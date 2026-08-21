@@ -1,0 +1,1713 @@
+{
+  "report_id": "multi_evidence_candidate_coverage_v1",
+  "generated_at": "2026-08-19T13:35:46.163092+00:00",
+  "dataset_sha256": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+  "multi_case_count": 9,
+  "summary": {
+    "required_piece_count": 26,
+    "dense_top_10": 10,
+    "dense_top_20": 12,
+    "dense_top_30": 14,
+    "dense_top_50": 19,
+    "lexical_top_10": 0,
+    "lexical_top_20": 0,
+    "lexical_top_30": 0,
+    "lexical_top_50": 0,
+    "fused_top_10": 10,
+    "fused_top_15": 10,
+    "fused_top_20": 12,
+    "fused_top_30": 14,
+    "fused_top_50": 19,
+    "not_in_any_candidate_pool": 7,
+    "candidate_pool_complete_cases": 3,
+    "perfect_reranker_complete_ceiling": 0.3333333333333333
+  },
+  "cases": [
+    {
+      "case_id": "v2_social_scope",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư về thực hành công tác xã hội quy định chi tiết ba nhóm nội dung nào của Nghị định 110/2024/NĐ-CP?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "36343b2e-1725-4697-877b-9e33526db4d2",
+          "db824433-8240-447b-89a8-0d20a1a88349",
+          "69bf65cc-80b1-41d1-86a3-8714b13f2924"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": false,
+          "recall": 0.0,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "63641a91-76dd-4007-add6-9a22234ce020",
+          "5face032-faa3-4b38-a5c8-35072a34adda",
+          "783aac1c-9c44-4095-a63a-6adc9ba0e209",
+          "fac9f444-c203-4ef7-aa90-acdba56a486d",
+          "425f59be-f2fa-49f4-acb7-461cb0769b50",
+          "461bda71-d08d-45e4-afee-17809d626cc0",
+          "4aec0cc1-cf74-4fbc-b88c-5f628dd8f4d0",
+          "644205fc-d6cc-4833-9638-b783d1c1e00b",
+          "fb2b69bb-edab-45b0-a56d-7b6248445757",
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "36343b2e-1725-4697-877b-9e33526db4d2",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "95f7c696-c9fd-43a6-a56a-052cb5b38f53",
+            "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+            "unit_type": "CLAUSE",
+            "unit_number": "1",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+          }
+        },
+        {
+          "chunk_id": "db824433-8240-447b-89a8-0d20a1a88349",
+          "ranks": {
+            "dense_rank": 36,
+            "dense_score": 0.8382619119726487,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 36,
+            "fusion_score": 0.010416666666666666,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "4aec1321-623f-47a9-b47a-3ae68c9a2d9e",
+            "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+            "unit_type": "CLAUSE",
+            "unit_number": "2",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+          }
+        },
+        {
+          "chunk_id": "69bf65cc-80b1-41d1-86a3-8714b13f2924",
+          "ranks": {
+            "dense_rank": 38,
+            "dense_score": 0.8379265263168184,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 38,
+            "fusion_score": 0.01020408163265306,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "9f185fc4-8d9a-4304-9b49-d4c981157a0a",
+            "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+            "unit_type": "CLAUSE",
+            "unit_number": "3",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 37,
+        "correct_document_candidates_top10": 10,
+        "required_within_document_ranks": {
+          "36343b2e-1725-4697-877b-9e33526db4d2": null,
+          "db824433-8240-447b-89a8-0d20a1a88349": 35,
+          "69bf65cc-80b1-41d1-86a3-8714b13f2924": 36
+        },
+        "dense_score_distribution": {
+          "min": 0.8371840216407778,
+          "max": 0.8896728819803682,
+          "mean": 0.8524855385738259
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.010101010101010102,
+          "max": 0.01639344262295082,
+          "mean": 0.01286038351280353
+        },
+        "competing_unit_types_top10": {
+          "ARTICLE": 2,
+          "CLAUSE": 5,
+          "PREAMBLE": 1,
+          "POINT": 2
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_social_applicable_groups",
+      "category": "MULTI_EVIDENCE",
+      "question": "Bốn nhóm đối tượng nào thuộc phạm vi áp dụng của Thông tư về thực hành và cập nhật kiến thức công tác xã hội?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "23d10632-6b5f-4e82-a9eb-a91f3f1fa878",
+          "f160106c-f98a-4935-b076-16389967e868",
+          "d3421519-8b8b-44a9-b4b1-25a0c47b8515",
+          "b5d4ed5c-0914-4e73-97af-d655047006bb"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": false,
+          "recall": 0.0,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "30096d45-61c8-46b9-beb2-ef9b189f37ef",
+          "4aec0cc1-cf74-4fbc-b88c-5f628dd8f4d0",
+          "aaea503a-39f3-43b5-985e-318a9dd5ee7c",
+          "fb2b69bb-edab-45b0-a56d-7b6248445757",
+          "461bda71-d08d-45e4-afee-17809d626cc0",
+          "616c1e16-25dc-479c-b230-467b1cbef660",
+          "1f76cce4-ecaa-483f-aa1c-731b146fae51",
+          "ee9f8c97-ff12-463a-ba91-e2f97c82ee76",
+          "85df846b-61a4-43ca-9bb2-93ec66b6244e",
+          "6b3831bc-e211-4587-976c-42d35814c2ea"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "23d10632-6b5f-4e82-a9eb-a91f3f1fa878",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "ca207212-e495-47d5-ab72-2b83eb6eaced",
+            "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+            "unit_type": "CLAUSE",
+            "unit_number": "1",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+          }
+        },
+        {
+          "chunk_id": "f160106c-f98a-4935-b076-16389967e868",
+          "ranks": {
+            "dense_rank": 38,
+            "dense_score": 0.8427461385726929,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 38,
+            "fusion_score": 0.01020408163265306,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "f7fd5dab-c339-4541-9e1b-b7d3fce9de55",
+            "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+            "unit_type": "CLAUSE",
+            "unit_number": "2",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+          }
+        },
+        {
+          "chunk_id": "d3421519-8b8b-44a9-b4b1-25a0c47b8515",
+          "ranks": {
+            "dense_rank": 31,
+            "dense_score": 0.8457920047168744,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 31,
+            "fusion_score": 0.01098901098901099,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "da1d04a8-7a1a-48f7-9b1d-1b499fe265de",
+            "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+            "unit_type": "CLAUSE",
+            "unit_number": "3",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+          }
+        },
+        {
+          "chunk_id": "b5d4ed5c-0914-4e73-97af-d655047006bb",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "9b8bf3eb-71f4-4f07-88fb-4f012b136e59",
+            "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+            "unit_type": "CLAUSE",
+            "unit_number": "4",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 40,
+        "correct_document_candidates_top10": 10,
+        "required_within_document_ranks": {
+          "23d10632-6b5f-4e82-a9eb-a91f3f1fa878": null,
+          "f160106c-f98a-4935-b076-16389967e868": 38,
+          "d3421519-8b8b-44a9-b4b1-25a0c47b8515": 31,
+          "b5d4ed5c-0914-4e73-97af-d655047006bb": null
+        },
+        "dense_score_distribution": {
+          "min": 0.841839611530304,
+          "max": 0.8693522214889526,
+          "mean": 0.8528222144679583
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.01,
+          "max": 0.01639344262295082,
+          "mean": 0.01268767761719706
+        },
+        "competing_unit_types_top10": {
+          "CLAUSE": 7,
+          "POINT": 2,
+          "CHAPTER": 1
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_social_practice_content",
+      "category": "MULTI_EVIDENCE",
+      "question": "Nội dung thực hành công tác xã hội bao gồm những nhóm năng lực và kỹ năng nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "77d1986c-82a4-4ef3-a215-08e1c2250d9d",
+          "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+          "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": true,
+          "recall": 0.5,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d",
+          "aa4b26d2-0a3a-4b57-82fd-76531d8d9791",
+          "cf38602e-3071-4e35-b4f5-532752cf0b86",
+          "0b2b4b29-e108-47c8-8bc1-3a774fa455da",
+          "fac9f444-c203-4ef7-aa90-acdba56a486d",
+          "c1b373eb-3a7e-423b-bd68-ffd339ff9af2",
+          "4d0db85b-6496-47f8-a336-af7cec513cef",
+          "98d4b7c3-ae85-4422-8abd-d18fb2962fc2",
+          "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "5face032-faa3-4b38-a5c8-35072a34adda"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "77d1986c-82a4-4ef3-a215-08e1c2250d9d",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "d0ba484b-147d-4910-b8d0-86850faeb618",
+            "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+            "unit_type": "POINT",
+            "unit_number": "a",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 2,
+            "page_end": 2,
+            "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+          }
+        },
+        {
+          "chunk_id": "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+          "ranks": {
+            "dense_rank": 20,
+            "dense_score": 0.833653450012207,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 20,
+            "fusion_score": 0.0125,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "b1e9febc-3284-4a93-9862-a64978722613",
+            "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+            "unit_type": "POINT",
+            "unit_number": "b",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 2,
+            "page_end": 2,
+            "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+          }
+        },
+        {
+          "chunk_id": "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "ranks": {
+            "dense_rank": 9,
+            "dense_score": 0.8456268310546875,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 9,
+            "fusion_score": 0.014492753623188406,
+            "production_final_rank": 9,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "f6702837-5d07-4fa3-a547-1a12fd5828a3",
+            "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+            "unit_type": "POINT",
+            "unit_number": "c",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 2,
+            "page_end": 2,
+            "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+          }
+        },
+        {
+          "chunk_id": "aebafad2-e8a0-49e6-82e0-2cd27270e54d",
+          "ranks": {
+            "dense_rank": 1,
+            "dense_score": 0.8681122064590454,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 1,
+            "fusion_score": 0.01639344262295082,
+            "production_final_rank": 1,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "6450aff8-08d9-4132-aa89-d899473f22bf",
+            "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+            "unit_type": "POINT",
+            "unit_number": "d",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 2,
+            "page_end": 2,
+            "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 40,
+        "correct_document_candidates_top10": 10,
+        "required_within_document_ranks": {
+          "77d1986c-82a4-4ef3-a215-08e1c2250d9d": null,
+          "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf": 20,
+          "e044e3d1-b910-4d49-ab4e-10b049acc42a": 9,
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d": 1
+        },
+        "dense_score_distribution": {
+          "min": 0.8251081913580725,
+          "max": 0.8681122064590454,
+          "mean": 0.837035763280114
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.01,
+          "max": 0.01639344262295082,
+          "mean": 0.01268767761719706
+        },
+        "competing_unit_types_top10": {
+          "POINT": 6,
+          "CLAUSE": 4
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_social_effective_transition",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư về công tác xã hội có hiệu lực ngày nào và người đã có giấy xác nhận thực hành có phải thực hành lại không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "ff57c879-4c67-4a7b-b550-6c2b373955be"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": true,
+          "recall": 0.5,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "425f59be-f2fa-49f4-acb7-461cb0769b50",
+          "fb2b69bb-edab-45b0-a56d-7b6248445757",
+          "ff57c879-4c67-4a7b-b550-6c2b373955be",
+          "dd748672-d3b1-45e5-a840-e61615901646",
+          "4aec0cc1-cf74-4fbc-b88c-5f628dd8f4d0",
+          "cf38602e-3071-4e35-b4f5-532752cf0b86",
+          "74246516-06c7-4adb-a212-656c063dde89",
+          "3e972463-1919-46c9-94ce-751fc9689188",
+          "1f76cce4-ecaa-483f-aa1c-731b146fae51",
+          "5face032-faa3-4b38-a5c8-35072a34adda"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e",
+            "parent_unit_id": "cd1f9027-55b0-4064-8270-5aea1c8a4ec4",
+            "unit_type": "ARTICLE",
+            "unit_number": "17",
+            "unit_title": "Hiệu lực thi hành",
+            "level": 4,
+            "page_start": 7,
+            "page_end": 7,
+            "article_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e"
+          }
+        },
+        {
+          "chunk_id": "ff57c879-4c67-4a7b-b550-6c2b373955be",
+          "ranks": {
+            "dense_rank": 3,
+            "dense_score": 0.8694511911109448,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 3,
+            "fusion_score": 0.015873015873015872,
+            "production_final_rank": 3,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "59ef60bf-2069-4ca0-9bcf-4668da864262",
+            "parent_unit_id": "e98f5131-e86a-4cb5-a1b5-8bf3ad3d4b0e",
+            "unit_type": "CLAUSE",
+            "unit_number": "1",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 7,
+            "page_end": 7,
+            "article_id": "e98f5131-e86a-4cb5-a1b5-8bf3ad3d4b0e"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 39,
+        "correct_document_candidates_top10": 10,
+        "required_within_document_ranks": {
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e": null,
+          "ff57c879-4c67-4a7b-b550-6c2b373955be": 3
+        },
+        "dense_score_distribution": {
+          "min": 0.840113232129025,
+          "max": 0.9028133153915405,
+          "mean": 0.8518148603140767
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.01,
+          "max": 0.01639344262295082,
+          "mean": 0.012661755757715287
+        },
+        "competing_unit_types_top10": {
+          "ARTICLE": 1,
+          "POINT": 2,
+          "CLAUSE": 6,
+          "CHAPTER": 1
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_bank_scope_ratios",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư 40/2026/TT-NHNN điều chỉnh năm nhóm hạn chế, giới hạn và tỷ lệ an toàn chính nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "30e14c4c-d8fd-4d68-9382-4d96bef43392"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": true,
+          "recall": 0.2,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "7ad5a22b-089a-4afe-85c4-77be8f5a98d4",
+          "13566529-a241-4568-a651-b95a14bb0f9f",
+          "4e7a93e5-a04d-4d74-b3c1-0a7c5ae3f354",
+          "c4f0d74c-a06b-4e50-9303-c148f2899272",
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "46193291-fcb4-4458-8fa3-85dfbb321e59",
+          "5965373c-7e11-4fe7-b179-42365b4eedc9",
+          "39bf860e-d459-48a5-ac28-17380c5cf9c5",
+          "6919c16f-5507-48c0-9fd6-f893a7a125ff",
+          "e268e6d3-9f77-415a-b27e-7518a20a9254"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "ranks": {
+            "dense_rank": 5,
+            "dense_score": 0.8761269597855854,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 5,
+            "fusion_score": 0.015384615384615385,
+            "production_final_rank": 5,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "9719bc4b-93a7-4ff1-9403-72e69ee03c35",
+            "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+            "unit_type": "POINT",
+            "unit_number": "a",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+          }
+        },
+        {
+          "chunk_id": "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "ranks": {
+            "dense_rank": 23,
+            "dense_score": 0.8553218504210993,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 23,
+            "fusion_score": 0.012048192771084338,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "ce883772-9824-40ee-8631-902c5b24712a",
+            "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+            "unit_type": "POINT",
+            "unit_number": "b",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+          }
+        },
+        {
+          "chunk_id": "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "ranks": {
+            "dense_rank": 34,
+            "dense_score": 0.8510270803554622,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 34,
+            "fusion_score": 0.010638297872340425,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "6f682fce-7151-472e-a3bc-cd30e4521636",
+            "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+            "unit_type": "POINT",
+            "unit_number": "c",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+          }
+        },
+        {
+          "chunk_id": "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "ranks": {
+            "dense_rank": 21,
+            "dense_score": 0.8570668782551972,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 21,
+            "fusion_score": 0.012345679012345678,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "ce74388c-8090-4faa-8c26-82fd35b01d1d",
+            "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+            "unit_type": "POINT",
+            "unit_number": "d",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+          }
+        },
+        {
+          "chunk_id": "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "7cdb85c2-bec6-4e17-a0a2-19fcdd604466",
+            "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+            "unit_type": "POINT",
+            "unit_number": "đ",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 1,
+            "page_end": 1,
+            "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 40,
+        "correct_document_candidates_top10": 10,
+        "required_within_document_ranks": {
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066": 5,
+          "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2": 23,
+          "5faec617-7237-4dc8-a01a-bc4ade33ac31": 34,
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a": 21,
+          "30e14c4c-d8fd-4d68-9382-4d96bef43392": null
+        },
+        "dense_score_distribution": {
+          "min": 0.8473359528379496,
+          "max": 0.8973322037062402,
+          "mean": 0.860660981561271
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.01,
+          "max": 0.01639344262295082,
+          "mean": 0.01268767761719706
+        },
+        "competing_unit_types_top10": {
+          "PREAMBLE": 1,
+          "CLAUSE": 3,
+          "POINT": 5,
+          "ARTICLE": 1
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_bank_loan_limit_exceptions",
+      "category": "MULTI_EVIDENCE",
+      "question": "Hai trường hợp nào không áp dụng giới hạn cho vay tại điểm b khoản 1 Điều 12?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "e57b1bc6-2105-4404-bda1-4472cf6e2574"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": false,
+          "partial": false,
+          "recall": 0.0,
+          "complete_rank": null
+        },
+        "block5_selected": [
+          "9c264672-b50d-453e-ac83-96c548afd31c",
+          "4fe6d518-19e8-479b-b3a7-45d0ac23707b",
+          "bf524416-5ecf-4b63-9c41-e3ab6d3942ab",
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "4b96b40c-0843-4137-a211-5707ccf4a8fa",
+          "e5c0d671-484a-4582-a71a-88ba13a3201a",
+          "e5e4e2cc-3efa-40a1-873d-8496090e8238",
+          "e8fa9eca-63c7-4953-a84b-6ab6852ee465",
+          "3eb658b7-ecf8-4e7e-a04e-f709eed2e4ab",
+          "9f866b06-cf8b-46fe-a3c2-7f9e23ffc3d7"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "ranks": {
+            "dense_rank": 18,
+            "dense_score": 0.8436414692615601,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 18,
+            "fusion_score": 0.01282051282051282,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_BELOW_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "a06b8204-0acf-441a-9545-dc31dc1a034e",
+            "parent_unit_id": "432411d9-d0b1-4aff-84bf-53eb378d3a5f",
+            "unit_type": "POINT",
+            "unit_number": "a",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 10,
+            "page_end": 10,
+            "article_id": "2d28a8ee-d729-415c-815f-2678eda10565"
+          }
+        },
+        {
+          "chunk_id": "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+          "ranks": {
+            "dense_rank": null,
+            "dense_score": null,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": null,
+            "fusion_score": null,
+            "production_final_rank": null,
+            "dense_top_10": false,
+            "dense_top_20": false,
+            "dense_top_30": false,
+            "dense_top_50": false,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": false,
+            "fused_top_15": false,
+            "fused_top_20": false,
+            "fused_top_30": false,
+            "fused_top_50": false
+          },
+          "labels": [
+            "NOT_IN_DENSE_TOP50",
+            "NOT_IN_LEXICAL_TOP50",
+            "NOT_IN_ANY_CANDIDATE_POOL"
+          ],
+          "unit": {
+            "legal_unit_id": "f38fab58-fd78-4a50-9caa-6e8bf577daa9",
+            "parent_unit_id": "432411d9-d0b1-4aff-84bf-53eb378d3a5f",
+            "unit_type": "POINT",
+            "unit_number": "b",
+            "unit_title": "",
+            "level": 6,
+            "page_start": 11,
+            "page_end": 11,
+            "article_id": "2d28a8ee-d729-415c-815f-2678eda10565"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 14,
+        "correct_document_candidates_top10": 7,
+        "required_within_document_ranks": {
+          "022d0872-1a53-43ba-bc11-a4474db0cea9": 9,
+          "e57b1bc6-2105-4404-bda1-4472cf6e2574": null
+        },
+        "dense_score_distribution": {
+          "min": 0.8380881644434846,
+          "max": 0.8760010673999166,
+          "mean": 0.8516710989940547
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.01098901098901099,
+          "max": 0.01639344262295082,
+          "mean": 0.01375873398287161
+        },
+        "competing_unit_types_top10": {
+          "POINT": 4,
+          "CLAUSE": 2,
+          "ARTICLE": 1
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_bank_illiquidity_reporting",
+      "category": "MULTI_EVIDENCE",
+      "question": "Khi nào quỹ được coi là mất khả năng chi trả và khi đó phải báo cáo, thông báo cho những cơ quan nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "7dd56c09-f816-4d05-8e98-d5b910bbe7a3",
+          "bbae4048-603a-45ab-9bd2-fbdfc879045b"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": true,
+          "partial": false,
+          "recall": 1.0,
+          "complete_rank": 4
+        },
+        "block5_selected": [
+          "bbae4048-603a-45ab-9bd2-fbdfc879045b",
+          "19ea68e4-3009-4dad-8917-0245db511d7f",
+          "afbea721-e647-42e1-ba1c-c83020257114",
+          "7dd56c09-f816-4d05-8e98-d5b910bbe7a3",
+          "d5c99d40-c7d1-4c2d-8990-45fccf92c3db",
+          "22a91752-1bed-46a2-8858-6c3b0a619c98",
+          "f496f39e-2b6b-47d9-909b-137e8b58d7cb",
+          "67e38280-1017-4f93-b9ac-179a4a0db565",
+          "932b1b44-40ae-44d4-958b-05230449c7ae",
+          "56d3d623-d61f-4613-acbe-dc3b977ae8db"
+        ],
+        "block6_status": "COMPLETED",
+        "citations": [
+          "7dd56c09-f816-4d05-8e98-d5b910bbe7a3",
+          "bbae4048-603a-45ab-9bd2-fbdfc879045b"
+        ]
+      },
+      "pieces": [
+        {
+          "chunk_id": "7dd56c09-f816-4d05-8e98-d5b910bbe7a3",
+          "ranks": {
+            "dense_rank": 4,
+            "dense_score": 0.8389931417111685,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 4,
+            "fusion_score": 0.015625,
+            "production_final_rank": 4,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "07474408-fc87-4de9-8417-cddcb7770408",
+            "parent_unit_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4",
+            "unit_type": "CLAUSE",
+            "unit_number": "2",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 11,
+            "page_end": 11,
+            "article_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4"
+          }
+        },
+        {
+          "chunk_id": "bbae4048-603a-45ab-9bd2-fbdfc879045b",
+          "ranks": {
+            "dense_rank": 1,
+            "dense_score": 0.8725817463571357,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 1,
+            "fusion_score": 0.01639344262295082,
+            "production_final_rank": 1,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "19f4b2ae-bc02-40bf-a16a-8a1c42cb6f24",
+            "parent_unit_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4",
+            "unit_type": "CLAUSE",
+            "unit_number": "3",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 11,
+            "page_end": 11,
+            "article_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 24,
+        "correct_document_candidates_top10": 8,
+        "required_within_document_ranks": {
+          "7dd56c09-f816-4d05-8e98-d5b910bbe7a3": 4,
+          "bbae4048-603a-45ab-9bd2-fbdfc879045b": 1
+        },
+        "dense_score_distribution": {
+          "min": 0.8083853125572205,
+          "max": 0.8725817463571357,
+          "mean": 0.8209391850793857
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.010752688172043012,
+          "max": 0.01639344262295082,
+          "mean": 0.013431664817845555
+        },
+        "competing_unit_types_top10": {
+          "CLAUSE": 4,
+          "ARTICLE": 1,
+          "POINT": 3
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_civil_effect_and_repeal",
+      "category": "MULTI_EVIDENCE",
+      "question": "Nghị định 170/2025/NĐ-CP có hiệu lực từ ngày nào và Nghị định 138/2020/NĐ-CP có bị hết hiệu lực không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "fbb59a42-1217-47d1-85c9-41c440381bab",
+          "c694da84-e725-4d60-95fd-db06adf27884"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": true,
+          "partial": false,
+          "recall": 1.0,
+          "complete_rank": 5
+        },
+        "block5_selected": [
+          "fbb59a42-1217-47d1-85c9-41c440381bab",
+          "7239888d-6b34-417a-bb1d-4da08ebb5b67",
+          "d70d0769-76c6-4c6d-ac4c-b40ea5b7d3ef",
+          "5cdcbb2d-9f21-4ee0-a3b9-4b3680ee75bc",
+          "c694da84-e725-4d60-95fd-db06adf27884",
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "2f06507a-fe73-40e8-a696-d26be29d691d",
+          "caa68e8c-4b5b-4f87-b702-8c2d54d1ffe2",
+          "7d00a0c1-7c45-447a-951e-285cf78edfd1",
+          "34f2e2e3-b5ec-48cb-97c8-c48a68b1ba91"
+        ],
+        "block6_status": "INSUFFICIENT_EVIDENCE",
+        "citations": []
+      },
+      "pieces": [
+        {
+          "chunk_id": "fbb59a42-1217-47d1-85c9-41c440381bab",
+          "ranks": {
+            "dense_rank": 1,
+            "dense_score": 0.8571140510703941,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 1,
+            "fusion_score": 0.01639344262295082,
+            "production_final_rank": 1,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "d51896d7-2bee-4d00-af11-62396a03e234",
+            "parent_unit_id": "161ecdeb-140c-4ca5-b601-c85bfcdd8c32",
+            "unit_type": "CLAUSE",
+            "unit_number": "1",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 60,
+            "page_end": 60,
+            "article_id": "161ecdeb-140c-4ca5-b601-c85bfcdd8c32"
+          }
+        },
+        {
+          "chunk_id": "c694da84-e725-4d60-95fd-db06adf27884",
+          "ranks": {
+            "dense_rank": 5,
+            "dense_score": 0.8526792701865112,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 5,
+            "fusion_score": 0.015384615384615385,
+            "production_final_rank": 5,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "3a51fa00-8862-4553-90fa-908cf9bbbabd",
+            "parent_unit_id": "3f6924ca-5cda-4075-b914-8fd75f3a4917",
+            "unit_type": "CLAUSE",
+            "unit_number": "4",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 59,
+            "page_end": 60,
+            "article_id": "3f6924ca-5cda-4075-b914-8fd75f3a4917"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 34,
+        "correct_document_candidates_top10": 9,
+        "required_within_document_ranks": {
+          "fbb59a42-1217-47d1-85c9-41c440381bab": 1,
+          "c694da84-e725-4d60-95fd-db06adf27884": 5
+        },
+        "dense_score_distribution": {
+          "min": 0.8304192029930111,
+          "max": 0.8571140510703941,
+          "mean": 0.8415936446923764
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.010309278350515464,
+          "max": 0.01639344262295082,
+          "mean": 0.012871626268362987
+        },
+        "competing_unit_types_top10": {
+          "CLAUSE": 4,
+          "PREAMBLE": 1,
+          "POINT": 4
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    },
+    {
+      "case_id": "v2_cross_document_effective_dates",
+      "category": "MULTI_DOCUMENT_EVIDENCE",
+      "question": "So sánh ngày hiệu lực của Thông tư về thực hành công tác xã hội và Thông tư 40/2026/TT-NHNN: văn bản nào có hiệu lực trước?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+        ]
+      ],
+      "baseline": {
+        "retrieval": {
+          "complete": true,
+          "partial": false,
+          "recall": 1.0,
+          "complete_rank": 4
+        },
+        "block5_selected": [
+          "425f59be-f2fa-49f4-acb7-461cb0769b50",
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+          "fff91e5d-f828-4bc3-bf45-3471393dc391",
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "932b1b44-40ae-44d4-958b-05230449c7ae",
+          "ff57c879-4c67-4a7b-b550-6c2b373955be",
+          "9406cd83-efed-4c66-845b-f008e2f16d56",
+          "5face032-faa3-4b38-a5c8-35072a34adda",
+          "783aac1c-9c44-4095-a63a-6adc9ba0e209",
+          "fb2b69bb-edab-45b0-a56d-7b6248445757"
+        ],
+        "block6_status": "COMPLETED",
+        "citations": [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+        ]
+      },
+      "pieces": [
+        {
+          "chunk_id": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "ranks": {
+            "dense_rank": 4,
+            "dense_score": 0.8613932554668353,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 4,
+            "fusion_score": 0.015625,
+            "production_final_rank": 4,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e",
+            "parent_unit_id": "cd1f9027-55b0-4064-8270-5aea1c8a4ec4",
+            "unit_type": "ARTICLE",
+            "unit_number": "17",
+            "unit_title": "Hiệu lực thi hành",
+            "level": 4,
+            "page_start": 7,
+            "page_end": 7,
+            "article_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e"
+          }
+        },
+        {
+          "chunk_id": "fc3ce1a3-88e0-46dd-a694-d3ab54512d68",
+          "ranks": {
+            "dense_rank": 2,
+            "dense_score": 0.8766475540433744,
+            "lexical_rank": null,
+            "lexical_score": null,
+            "fusion_rank": 2,
+            "fusion_score": 0.016129032258064516,
+            "production_final_rank": 2,
+            "dense_top_10": true,
+            "dense_top_20": true,
+            "dense_top_30": true,
+            "dense_top_50": true,
+            "lexical_top_10": false,
+            "lexical_top_20": false,
+            "lexical_top_30": false,
+            "lexical_top_50": false,
+            "fused_top_10": true,
+            "fused_top_15": true,
+            "fused_top_20": true,
+            "fused_top_30": true,
+            "fused_top_50": true
+          },
+          "labels": [
+            "FOUND_FINAL_TOP10",
+            "FOUND_DENSE_POOL_ONLY",
+            "NOT_IN_LEXICAL_TOP50"
+          ],
+          "unit": {
+            "legal_unit_id": "ca9fa8fe-bdbd-4fc8-ae12-9aded677956a",
+            "parent_unit_id": "dd28cd00-4f78-436b-81e0-91b42809e859",
+            "unit_type": "CLAUSE",
+            "unit_number": "1",
+            "unit_title": "",
+            "level": 5,
+            "page_start": 11,
+            "page_end": 11,
+            "article_id": "dd28cd00-4f78-436b-81e0-91b42809e859"
+          }
+        }
+      ],
+      "document_analysis": {
+        "correct_document_in_top10": true,
+        "correct_document_candidates_top50": 34,
+        "correct_document_candidates_top10": 9,
+        "required_within_document_ranks": {
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e": 4,
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68": 2
+        },
+        "dense_score_distribution": {
+          "min": 0.8417799755728304,
+          "max": 0.8777626898571685,
+          "mean": 0.8502092292485856
+        },
+        "lexical_score_distribution": null,
+        "fusion_score_distribution": {
+          "min": 0.010101010101010102,
+          "max": 0.01639344262295082,
+          "mean": 0.012797555062229503
+        },
+        "competing_unit_types_top10": {
+          "ARTICLE": 3,
+          "CLAUSE": 3,
+          "POINT": 2,
+          "PREAMBLE": 1
+        },
+        "discrimination": "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION"
+      }
+    }
+  ]
+}

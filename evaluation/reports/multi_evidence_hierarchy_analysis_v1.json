@@ -1,0 +1,625 @@
+{
+  "report_id": "multi_evidence_hierarchy_analysis_v1",
+  "dataset_sha256": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+  "relationship_counts": {
+    "ADJACENT_LEGAL_UNIT": 6,
+    "SAME_ARTICLE": 6,
+    "SAME_DOCUMENT": 8,
+    "SIBLING": 6,
+    "CROSS_DOCUMENT": 1
+  },
+  "recovery_ceiling": {
+    "missing_piece_count": 16,
+    "potentially_recoverable": 12,
+    "not_recoverable": 4,
+    "rate": 0.75
+  },
+  "document_discrimination_counts": {
+    "INTRA_DOCUMENT_LEGAL_UNIT_DISCRIMINATION": 9
+  },
+  "cases": [
+    {
+      "case_id": "v2_social_scope",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "36343b2e-1725-4697-877b-9e33526db4d2": {
+          "legal_unit_id": "95f7c696-c9fd-43a6-a56a-052cb5b38f53",
+          "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+          "unit_type": "CLAUSE",
+          "unit_number": "1",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+        },
+        "db824433-8240-447b-89a8-0d20a1a88349": {
+          "legal_unit_id": "4aec1321-623f-47a9-b47a-3ae68c9a2d9e",
+          "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+          "unit_type": "CLAUSE",
+          "unit_number": "2",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+        },
+        "69bf65cc-80b1-41d1-86a3-8714b13f2924": {
+          "legal_unit_id": "9f185fc4-8d9a-4304-9b49-d4c981157a0a",
+          "parent_unit_id": "6db49994-6aad-4f6e-a642-ee70701e6591",
+          "unit_type": "CLAUSE",
+          "unit_number": "3",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "6db49994-6aad-4f6e-a642-ee70701e6591"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "36343b2e-1725-4697-877b-9e33526db4d2",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "db824433-8240-447b-89a8-0d20a1a88349",
+          "anchor_relationships": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "69bf65cc-80b1-41d1-86a3-8714b13f2924",
+          "anchor_relationships": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE"
+          ],
+          "potentially_hierarchy_recoverable": true
+        }
+      ]
+    },
+    {
+      "case_id": "v2_social_applicable_groups",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "23d10632-6b5f-4e82-a9eb-a91f3f1fa878": {
+          "legal_unit_id": "ca207212-e495-47d5-ab72-2b83eb6eaced",
+          "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+          "unit_type": "CLAUSE",
+          "unit_number": "1",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+        },
+        "f160106c-f98a-4935-b076-16389967e868": {
+          "legal_unit_id": "f7fd5dab-c339-4541-9e1b-b7d3fce9de55",
+          "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+          "unit_type": "CLAUSE",
+          "unit_number": "2",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+        },
+        "d3421519-8b8b-44a9-b4b1-25a0c47b8515": {
+          "legal_unit_id": "da1d04a8-7a1a-48f7-9b1d-1b499fe265de",
+          "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+          "unit_type": "CLAUSE",
+          "unit_number": "3",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+        },
+        "b5d4ed5c-0914-4e73-97af-d655047006bb": {
+          "legal_unit_id": "9b8bf3eb-71f4-4f07-88fb-4f012b136e59",
+          "parent_unit_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2",
+          "unit_type": "CLAUSE",
+          "unit_number": "4",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "bc0fb5b4-882d-4afa-a746-fe5c86dc4bd2"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "23d10632-6b5f-4e82-a9eb-a91f3f1fa878",
+          "anchor_relationships": [
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [],
+          "potentially_hierarchy_recoverable": false
+        },
+        {
+          "chunk_id": "f160106c-f98a-4935-b076-16389967e868",
+          "anchor_relationships": [
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [],
+          "potentially_hierarchy_recoverable": false
+        },
+        {
+          "chunk_id": "d3421519-8b8b-44a9-b4b1-25a0c47b8515",
+          "anchor_relationships": [
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [],
+          "potentially_hierarchy_recoverable": false
+        },
+        {
+          "chunk_id": "b5d4ed5c-0914-4e73-97af-d655047006bb",
+          "anchor_relationships": [
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [],
+          "potentially_hierarchy_recoverable": false
+        }
+      ]
+    },
+    {
+      "case_id": "v2_social_practice_content",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "77d1986c-82a4-4ef3-a215-08e1c2250d9d": {
+          "legal_unit_id": "d0ba484b-147d-4910-b8d0-86850faeb618",
+          "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+          "unit_type": "POINT",
+          "unit_number": "a",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 2,
+          "page_end": 2,
+          "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+        },
+        "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf": {
+          "legal_unit_id": "b1e9febc-3284-4a93-9862-a64978722613",
+          "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+          "unit_type": "POINT",
+          "unit_number": "b",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 2,
+          "page_end": 2,
+          "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+        },
+        "e044e3d1-b910-4d49-ab4e-10b049acc42a": {
+          "legal_unit_id": "f6702837-5d07-4fa3-a547-1a12fd5828a3",
+          "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+          "unit_type": "POINT",
+          "unit_number": "c",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 2,
+          "page_end": 2,
+          "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+        },
+        "aebafad2-e8a0-49e6-82e0-2cd27270e54d": {
+          "legal_unit_id": "6450aff8-08d9-4132-aa89-d899473f22bf",
+          "parent_unit_id": "0d357c5e-98c5-44ff-9c3f-c95200e8c6cd",
+          "unit_type": "POINT",
+          "unit_number": "d",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 2,
+          "page_end": 2,
+          "article_id": "d7216f7a-df54-48e0-a146-0afc29cfc1d9"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "77d1986c-82a4-4ef3-a215-08e1c2250d9d",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        }
+      ]
+    },
+    {
+      "case_id": "v2_social_effective_transition",
+      "set_relationships": [
+        "SAME_DOCUMENT"
+      ],
+      "required_units": {
+        "70100659-7c0f-4617-ad9f-7ce2a3b44f2e": {
+          "legal_unit_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e",
+          "parent_unit_id": "cd1f9027-55b0-4064-8270-5aea1c8a4ec4",
+          "unit_type": "ARTICLE",
+          "unit_number": "17",
+          "unit_title": "Hiệu lực thi hành",
+          "level": 4,
+          "page_start": 7,
+          "page_end": 7,
+          "article_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e"
+        },
+        "ff57c879-4c67-4a7b-b550-6c2b373955be": {
+          "legal_unit_id": "59ef60bf-2069-4ca0-9bcf-4668da864262",
+          "parent_unit_id": "e98f5131-e86a-4cb5-a1b5-8bf3ad3d4b0e",
+          "unit_type": "CLAUSE",
+          "unit_number": "1",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 7,
+          "page_end": 7,
+          "article_id": "e98f5131-e86a-4cb5-a1b5-8bf3ad3d4b0e"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        }
+      ]
+    },
+    {
+      "case_id": "v2_bank_scope_ratios",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "48109bc6-e5cb-4c25-89be-b6ed2d85e066": {
+          "legal_unit_id": "9719bc4b-93a7-4ff1-9403-72e69ee03c35",
+          "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+          "unit_type": "POINT",
+          "unit_number": "a",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+        },
+        "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2": {
+          "legal_unit_id": "ce883772-9824-40ee-8631-902c5b24712a",
+          "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+          "unit_type": "POINT",
+          "unit_number": "b",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+        },
+        "5faec617-7237-4dc8-a01a-bc4ade33ac31": {
+          "legal_unit_id": "6f682fce-7151-472e-a3bc-cd30e4521636",
+          "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+          "unit_type": "POINT",
+          "unit_number": "c",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+        },
+        "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a": {
+          "legal_unit_id": "ce74388c-8090-4faa-8c26-82fd35b01d1d",
+          "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+          "unit_type": "POINT",
+          "unit_number": "d",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+        },
+        "30e14c4c-d8fd-4d68-9382-4d96bef43392": {
+          "legal_unit_id": "7cdb85c2-bec6-4e17-a0a2-19fcdd604466",
+          "parent_unit_id": "42100a81-14e5-4a66-a9cc-bd87206b2d0e",
+          "unit_type": "POINT",
+          "unit_number": "đ",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 1,
+          "page_end": 1,
+          "article_id": "f28be791-d320-42c7-a0f7-f295a3de8fae"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "anchor_relationships": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "anchor_relationships": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "30e14c4c-d8fd-4d68-9382-4d96bef43392",
+          "anchor_relationships": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT",
+            "SIBLING"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SIBLING"
+          ],
+          "potentially_hierarchy_recoverable": true
+        }
+      ]
+    },
+    {
+      "case_id": "v2_bank_loan_limit_exceptions",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "022d0872-1a53-43ba-bc11-a4474db0cea9": {
+          "legal_unit_id": "a06b8204-0acf-441a-9545-dc31dc1a034e",
+          "parent_unit_id": "432411d9-d0b1-4aff-84bf-53eb378d3a5f",
+          "unit_type": "POINT",
+          "unit_number": "a",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 10,
+          "page_end": 10,
+          "article_id": "2d28a8ee-d729-415c-815f-2678eda10565"
+        },
+        "e57b1bc6-2105-4404-bda1-4472cf6e2574": {
+          "legal_unit_id": "f38fab58-fd78-4a50-9caa-6e8bf577daa9",
+          "parent_unit_id": "432411d9-d0b1-4aff-84bf-53eb378d3a5f",
+          "unit_type": "POINT",
+          "unit_number": "b",
+          "unit_title": "",
+          "level": 6,
+          "page_start": 11,
+          "page_end": 11,
+          "article_id": "2d28a8ee-d729-415c-815f-2678eda10565"
+        }
+      },
+      "missing_piece_recovery": [
+        {
+          "chunk_id": "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "anchor_relationships": [
+            "ADJACENT_LEGAL_UNIT",
+            "CROSS_DOCUMENT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [
+            "ADJACENT_LEGAL_UNIT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE"
+          ],
+          "potentially_hierarchy_recoverable": true
+        },
+        {
+          "chunk_id": "e57b1bc6-2105-4404-bda1-4472cf6e2574",
+          "anchor_relationships": [
+            "CROSS_DOCUMENT",
+            "PARENT_CHILD",
+            "SAME_ARTICLE",
+            "SAME_DOCUMENT"
+          ],
+          "recoverable_relations": [
+            "PARENT_CHILD",
+            "SAME_ARTICLE"
+          ],
+          "potentially_hierarchy_recoverable": true
+        }
+      ]
+    },
+    {
+      "case_id": "v2_bank_illiquidity_reporting",
+      "set_relationships": [
+        "ADJACENT_LEGAL_UNIT",
+        "SAME_ARTICLE",
+        "SAME_DOCUMENT",
+        "SIBLING"
+      ],
+      "required_units": {
+        "7dd56c09-f816-4d05-8e98-d5b910bbe7a3": {
+          "legal_unit_id": "07474408-fc87-4de9-8417-cddcb7770408",
+          "parent_unit_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4",
+          "unit_type": "CLAUSE",
+          "unit_number": "2",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 11,
+          "page_end": 11,
+          "article_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4"
+        },
+        "bbae4048-603a-45ab-9bd2-fbdfc879045b": {
+          "legal_unit_id": "19f4b2ae-bc02-40bf-a16a-8a1c42cb6f24",
+          "parent_unit_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4",
+          "unit_type": "CLAUSE",
+          "unit_number": "3",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 11,
+          "page_end": 11,
+          "article_id": "2e10e327-d5ab-4058-bcd8-da81c6e423b4"
+        }
+      },
+      "missing_piece_recovery": []
+    },
+    {
+      "case_id": "v2_civil_effect_and_repeal",
+      "set_relationships": [
+        "SAME_DOCUMENT"
+      ],
+      "required_units": {
+        "fbb59a42-1217-47d1-85c9-41c440381bab": {
+          "legal_unit_id": "d51896d7-2bee-4d00-af11-62396a03e234",
+          "parent_unit_id": "161ecdeb-140c-4ca5-b601-c85bfcdd8c32",
+          "unit_type": "CLAUSE",
+          "unit_number": "1",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 60,
+          "page_end": 60,
+          "article_id": "161ecdeb-140c-4ca5-b601-c85bfcdd8c32"
+        },
+        "c694da84-e725-4d60-95fd-db06adf27884": {
+          "legal_unit_id": "3a51fa00-8862-4553-90fa-908cf9bbbabd",
+          "parent_unit_id": "3f6924ca-5cda-4075-b914-8fd75f3a4917",
+          "unit_type": "CLAUSE",
+          "unit_number": "4",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 59,
+          "page_end": 60,
+          "article_id": "3f6924ca-5cda-4075-b914-8fd75f3a4917"
+        }
+      },
+      "missing_piece_recovery": []
+    },
+    {
+      "case_id": "v2_cross_document_effective_dates",
+      "set_relationships": [
+        "CROSS_DOCUMENT"
+      ],
+      "required_units": {
+        "70100659-7c0f-4617-ad9f-7ce2a3b44f2e": {
+          "legal_unit_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e",
+          "parent_unit_id": "cd1f9027-55b0-4064-8270-5aea1c8a4ec4",
+          "unit_type": "ARTICLE",
+          "unit_number": "17",
+          "unit_title": "Hiệu lực thi hành",
+          "level": 4,
+          "page_start": 7,
+          "page_end": 7,
+          "article_id": "5dc1f785-e776-4296-8984-cc9e6dd38c3e"
+        },
+        "fc3ce1a3-88e0-46dd-a694-d3ab54512d68": {
+          "legal_unit_id": "ca9fa8fe-bdbd-4fc8-ae12-9aded677956a",
+          "parent_unit_id": "dd28cd00-4f78-436b-81e0-91b42809e859",
+          "unit_type": "CLAUSE",
+          "unit_number": "1",
+          "unit_title": "",
+          "level": 5,
+          "page_start": 11,
+          "page_end": 11,
+          "article_id": "dd28cd00-4f78-436b-81e0-91b42809e859"
+        }
+      },
+      "missing_piece_recovery": []
+    }
+  ]
+}

@@ -1,0 +1,1076 @@
+{
+  "dataset_id": "legal_eval_v2",
+  "version": "2.0.0",
+  "description": "Grounded scale/generalization baseline over the user-supplied, text-native Legal Corpus V2; no quality tuning.",
+  "cases": [
+    {
+      "case_id": "v2_social_scope",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư về thực hành công tác xã hội quy định chi tiết ba nhóm nội dung nào của Nghị định 110/2024/NĐ-CP?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "36343b2e-1725-4697-877b-9e33526db4d2",
+          "db824433-8240-447b-89a8-0d20a1a88349",
+          "69bf65cc-80b1-41d1-86a3-8714b13f2924"
+        ]
+      ],
+      "source_reference": "Thực hành công tác xã hội tại điểm b khoản 1 Điều 45",
+      "notes": "Complete answer requires all three scope items."
+    },
+    {
+      "case_id": "v2_social_applicable_groups",
+      "category": "MULTI_EVIDENCE",
+      "question": "Bốn nhóm đối tượng nào thuộc phạm vi áp dụng của Thông tư về thực hành và cập nhật kiến thức công tác xã hội?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "23d10632-6b5f-4e82-a9eb-a91f3f1fa878",
+          "f160106c-f98a-4935-b076-16389967e868",
+          "d3421519-8b8b-44a9-b4b1-25a0c47b8515",
+          "b5d4ed5c-0914-4e73-97af-d655047006bb"
+        ]
+      ],
+      "source_reference": "Cơ sở thực hành công tác xã hội",
+      "notes": "Complete answer requires four separately chunked groups."
+    },
+    {
+      "case_id": "v2_social_practice_content",
+      "category": "MULTI_EVIDENCE",
+      "question": "Nội dung thực hành công tác xã hội bao gồm những nhóm năng lực và kỹ năng nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "77d1986c-82a4-4ef3-a215-08e1c2250d9d",
+          "bb5ff3eb-1831-4df5-a40f-0b8cfb4444bf",
+          "e044e3d1-b910-4d49-ab4e-10b049acc42a",
+          "aebafad2-e8a0-49e6-82e0-2cd27270e54d"
+        ]
+      ],
+      "source_reference": "Đạo đức nghề nghiệp công tác xã hội",
+      "notes": "The fourth chunk also contains the coordination-skill item."
+    },
+    {
+      "case_id": "v2_social_university_duration",
+      "category": "SAME_ARTICLE_NUMBER",
+      "question": "Theo Điều 4 của Thông tư về công tác xã hội, người có trình độ đại học trở lên phải thực hành tối thiểu bao lâu và bao nhiêu giờ?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "eaf350d9-641f-4a7d-adbe-080973e8f292"
+        ]
+      ],
+      "source_reference": "trình độ đại học trở lên từ đủ 12 tháng",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_college_duration",
+      "category": "SEMANTIC_PARAPHRASE",
+      "question": "Người có trình độ cao đẳng cần hoàn thành thời lượng thực hành công tác xã hội thế nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "a8a82180-44b8-4fc5-a534-c17f28be253e"
+        ]
+      ],
+      "source_reference": "trình độ cao đẳng từ đủ 09 tháng",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_intermediate_duration",
+      "category": "KEYWORD_IDENTIFIER",
+      "question": "Mốc 06 tháng và 500 giờ tại Điều 4 áp dụng cho trình độ nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "126ce698-2e03-4ad1-b724-c881d09b56c8"
+        ]
+      ],
+      "source_reference": "trình độ trung cấp từ đủ 06 tháng",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_training_sessions",
+      "category": "DIRECT_FACT",
+      "question": "Trong thời gian thực hành, tổng thời lượng tập huấn là bao nhiêu buổi và mỗi buổi bao nhiêu tiết?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "cf38602e-3071-4e35-b4f5-532752cf0b86"
+        ]
+      ],
+      "source_reference": "tổng thời lượng là 10 buổi (mỗi buổi 04 tiết học",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_plan_deadline",
+      "category": "DIRECT_FACT",
+      "question": "Cơ sở thực hành phải xây dựng kế hoạch hướng dẫn thực hành trước ngày nào hằng năm?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "11944445-90ec-4013-81a0-952889e8a837"
+        ]
+      ],
+      "source_reference": "xây dựng kế hoạch hướng dẫn thực hành trước ngày 15 tháng 01 hằng năm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_plan_submission_filter",
+      "category": "DOCUMENT_FILTER",
+      "question": "Theo Thông tư về công tác xã hội, kế hoạch hướng dẫn thực hành phải gửi cơ quan chuyên môn về y tế cấp tỉnh trước ngày nào?",
+      "answerable": true,
+      "document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "76a4ed3a-5929-4a51-8d76-b58792f9a277"
+        ]
+      ],
+      "source_reference": "trước ngày 01 tháng 02 hằng năm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_multiple_instructors",
+      "category": "SEMANTIC_PARAPHRASE",
+      "question": "Khi một người thực hành có nhiều người hướng dẫn, người đứng đầu cơ sở phải phân công ra sao?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "5face032-faa3-4b38-a5c8-35072a34adda"
+        ]
+      ],
+      "source_reference": "phải phân công rõ phạm vi hướng dẫn và thời gian hướng dẫn thực hành cụ thể",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_program_review",
+      "category": "DEEPER_RANK",
+      "question": "Chương trình và tài liệu cập nhật kiến thức công tác xã hội phải được rà soát định kỳ tối thiểu bao lâu một lần?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "1f76cce4-ecaa-483f-aa1c-731b146fae51"
+        ]
+      ],
+      "source_reference": "được rà soát, cập nhật định kỳ tối thiểu 03 năm một lần",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_course_modes",
+      "category": "SAME_TERM_DIFFERENT_DOCUMENT",
+      "question": "Khóa bồi dưỡng ngắn hạn về công tác xã hội có thể tổ chức theo những hình thức nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "d390e530-9beb-41d8-90a3-be46d512a08b"
+        ]
+      ],
+      "source_reference": "Hình thức tổ chức: trực tiếp hoặc trực tuyến hoặc trực tiếp kết hợp trực tuyến",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_foreign_training",
+      "category": "DIRECT_FACT",
+      "question": "Người hành nghề có thể dùng khóa đào tạo ở nước ngoài để cập nhật kiến thức công tác xã hội không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "c42867c7-06ce-4612-8c24-445964afe9d7"
+        ]
+      ],
+      "source_reference": "tham gia các khóa đào tạo, bồi dưỡng ở nước ngoài về công tác xã hội",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_research_credit",
+      "category": "DEEPER_RANK",
+      "question": "Những hoạt động nghiên cứu, sáng kiến hoặc bài báo nào có thể được tính là cập nhật kiến thức công tác xã hội?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "d1a2ec6a-ad32-4197-a0c4-0a1a1e1185fe"
+        ]
+      ],
+      "source_reference": "chủ trì hoặc tham gia thực hiện nhiệm vụ khoa học, công nghệ và đổi mới sáng tạo",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_thesis_update",
+      "category": "KEYWORD_IDENTIFIER",
+      "question": "Việc hướng dẫn luận văn, luận án được tính là hình thức cập nhật kiến thức khi đáp ứng điều kiện gì?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "5b412ee3-9c52-44ac-a7e0-f76145c10b62"
+        ]
+      ],
+      "source_reference": "tham gia hướng dẫn luận văn, luận án",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_confidentiality",
+      "category": "DIRECT_FACT",
+      "question": "Người thực hành phải bảo đảm an toàn và giữ bí mật thông tin cho những đối tượng nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "1beae555-6f5c-4b83-ab57-911a2ea01d2b"
+        ]
+      ],
+      "source_reference": "Bảo đảm an toàn cho đối tượng được cung cấp dịch vụ công tác xã hội",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_confirmation_reporting",
+      "category": "DEEPER_RANK",
+      "question": "Sau khi cấp giấy xác nhận thực hành, cơ sở phải gửi danh sách đến cơ quan chuyên môn về y tế trong bao nhiêu ngày làm việc?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "ff57c879-4c67-4a7b-b550-6c2b373955be"
+        ]
+      ],
+      "source_reference": "Trong thời gian 03 ngày làm việc, kể từ ngày",
+      "notes": null
+    },
+    {
+      "case_id": "v2_social_effective_transition",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư về công tác xã hội có hiệu lực ngày nào và người đã có giấy xác nhận thực hành có phải thực hành lại không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "ff57c879-4c67-4a7b-b550-6c2b373955be"
+        ]
+      ],
+      "source_reference": "có hiệu lực từ ngày 25 tháng 8 năm 2026",
+      "notes": "Requires effective-date and transition evidence."
+    },
+    {
+      "case_id": "v2_bank_scope_ratios",
+      "category": "MULTI_EVIDENCE",
+      "question": "Thông tư 40/2026/TT-NHNN điều chỉnh năm nhóm hạn chế, giới hạn và tỷ lệ an toàn chính nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "48109bc6-e5cb-4c25-89be-b6ed2d85e066",
+          "283fc8f6-8d90-4a6b-8a8c-d7f31d8935d2",
+          "5faec617-7237-4dc8-a01a-bc4ade33ac31",
+          "5c3fd83c-0fb0-4cd7-9d52-b346c203c28a",
+          "30e14c4c-d8fd-4d68-9382-4d96bef43392"
+        ]
+      ],
+      "source_reference": "Tỷ lệ an toàn vốn tối thiểu",
+      "notes": "Complete answer requires all five scope items."
+    },
+    {
+      "case_id": "v2_bank_special_control_exception",
+      "category": "DIRECT_FACT",
+      "question": "Quỹ tín dụng nhân dân được kiểm soát đặc biệt có phải tuân thủ các Điều 136, 137, 138 và khoản 3 Điều 144 không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "86532d17-b3a6-4663-824d-d66bff3e828a"
+        ]
+      ],
+      "source_reference": "được kiểm soát đặc biệt không phải tuân thủ",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_actual_capital_formula",
+      "category": "SEMANTIC_PARAPHRASE",
+      "question": "Giá trị thực của vốn điều lệ được tính từ vốn điều lệ, lợi nhuận và lỗ lũy kế như thế nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "aae40b26-6c1a-4ed3-9a44-cfd13fdd545d"
+        ]
+      ],
+      "source_reference": "được xác định bằng vốn điều lệ cộng lợi nhuận lũy kế chưa phân phối, trừ lỗ lũy kế chưa xử lý",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_low_capital_report",
+      "category": "DEEPER_RANK",
+      "question": "Khi giá trị thực của vốn điều lệ thấp hơn vốn pháp định, quỹ phải báo cáo kèm phương án xử lý trong tối đa bao nhiêu ngày?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "932b1b44-40ae-44d4-958b-05230449c7ae"
+        ]
+      ],
+      "source_reference": "Trong thời gian tối đa 30 ngày kể từ ngày giá trị thực của vốn điều lệ giảm thấp hơn mức vốn pháp định",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_below_80_measures",
+      "category": "PARTIAL_SUPPORT",
+      "question": "Khi giá trị thực của vốn điều lệ xuống dưới 80% vốn pháp định, chi nhánh Ngân hàng Nhà nước có thể áp dụng những nhóm biện pháp nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "31b2230f-aa0e-47e3-86a7-2c2f3d162c97"
+        ]
+      ],
+      "source_reference": "giá trị thực của vốn điều lệ giảm xuống dưới 80% của mức vốn pháp định",
+      "notes": "One long chunk contains the measured list; answer quality still requires careful grounding."
+    },
+    {
+      "case_id": "v2_bank_min_capital_ratio_filter",
+      "category": "DOCUMENT_FILTER",
+      "question": "Theo Thông tư 40/2026/TT-NHNN, tỷ lệ an toàn vốn tối thiểu quỹ tín dụng nhân dân phải duy trì là bao nhiêu?",
+      "answerable": true,
+      "document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "e39582dd-80a7-491b-9712-4bcbb672bac8"
+        ]
+      ],
+      "source_reference": "phải duy trì tỷ lệ an toàn vốn tối thiểu 8%",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_zero_risk_assets",
+      "category": "KEYWORD_IDENTIFIER",
+      "question": "Tiền mặt và tiền gửi tại Ngân hàng Nhà nước thuộc nhóm tài sản có hệ số rủi ro bao nhiêu phần trăm?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "c100dd1c-c11c-4d18-9ecc-3e1138a106ae"
+        ]
+      ],
+      "source_reference": "Nhóm tài sản có hệ số rủi ro 0% bao gồm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_fifty_risk_assets",
+      "category": "SAME_ARTICLE_NUMBER",
+      "question": "Theo Điều 8 của Thông tư 40, khoản vay được bảo đảm toàn bộ bằng nhà ở hoặc quyền sử dụng đất có hệ số rủi ro bao nhiêu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "06d7e243-1334-494c-99be-c94f54ce5206"
+        ]
+      ],
+      "source_reference": "Nhóm tài sản có hệ số rủi ro 50%",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_liquidity_100",
+      "category": "DIRECT_FACT",
+      "question": "Quỹ tín dụng nhân dân phải duy trì tỷ lệ khả năng chi trả cho ngày làm việc tiếp theo và bảy ngày tiếp theo ở mức tối thiểu nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "547434ba-581e-4ade-b49b-37a05f625d2c"
+        ]
+      ],
+      "source_reference": "trong khoảng thời gian 7 (bảy) ngày làm việc tiếp theo tối thiểu bằng 100%",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_short_term_funding_30",
+      "category": "DIRECT_FACT",
+      "question": "Tỷ lệ nguồn vốn ngắn hạn dùng để cho vay trung và dài hạn tối đa là bao nhiêu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "10f06949-310e-4f60-bdd4-b9ff4fd5d4c2"
+        ]
+      ],
+      "source_reference": "tối đa là 30%",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_ratio_zero_condition",
+      "category": "SEMANTIC_PARAPHRASE",
+      "question": "Khi tổng dư nợ trung, dài hạn nhỏ hơn tổng nguồn vốn trung, dài hạn thì tỷ lệ nguồn vốn ngắn hạn được tính bằng bao nhiêu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "1618875f-e84f-43e3-b414-c46d5650baac"
+        ]
+      ],
+      "source_reference": "tỷ lệ này có giá trị bằng 0",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_deposit_multiple",
+      "category": "DIRECT_FACT",
+      "question": "Tổng mức nhận tiền gửi của quỹ tín dụng nhân dân không được vượt quá bao nhiêu lần vốn chủ sở hữu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "8ee8ecfc-84c3-4698-8e91-e26fe15cc430"
+        ]
+      ],
+      "source_reference": "không được vượt quá 20 lần",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_board_loan_threshold",
+      "category": "DEEPER_RANK",
+      "question": "Khoản cho vay đối với người thẩm định hoặc người xét duyệt phải được Hội đồng quản trị thông qua từ mức giá trị nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "5e06c2be-ef51-475a-8190-5ab9e6e1f404"
+        ]
+      ],
+      "source_reference": "có giá trị từ 100 triệu đồng trở lên",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_member_legal_entity_cap",
+      "category": "DOCUMENT_DISAMBIGUATION",
+      "question": "Dư nợ cho vay tối đa đối với một thành viên là pháp nhân được giới hạn theo các khoản nào của pháp nhân đó tại quỹ?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "9e2bf274-9f66-40bf-9989-27fa66ca730c"
+        ]
+      ],
+      "source_reference": "không được vượt quá tổng số vốn góp và số dư tiền gửi của pháp nhân đó",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_nonmember_cap",
+      "category": "DOCUMENT_DISAMBIGUATION",
+      "question": "Dư nợ của khách hàng không phải thành viên bị giới hạn theo số dư nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "cea9699e-1fde-488a-909a-4da59dd2daa2"
+        ]
+      ],
+      "source_reference": "không phải là thành viên không được vượt quá số dư của hợp đồng tiền gửi, sổ tiết kiệm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_loan_limit_exceptions",
+      "category": "MULTI_EVIDENCE",
+      "question": "Hai trường hợp nào không áp dụng giới hạn cho vay tại điểm b khoản 1 Điều 12?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "022d0872-1a53-43ba-bc11-a4474db0cea9",
+          "e57b1bc6-2105-4404-bda1-4472cf6e2574"
+        ]
+      ],
+      "source_reference": "Khoản cho vay từ nguồn vốn ủy thác",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_risk_of_illiquidity",
+      "category": "KEYWORD_IDENTIFIER",
+      "question": "Mức thiếu hụt và thời gian liên tục nào làm quỹ bị coi là có nguy cơ mất khả năng chi trả?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "afbea721-e647-42e1-ba1c-c83020257114"
+        ]
+      ],
+      "source_reference": "thiếu hụt Tài sản “Có” có thể thanh toán ngay ở mức 20% trở lên",
+      "notes": null
+    },
+    {
+      "case_id": "v2_bank_illiquidity_reporting",
+      "category": "MULTI_EVIDENCE",
+      "question": "Khi nào quỹ được coi là mất khả năng chi trả và khi đó phải báo cáo, thông báo cho những cơ quan nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "7dd56c09-f816-4d05-8e98-d5b910bbe7a3",
+          "bbae4048-603a-45ab-9bd2-fbdfc879045b"
+        ]
+      ],
+      "source_reference": "không thực hiện thanh toán nghĩa vụ nợ trong thời gian 01 tháng",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_scope",
+      "category": "DOCUMENT_DISAMBIGUATION",
+      "question": "Văn bản hợp nhất 10/2026/VBHN-NĐ-BNV quy định phạm vi nào?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "7239888d-6b34-417a-bb1d-4da08ebb5b67"
+        ]
+      ],
+      "source_reference": "quy định về tuyển dụng, sử dụng và quản lý công chức",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_training_nondiscrimination",
+      "category": "SAME_ARTICLE_NUMBER",
+      "question": "Theo Điều 4 của văn bản về công chức, điều kiện dự tuyển có được phân biệt loại hình đào tạo không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "9d21598a-4da3-4728-930f-9df34353dd0e"
+        ]
+      ],
+      "source_reference": "không được phân biệt loại hình đào tạo",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_hard_area_commitment",
+      "category": "DIRECT_FACT",
+      "question": "Người cam kết tình nguyện làm việc ở vùng đặc biệt khó khăn phải cam kết tối thiểu bao nhiêu năm để thuộc nhóm xét tuyển?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "05e29cdf-8a64-41fa-a00e-0af50593f76c"
+        ]
+      ],
+      "source_reference": "tình nguyện làm việc từ đủ 05 năm trở lên",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_priority_75",
+      "category": "KEYWORD_IDENTIFIER",
+      "question": "Anh hùng Lực lượng vũ trang, Anh hùng Lao động và thương binh được cộng bao nhiêu điểm ưu tiên tuyển dụng?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "9b0665bf-80c3-4072-8985-ecfcb82d4de3"
+        ]
+      ],
+      "source_reference": "Được cộng 7,5 điểm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_priority_5",
+      "category": "NEAR_DUPLICATE_EVIDENCE",
+      "question": "Người dân tộc thiểu số và các nhóm sĩ quan, quân nhân nêu tại Điều 6 được cộng bao nhiêu điểm?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "ffe447b3-2333-4f42-a177-f0f6a0f89470"
+        ]
+      ],
+      "source_reference": "Được cộng 5 điểm vào kết quả điểm thi hoặc xét nghiệp vụ chuyên ngành",
+      "notes": "Distinguishes this near-parallel priority clause from the 7.5-point clause."
+    },
+    {
+      "case_id": "v2_civil_council_size",
+      "category": "DIRECT_FACT",
+      "question": "Hội đồng tuyển dụng công chức có bao nhiêu thành viên?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "fa4614ac-0200-4b4d-8768-3d4ea1acc787"
+        ]
+      ],
+      "source_reference": "Hội đồng tuyển dụng có 05 hoặc 07 thành viên",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_project_exam_time",
+      "category": "DEEPER_RANK",
+      "question": "Tổng thời gian chuẩn bị và bảo vệ Đề án trong thi tuyển không được vượt quá bao nhiêu phút?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "952f7566-7e52-4c24-a51c-b3cb821345ad"
+        ]
+      ],
+      "source_reference": "không quá 90 phút",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_exam_pass_score",
+      "category": "DIRECT_FACT",
+      "question": "Điểm thi nghiệp vụ chuyên ngành tối thiểu để trúng tuyển kỳ thi công chức là bao nhiêu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "ddef021c-20da-498b-b333-202b1362c1af"
+        ]
+      ],
+      "source_reference": "điểm thi nghiệp vụ chuyên ngành đạt từ 50 điểm trở lên",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_application_window",
+      "category": "DIRECT_FACT",
+      "question": "Thời hạn nhận Phiếu đăng ký dự tuyển công chức là bao nhiêu ngày?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "56d7bde3-a944-41de-a7ab-14b54c8ffa3f"
+        ]
+      ],
+      "source_reference": "Thời hạn nhận Phiếu đăng ký dự tuyển là 30 ngày",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_result_notice",
+      "category": "DEEPER_RANK",
+      "question": "Sau quyết định phê duyệt kết quả trúng tuyển, Hội đồng tuyển dụng phải công khai và gửi thông báo trong bao nhiêu ngày làm việc?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "bb12cce9-e325-4ee7-be00-e4acc8f85042"
+        ]
+      ],
+      "source_reference": "Chậm nhất là 02 ngày làm việc kể từ ngày có quyết định phê duyệt kết quả trúng tuyển",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_file_completion",
+      "category": "DIRECT_FACT",
+      "question": "Người trúng tuyển phải hoàn thiện hồ sơ trong bao nhiêu ngày kể từ ngày danh sách được công khai?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "cb791354-b8df-486b-8950-d1fa3baff522"
+        ]
+      ],
+      "source_reference": "Chậm nhất là 15 ngày kể từ ngày danh sách trúng tuyển được công khai",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_start_work",
+      "category": "DIRECT_FACT",
+      "question": "Người được tuyển dụng phải đến nhận việc trong bao nhiêu ngày kể từ khi nhận quyết định tuyển dụng?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "da9ae7e5-55b8-4981-8789-a64173b7fac4"
+        ]
+      ],
+      "source_reference": "Chậm nhất là 15 ngày kể từ ngày nhận được quyết định tuyển dụng",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_secondment_duration",
+      "category": "SEMANTIC_PARAPHRASE",
+      "question": "Thời gian biệt phái công chức thông thường tối đa là bao lâu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "23210ae2-b560-470e-b36f-16a994be16a7"
+        ]
+      ],
+      "source_reference": "Thời gian biệt phái công chức không quá 03 năm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_appointment_term",
+      "category": "SAME_TERM_DIFFERENT_DOCUMENT",
+      "question": "Mỗi lần bổ nhiệm chức vụ lãnh đạo, quản lý công chức thường có thời hạn bao lâu?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "b2aa4222-35b8-4ceb-ad11-a55fe1f9bdab"
+        ]
+      ],
+      "source_reference": "Thời hạn giữ chức vụ lãnh đạo, quản lý cho mỗi lần bổ nhiệm là 05 năm",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_rotation_duration",
+      "category": "DEEPER_RANK",
+      "question": "Một lần luân chuyển công chức kéo dài ít nhất bao nhiêu năm hoặc tháng?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "17c7c47a-8fe2-419f-8c4f-b9a2c68f14e6"
+        ]
+      ],
+      "source_reference": "Thời gian luân chuyển ít nhất 3 năm (36 tháng)",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_severance_half_month",
+      "category": "DIRECT_FACT",
+      "question": "Trường hợp tự nguyện thôi việc thuộc điểm a được trợ cấp bao nhiêu tháng tiền lương cho mỗi năm làm việc?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "d4ede7a2-a78a-419d-b81c-bd865c13755e"
+        ]
+      ],
+      "source_reference": "mỗi năm làm việc được trợ cấp một nửa tháng tiền lương",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_retirement_notice_filter",
+      "category": "DOCUMENT_FILTER",
+      "question": "Theo văn bản hợp nhất về công chức, thông báo nghỉ hưu phải được ban hành trước thời điểm nghỉ hưu bao lâu?",
+      "answerable": true,
+      "document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "e36f74dd-9a6c-4007-baf3-c72591fd9a15"
+        ]
+      ],
+      "source_reference": "Trước 06 tháng tính đến thời điểm nghỉ hưu",
+      "notes": null
+    },
+    {
+      "case_id": "v2_civil_effect_and_repeal",
+      "category": "MULTI_EVIDENCE",
+      "question": "Nghị định 170/2025/NĐ-CP có hiệu lực từ ngày nào và Nghị định 138/2020/NĐ-CP có bị hết hiệu lực không?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "ed9f3e56-f3cd-41f6-9ed9-8b70e7f44c25"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "fbb59a42-1217-47d1-85c9-41c440381bab",
+          "c694da84-e725-4d60-95fd-db06adf27884"
+        ]
+      ],
+      "source_reference": "có hiệu lực thi hành kể từ ngày 01 tháng 7 năm 2025",
+      "notes": "Requires the effective-date clause and the enumerated repealed instrument."
+    },
+    {
+      "case_id": "v2_cross_document_effective_dates",
+      "category": "MULTI_DOCUMENT_EVIDENCE",
+      "question": "So sánh ngày hiệu lực của Thông tư về thực hành công tác xã hội và Thông tư 40/2026/TT-NHNN: văn bản nào có hiệu lực trước?",
+      "answerable": true,
+      "document_ids": null,
+      "expected_document_ids": [
+        "3fb22b9b-ed46-4e04-97e2-b8c854f8252b",
+        "78e54e57-fc2e-47b2-919c-c7120776226d"
+      ],
+      "acceptable_evidence_sets": [
+        [
+          "70100659-7c0f-4617-ad9f-7ce2a3b44f2e",
+          "fc3ce1a3-88e0-46dd-a694-d3ab54512d68"
+        ]
+      ],
+      "source_reference": "có hiệu lực từ ngày 25 tháng 8 năm 2026",
+      "notes": "Requires two documents; social-work instrument is earlier."
+    },
+    {
+      "case_id": "v2_hard_social_practice_fee",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Mức học phí tối đa người thực hành công tác xã hội phải trả cho cơ sở thực hành là bao nhiêu đồng mỗi tháng?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "Corpus regulates duration/content/responsibilities but provides no practice-fee amount."
+    },
+    {
+      "case_id": "v2_hard_social_online_practice",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Người thực hành công tác xã hội được thực hành trực tuyến tối đa bao nhiêu giờ trong tổng thời gian bắt buộc?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "Online modes are specified for knowledge-update activities, not an online-practice-hour maximum."
+    },
+    {
+      "case_id": "v2_hard_bank_statutory_capital",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Mức vốn pháp định cụ thể bằng bao nhiêu đồng đối với quỹ tín dụng nhân dân theo Thông tư 40/2026/TT-NHNN?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "The instrument refers to statutory capital but does not state its numeric amount."
+    },
+    {
+      "case_id": "v2_hard_bank_administrative_fine",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Quỹ tín dụng nhân dân vi phạm tỷ lệ khả năng chi trả bị phạt hành chính chính xác bao nhiêu tiền?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "No administrative fine schedule is present."
+    },
+    {
+      "case_id": "v2_hard_civil_exam_fee",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Lệ phí đăng ký dự tuyển công chức theo văn bản hợp nhất là bao nhiêu đồng?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "Recruitment procedure is present but no application-fee amount is supplied."
+    },
+    {
+      "case_id": "v2_hard_civil_retirement_age",
+      "category": "HARD_UNANSWERABLE",
+      "question": "Tuổi nghỉ hưu chính xác của công chức nam trong năm 2026 là bao nhiêu tuổi, bao nhiêu tháng?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": "The corpus incorporates labor/social-insurance law by reference but does not state the requested 2026 age."
+    },
+    {
+      "case_id": "v2_out_personal_income_tax",
+      "category": "OUT_OF_CORPUS",
+      "question": "Mức giảm trừ gia cảnh thuế thu nhập cá nhân hiện hành là bao nhiêu?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": null
+    },
+    {
+      "case_id": "v2_out_offshore_wind_license",
+      "category": "OUT_OF_CORPUS",
+      "question": "Hồ sơ xin giấy phép khảo sát dự án điện gió ngoài khơi gồm những tài liệu nào?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": null
+    },
+    {
+      "case_id": "v2_out_traffic_fine",
+      "category": "OUT_OF_CORPUS",
+      "question": "Mức phạt ô tô vượt đèn đỏ hiện hành là bao nhiêu tiền?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": null
+    },
+    {
+      "case_id": "v2_out_private_maternity",
+      "category": "OUT_OF_CORPUS",
+      "question": "Lao động nữ tại doanh nghiệp tư nhân được nghỉ thai sản bao nhiêu tháng?",
+      "answerable": false,
+      "document_ids": null,
+      "expected_document_ids": [],
+      "acceptable_evidence_sets": [],
+      "source_reference": null,
+      "notes": null
+    }
+  ]
+}

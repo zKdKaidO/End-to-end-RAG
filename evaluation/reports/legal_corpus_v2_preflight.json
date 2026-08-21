@@ -1,0 +1,100 @@
+{
+  "report_id": "legal_corpus_v2_preflight",
+  "generated_at": "2026-08-19T12:20:16.078786+00:00",
+  "input_directory": "A:\\RAG\\evaluation\\corpus\\input",
+  "no_ocr": true,
+  "summary": {
+    "pdf_count": 5,
+    "ready_count": 3,
+    "excluded_count": 2,
+    "classification_counts": {
+      "READY": 3,
+      "TEXT_TOO_SPARSE_OR_SCAN_LIKE": 2,
+      "ENCRYPTED": 0,
+      "INVALID_PDF": 0,
+      "OTHER_ERROR": 0
+    }
+  },
+  "files": [
+    {
+      "filename": "104.2026.TT-BQP.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\104.2026.TT-BQP.pdf",
+      "file_size": 337077,
+      "sha256": "fef9526df3f657025bc418ea82e49af0698bd1480f4e7d4b52a3ebea5ae92134",
+      "readable_pdf": true,
+      "page_count": 5,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": false,
+      "extracted_character_count": 4,
+      "non_whitespace_character_count": 0,
+      "pages_with_text": 0,
+      "classification": "TEXT_TOO_SPARSE_OR_SCAN_LIKE",
+      "error": null
+    },
+    {
+      "filename": "Nghị-định-273-2026-NĐ-CP.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Nghị-định-273-2026-NĐ-CP.pdf",
+      "file_size": 6885589,
+      "sha256": "2c1f68426dd84536917975fa2cc0e4cc502ab7791edc9a0a4e115ebc1c61c5bc",
+      "readable_pdf": true,
+      "page_count": 67,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": false,
+      "extracted_character_count": 66,
+      "non_whitespace_character_count": 0,
+      "pages_with_text": 0,
+      "classification": "TEXT_TOO_SPARSE_OR_SCAN_LIKE",
+      "error": null
+    },
+    {
+      "filename": "Thong tu quy dinh thuc hanh cong tac xa hoi va cap nhat kien thuc cong.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Thong tu quy dinh thuc hanh cong tac xa hoi va cap nhat kien thuc cong.pdf",
+      "file_size": 1469636,
+      "sha256": "1700c0adc6938fe21bbfa2be46c6dd6eeaeec3fe6ed49c88da0a598f4639c0ba",
+      "readable_pdf": true,
+      "page_count": 18,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 33196,
+      "non_whitespace_character_count": 25013,
+      "pages_with_text": 18,
+      "classification": "READY",
+      "error": null
+    },
+    {
+      "filename": "Thông tư 40.2026.TT-NHNN.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\Thông tư 40.2026.TT-NHNN.pdf",
+      "file_size": 504579,
+      "sha256": "80286aaa15cdd95f3ce554ee12d5a5c9c94303953093df5057561c9fea72dfb0",
+      "readable_pdf": true,
+      "page_count": 21,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 33886,
+      "non_whitespace_character_count": 24926,
+      "pages_with_text": 21,
+      "classification": "READY",
+      "error": null
+    },
+    {
+      "filename": "VBHN 10.2026.pdf",
+      "input_path": "A:\\RAG\\evaluation\\corpus\\input\\VBHN 10.2026.pdf",
+      "file_size": 984068,
+      "sha256": "80855c15b8f935a271e9bdbac0e74b009d0c036d29212f391da884e9431d0e58",
+      "readable_pdf": true,
+      "page_count": 66,
+      "encrypted": false,
+      "password_protected": false,
+      "meaningful_text": true,
+      "extracted_character_count": 157065,
+      "non_whitespace_character_count": 118381,
+      "pages_with_text": 66,
+      "classification": "READY",
+      "error": null
+    }
+  ]
+}
