@@ -1,0 +1,49 @@
+{
+  "dataset_id": "synthetic-citation-alignment-v1",
+  "purpose": "Experiment-only diagnostics for direct claim-to-source citation mapping",
+  "benchmark_leakage": "NONE",
+  "cases": [
+    {
+      "case_id": "citation_parent_child_rule",
+      "question": "Hồ sơ phải được lưu trong bao lâu?",
+      "evidence": [{"source_id": "S1", "text": "Điều 8. Lưu trữ hồ sơ."}, {"source_id": "S2", "text": "Hồ sơ phải được lưu trong năm năm kể từ ngày kết thúc thủ tục."}],
+      "required_source_ids": ["S2"],
+      "parent_only_source_ids": ["S1"]
+    },
+    {
+      "case_id": "citation_two_claims_two_sources",
+      "question": "Ai ký biên bản và biên bản được gửi cho ai?",
+      "evidence": [{"source_id": "S1", "text": "Chủ tọa cuộc họp ký biên bản."}, {"source_id": "S2", "text": "Biên bản được gửi cho cơ quan giám sát."}],
+      "required_source_ids": ["S1", "S2"],
+      "parent_only_source_ids": []
+    },
+    {
+      "case_id": "citation_condition_child",
+      "question": "Khi nào tổ chức phải báo cáo bổ sung?",
+      "evidence": [{"source_id": "S1", "text": "Điều 11. Chế độ báo cáo."}, {"source_id": "S2", "text": "Tổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu."}],
+      "required_source_ids": ["S2"],
+      "parent_only_source_ids": ["S1"]
+    },
+    {
+      "case_id": "citation_rule_exception",
+      "question": "Thời hạn giải quyết là bao lâu và ngoại lệ nào được kéo dài?",
+      "evidence": [{"source_id": "S1", "text": "Thời hạn giải quyết là bảy ngày làm việc."}, {"source_id": "S2", "text": "Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày."}],
+      "required_source_ids": ["S1", "S2"],
+      "parent_only_source_ids": []
+    },
+    {
+      "case_id": "citation_date_separate",
+      "question": "Quy định có hiệu lực khi nào và hồ sơ cũ được xử lý thế nào?",
+      "evidence": [{"source_id": "S1", "text": "Quy định có hiệu lực từ ngày 01 tháng 9 năm 2031."}, {"source_id": "S2", "text": "Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ."}],
+      "required_source_ids": ["S1", "S2"],
+      "parent_only_source_ids": []
+    },
+    {
+      "case_id": "citation_actor_action",
+      "question": "Chủ thể nào thông báo và thông báo cho ai?",
+      "evidence": [{"source_id": "S1", "text": "Cơ quan cấp phép có trách nhiệm thông báo kết quả."}, {"source_id": "S2", "text": "Kết quả được thông báo cho người nộp hồ sơ và cơ quan giám sát."}],
+      "required_source_ids": ["S1", "S2"],
+      "parent_only_source_ids": []
+    }
+  ]
+}

@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from app.core.config import settings
 
 
 class GenerationStatus(str, Enum):
@@ -33,8 +35,15 @@ class CitationValidation(str, Enum):
 class AnswerRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    query_text: str
+    query_text: str = Field(max_length=settings.REQUEST_MAX_QUERY_CHARS)
     document_ids: list[str] | None = None
+
+    @field_validator("document_ids")
+    @classmethod
+    def bound_document_scope(cls, value: list[str] | None) -> list[str] | None:
+        if value is not None and len(value) > settings.AUTH_MAX_EXPLICIT_DOCUMENT_SCOPE:
+            raise ValueError(f"document_ids exceeds the safety limit of {settings.AUTH_MAX_EXPLICIT_DOCUMENT_SCOPE}")
+        return value
 
 
 class Citation(BaseModel):

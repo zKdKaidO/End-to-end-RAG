@@ -1,0 +1,25 @@
+{
+  "alembic_expected_head": "auth_authorization_v1",
+  "alembic_revision": "auth_authorization_v1",
+  "docker_image_identities": {
+    "api": "sha256:cc979f99ff7463485dc5ea8c293348fa3f464a2299024a17ade8fac723350bbc",
+    "frontend": "sha256:daba6d831c0c2f35e7f84c897f9f322bc7d2ab28a7fc904784738e6a108a64a5",
+    "minio": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+    "postgres": "sha256:9ee5199cf0d015a54f85fec6a08c1ef5bf3816e0fe57d472b90c785e099c9e40",
+    "redis": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2"
+  },
+  "frontend_build_sha256": "6f2f052cbd9ddaa292fb4d9906bc1fb225d917517baf8adb3cbb65e39939c47b",
+  "generated_at": "2026-08-23T16:35:40.1068123Z",
+  "git_commit_sha": "6a6a2551a48f4d861470c1e0534872189abe2617",
+  "minio_version": "RELEASE.2025-09-07T16-13-09Z",
+  "ollama_version": "0.32.15",
+  "pgvector_version": "0.5.1",
+  "postgresql_version": "15.19",
+  "production_model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+  "production_model_name": "qwen3.5:9b",
+  "production_prompt_name": "legal-rag-v2",
+  "production_prompt_sha256": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee",
+  "redis_version": "7.4.10",
+  "release_id": "deployment-backup-recovery-v1",
+  "release_manifest_version": 1
+}

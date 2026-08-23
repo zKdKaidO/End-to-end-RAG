@@ -28,11 +28,11 @@ def result(request_id="api-request"):
 
 
 class FakeAnswerService:
-    def __init__(self, error=None, stream_error=None):
+    def __init__(self, error=None, stream_error=None, prompt_version="legal-rag-v1"):
         self.error = error
         self.stream_error = stream_error
         self.request = None
-        self.profile = SimpleNamespace(model_id="qwen3.5:9b", prompt_version="legal-rag-v1")
+        self.profile = SimpleNamespace(model_id="qwen3.5:9b", prompt_version=prompt_version)
 
     async def answer(self, request_id, request):
         self.request = request
@@ -85,7 +85,7 @@ def test_answer_contract_request_id_and_forbidden_client_controls():
     assert response.headers["X-Request-ID"] == "answer-123"
     assert set(service.request.model_fields_set) == {"query_text", "document_ids"}
 
-    for forbidden in ("model", "temperature", "top_k", "system_prompt", "max_output_tokens"):
+    for forbidden in ("model", "temperature", "top_k", "system_prompt", "max_output_tokens", "prompt_version"):
         assert client.post("/answer", json={"query_text": "q", forbidden: 1}).status_code == 400
 
 
@@ -117,6 +117,13 @@ def test_stream_sse_start_delta_done_and_no_native_objects():
     assert body.index("event: start") < body.index("event: delta") < body.index("event: done")
     assert body.count("event: delta") == 2
     assert "prompt_eval_count" not in body and "eval_duration" not in body
+
+
+def test_stream_reports_server_selected_v3_without_client_override():
+    override(FakeAnswerService(prompt_version="legal-rag-v3"))
+    response = client.post("/answer/stream", json={"query_text": "q"})
+    assert response.status_code == 200
+    assert '"prompt_version": "legal-rag-v3"' in response.text
 
 
 def test_stream_failure_emits_error_and_never_done():

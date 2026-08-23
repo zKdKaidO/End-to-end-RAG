@@ -115,9 +115,13 @@ def process_ingestion(job_id: str, document_id: str, request_id: str = None):
 
 def run_worker():
     redis_conn = Redis.from_url(settings.REDIS_URL)
-    qs = [Queue('ingestion', connection=redis_conn)]
+    qs = [
+        Queue('ingestion', connection=redis_conn),
+        Queue('account-deletion', connection=redis_conn),
+        Queue('document-gc', connection=redis_conn),
+    ]
     w = Worker(qs, connection=redis_conn)
-    logger.info("Worker process starting up...", queues='ingestion')
+    logger.info("Worker process starting up...", queues='ingestion,account-deletion,document-gc')
     w.work()
 
 if __name__ == "__main__":

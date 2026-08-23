@@ -32,7 +32,7 @@ def test_debug_route_returns_typed_trace_without_secrets_or_prompt(monkeypatch):
     monkeypatch.setattr(settings, "APP_ENV", "test")
 
     class FakeDebugService:
-        def __init__(self, db):
+        def __init__(self, db, **_kwargs):
             pass
 
         async def run(self, request_id, payload):
@@ -78,4 +78,3 @@ def test_debug_route_returns_typed_trace_without_secrets_or_prompt(monkeypatch):
     serialized = response.text.lower()
     for forbidden in ("api_key", "authorization", "database_url", "system_prompt", "reasoning"):
         assert forbidden not in serialized
-

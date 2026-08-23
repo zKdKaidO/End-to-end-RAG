@@ -10,7 +10,7 @@ from app.retrieval.hierarchy_types import CandidateOrigin, HierarchyRelation
 class RetrievalRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    query_text: str
+    query_text: str = Field(max_length=settings.REQUEST_MAX_QUERY_CHARS)
     top_k_dense: int = settings.RETRIEVAL_TOP_K_DENSE_DEFAULT
     top_k_lexical: int = settings.RETRIEVAL_TOP_K_LEXICAL_DEFAULT
     top_k_final: int = settings.RETRIEVAL_TOP_K_FINAL_DEFAULT

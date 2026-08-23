@@ -37,7 +37,7 @@ class GenerationProfile:
             raise ValueError("sampling configuration is invalid")
         if self.request_timeout_seconds <= 0:
             raise ValueError("request timeout must be positive")
-        if self.prompt_version not in {"legal-rag-v1", "legal-rag-v2"}:
+        if self.prompt_version not in {"legal-rag-v1", "legal-rag-v2", "legal-rag-v3"}:
             raise ValueError("unknown prompt version")
 
 

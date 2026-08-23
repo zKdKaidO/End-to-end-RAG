@@ -10,3 +10,5 @@ RUN apk update && \
     cd / && \
     rm -rf /tmp/pgvector && \
     apk del git make build-base clang llvm
+
+COPY initdb/01-create-extension.sql /docker-entrypoint-initdb.d/01-create-extension.sql

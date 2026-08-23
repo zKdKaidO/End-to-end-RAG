@@ -1,0 +1,61 @@
+{
+  "dataset_id": "synthetic-partial-coverage-v1",
+  "purpose": "Experiment-only binary-status diagnostics for separable and inseparable partial evidence",
+  "benchmark_leakage": "NONE",
+  "cases": [
+    {
+      "case_id": "partial_a_supported_b_missing",
+      "question": "Cơ quan phải công bố quyết định khi nào và phải gửi quyết định cho đơn vị giám sát khi nào?",
+      "evidence": [{"source_id": "S1", "text": "Cơ quan phải công bố quyết định trong ba ngày làm việc kể từ ngày ký."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["gửi quyết định", "đơn vị giám sát"]
+    },
+    {
+      "case_id": "partial_b_supported_a_missing",
+      "question": "Tổ chức phải đăng ký hoạt động khi nào và phải thông báo kết quả cho người yêu cầu khi nào?",
+      "evidence": [{"source_id": "S1", "text": "Tổ chức phải thông báo kết quả cho người yêu cầu trong năm ngày kể từ ngày có quyết định."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["đăng ký hoạt động"]
+    },
+    {
+      "case_id": "partial_rule_without_exception",
+      "question": "Quy tắc cấp giấy xác nhận là gì và trường hợp ngoại lệ nào không phải áp dụng quy tắc đó?",
+      "evidence": [{"source_id": "S1", "text": "Giấy xác nhận được cấp sau khi hồ sơ hợp lệ đã được thẩm tra."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["ngoại lệ"]
+    },
+    {
+      "case_id": "partial_transition_without_date",
+      "question": "Quy định bắt đầu có hiệu lực từ ngày nào và hồ sơ đã tiếp nhận trước đó được xử lý ra sao?",
+      "evidence": [{"source_id": "S1", "text": "Hồ sơ đã tiếp nhận trước khi quy định có hiệu lực tiếp tục được giải quyết theo thủ tục đang áp dụng."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["ngày có hiệu lực", "hiệu lực từ ngày"]
+    },
+    {
+      "case_id": "partial_actor_without_condition",
+      "question": "Chủ thể nào có trách nhiệm lập biên bản và trách nhiệm này phát sinh trong điều kiện nào?",
+      "evidence": [{"source_id": "S1", "text": "Người chủ trì cuộc họp có trách nhiệm lập biên bản."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["điều kiện"]
+    },
+    {
+      "case_id": "partial_threshold_without_consequence",
+      "question": "Ngưỡng áp dụng là bao nhiêu và hậu quả pháp lý khi vượt ngưỡng là gì?",
+      "evidence": [{"source_id": "S1", "text": "Quy định này áp dụng khi tỷ lệ đạt từ sáu mươi phần trăm trở lên."}],
+      "e1_status": "INSUFFICIENT_EVIDENCE",
+      "e2_status": "ANSWERABLE",
+      "supported_source_ids": ["S1"],
+      "unsupported_component_terms": ["hậu quả pháp lý"]
+    }
+  ]
+}

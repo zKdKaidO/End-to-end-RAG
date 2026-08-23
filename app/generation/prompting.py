@@ -8,7 +8,7 @@ PROMPT_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
 
 def load_system_prompt(prompt_version: str) -> str:
-    if prompt_version not in {"legal-rag-v1", "legal-rag-v2"}:
+    if prompt_version not in {"legal-rag-v1", "legal-rag-v2", "legal-rag-v3"}:
         raise GenerationConfigurationError(
             "PROMPT_ASSEMBLY", "GENERATION_PROFILE_INVALID", "Unknown prompt version"
         )

@@ -5,6 +5,8 @@ vi.mock("../api/client", () => ({ api: {
   evaluationSummary: vi.fn().mockResolvedValue({ report_id: "r", dataset_sha256: "abc", aggregate: { case_count: 32, answerable_count: 27, unanswerable_count: 5, retrieval: { hit_at_10: .92, mrr: .88 }, context: { expected_evidence_retention: 1 }, generation: { citation_structural_validity_rate: 1 }, unanswerable: { correct_abstention_rate: 1 }, failure_counts: { PASS: 28, RETRIEVAL_MISS: 2 } }, known_limitations: ["Limited corpus"] }),
   evaluationCases: vi.fn().mockResolvedValue([{ case_id: "c1", category: "DIRECT_FACT", question: "Q?", answerable: true, retrieval_result: "FOUND", context_result: "RETAINED", generation_result: "COMPLETED", diagnosis: "PASS" }]),
   evaluationComparison: vi.fn().mockResolvedValue({ before: { retrieval: { hit_at_1: .8, hit_at_10: .9, mrr: .8 }, generation: {}, unanswerable: {} }, after: { retrieval: { hit_at_1: .8, hit_at_10: .9, mrr: .8 }, generation: {}, unanswerable: {} }, delta: {}, known_limitations: [] }),
+  evaluationCase: vi.fn().mockResolvedValue({ dataset_case: { case_id: "c1", answerable: true }, measured_case: { diagnosis: "PASS" } }),
+  rerunCase: vi.fn(),
 } }));
 import { api } from "../api/client";
 import { EvaluationPage } from "./EvaluationPage";
@@ -25,5 +27,13 @@ describe("EvaluationPage", () => {
     fireEvent.change(screen.getByLabelText("Evaluation dataset"), { target: { value: "legal_eval_v2" } });
     await waitFor(() => expect(api.evaluationSummary).toHaveBeenCalledWith("legal_eval_v2"));
     expect(api.evaluationCases).toHaveBeenCalledWith("legal_eval_v2");
+  });
+
+  it("opens a structured case inspector", async () => {
+    render(<EvaluationPage />);
+    fireEvent.click(await screen.findByRole("button", { name: "c1" }));
+    expect(await screen.findByRole("dialog", { name: "c1" })).toBeInTheDocument();
+    expect(screen.getByText("Expected contract")).toBeInTheDocument();
+    expect(api.evaluationCase).toHaveBeenCalledWith("c1", "legal_eval_v1");
   });
 });

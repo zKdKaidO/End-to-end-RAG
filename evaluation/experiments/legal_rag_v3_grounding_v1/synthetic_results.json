@@ -1,0 +1,1764 @@
+{
+  "records": [
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_a_supported_b_missing",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải công bố quyết định trong ba ngày làm việc kể từ ngày ký [S1].",
+      "public_answer_text": "Cơ quan phải công bố quyết định trong ba ngày làm việc kể từ ngày ký [S1].",
+      "citation_source_ids": [
+        "S1"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 436,
+      "ttft_ms": 293.2809650010313,
+      "generation_ms": 753.4931500013045,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 436,
+        "output_tokens": 29,
+        "total_tokens": 465
+      },
+      "experiment_total_ms": 754.7295709991886,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_a_supported_b_missing|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_b_supported_a_missing",
+      "variant": "E0",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 442,
+      "ttft_ms": 212.97649500047555,
+      "generation_ms": 381.0634149995167,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 442,
+        "output_tokens": 11,
+        "total_tokens": 453
+      },
+      "experiment_total_ms": 382.4102190010308,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_b_supported_a_missing|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_rule_without_exception",
+      "variant": "E0",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 436,
+      "ttft_ms": 210.86468100111233,
+      "generation_ms": 379.89867200303706,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 436,
+        "output_tokens": 11,
+        "total_tokens": 447
+      },
+      "experiment_total_ms": 381.3021200003277,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_rule_without_exception|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_transition_without_date",
+      "variant": "E0",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 445,
+      "ttft_ms": 217.42279400132247,
+      "generation_ms": 381.8437830013863,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 445,
+        "output_tokens": 11,
+        "total_tokens": 456
+      },
+      "experiment_total_ms": 383.310609999171,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_transition_without_date|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_actor_without_condition",
+      "variant": "E0",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 429,
+      "ttft_ms": 207.99890399939613,
+      "generation_ms": 375.42356699850643,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 429,
+        "output_tokens": 11,
+        "total_tokens": 440
+      },
+      "experiment_total_ms": 376.8129640011466,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_actor_without_condition|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_threshold_without_consequence",
+      "variant": "E0",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 432,
+      "ttft_ms": 213.48310200119158,
+      "generation_ms": 384.769308999239,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 432,
+        "output_tokens": 11,
+        "total_tokens": 443
+      },
+      "experiment_total_ms": 386.66481399923214,
+      "checkpoint_key": "synthetic|partial_coverage|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|partial_threshold_without_consequence|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_a_supported_b_missing",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 607,
+      "ttft_ms": 317.7657480009657,
+      "generation_ms": 485.6894930017006,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 607,
+        "output_tokens": 11,
+        "total_tokens": 618
+      },
+      "experiment_total_ms": 487.6587569997355,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_a_supported_b_missing|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_b_supported_a_missing",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 613,
+      "ttft_ms": 274.7283240023535,
+      "generation_ms": 443.2241670001531,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 613,
+        "output_tokens": 11,
+        "total_tokens": 624
+      },
+      "experiment_total_ms": 445.02344300053664,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_b_supported_a_missing|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_rule_without_exception",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 607,
+      "ttft_ms": 275.7715760017163,
+      "generation_ms": 444.80104300237144,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 607,
+        "output_tokens": 11,
+        "total_tokens": 618
+      },
+      "experiment_total_ms": 446.135977999802,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_rule_without_exception|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_transition_without_date",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 616,
+      "ttft_ms": 274.8918249999406,
+      "generation_ms": 442.4168089972227,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 616,
+        "output_tokens": 11,
+        "total_tokens": 627
+      },
+      "experiment_total_ms": 444.0279880000162,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_transition_without_date|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_actor_without_condition",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 600,
+      "ttft_ms": 270.9050869998464,
+      "generation_ms": 437.97920100041665,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 600,
+        "output_tokens": 11,
+        "total_tokens": 611
+      },
+      "experiment_total_ms": 439.42493100257707,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_actor_without_condition|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_threshold_without_consequence",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 603,
+      "ttft_ms": 275.4449090025446,
+      "generation_ms": 444.8973280013888,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 603,
+        "output_tokens": 11,
+        "total_tokens": 614
+      },
+      "experiment_total_ms": 446.50877399908495,
+      "checkpoint_key": "synthetic|partial_coverage|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|partial_threshold_without_consequence|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_a_supported_b_missing",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuy định về thời điểm cơ quan phải công bố quyết định là trong ba ngày làm việc kể từ ngày ký [S1]. Bằng chứng được cung cấp không xác lập thông tin về thời điểm phải gửi quyết định cho đơn vị giám sát.",
+      "public_answer_text": "Quy định về thời điểm cơ quan phải công bố quyết định là trong ba ngày làm việc kể từ ngày ký [S1]. Bằng chứng được cung cấp không xác lập thông tin về thời điểm phải gửi quyết định cho đơn vị giám sát.",
+      "citation_source_ids": [
+        "S1"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 637,
+      "ttft_ms": 346.77190100046573,
+      "generation_ms": 1283.2161789992824,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 637,
+        "output_tokens": 58,
+        "total_tokens": 695
+      },
+      "experiment_total_ms": 1284.6181019995129,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_a_supported_b_missing|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_b_supported_a_missing",
+      "variant": "E2",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 643,
+      "ttft_ms": 281.25978499883786,
+      "generation_ms": 448.2097799991607,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 643,
+        "output_tokens": 11,
+        "total_tokens": 654
+      },
+      "experiment_total_ms": 449.7874260014214,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_b_supported_a_missing|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "STATUS_POLICY_MISMATCH"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_rule_without_exception",
+      "variant": "E2",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 637,
+      "ttft_ms": 294.1931860004843,
+      "generation_ms": 464.60063800259377,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 637,
+        "output_tokens": 11,
+        "total_tokens": 648
+      },
+      "experiment_total_ms": 466.48164100042777,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_rule_without_exception|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "STATUS_POLICY_MISMATCH"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_transition_without_date",
+      "variant": "E2",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 646,
+      "ttft_ms": 295.54109500168124,
+      "generation_ms": 463.29493899975205,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 646,
+        "output_tokens": 11,
+        "total_tokens": 657
+      },
+      "experiment_total_ms": 464.8686389991781,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_transition_without_date|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "STATUS_POLICY_MISMATCH"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_actor_without_condition",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nChủ thể có trách nhiệm lập biên bản là người chủ trì cuộc họp [S1]. Trách nhiệm này phát sinh trong điều kiện khi có cuộc họp diễn ra [S1].",
+      "public_answer_text": "Chủ thể có trách nhiệm lập biên bản là người chủ trì cuộc họp [S1]. Trách nhiệm này phát sinh trong điều kiện khi có cuộc họp diễn ra [S1].",
+      "citation_source_ids": [
+        "S1"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 630,
+      "ttft_ms": 278.8089339992439,
+      "generation_ms": 1007.2324030006712,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 630,
+        "output_tokens": 46,
+        "total_tokens": 676
+      },
+      "experiment_total_ms": 1009.392439002113,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_actor_without_condition|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "UNSUPPORTED_PART_NOT_EXPLICIT"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "partial_coverage",
+      "case_id": "partial_threshold_without_consequence",
+      "variant": "E2",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 633,
+      "ttft_ms": 279.9209149998205,
+      "generation_ms": 448.2125200011069,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 633,
+        "output_tokens": 11,
+        "total_tokens": 644
+      },
+      "experiment_total_ms": 449.57267199788475,
+      "checkpoint_key": "synthetic|partial_coverage|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|partial_threshold_without_consequence|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "STATUS_POLICY_MISMATCH"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_create_submit",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nĐơn vị phải xây dựng kế hoạch trước ngày 10 tháng 4 [S1] và gửi kế hoạch cho cơ quan giám sát trước ngày 20 tháng 4 [S2].",
+      "public_answer_text": "Đơn vị phải xây dựng kế hoạch trước ngày 10 tháng 4 [S1] và gửi kế hoạch cho cơ quan giám sát trước ngày 20 tháng 4 [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 466,
+      "ttft_ms": 276.43807099957485,
+      "generation_ms": 1059.5122939994326,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 466,
+        "output_tokens": 49,
+        "total_tokens": 515
+      },
+      "experiment_total_ms": 1060.6369960005395,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_create_submit|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "ACTION_SUBSTITUTION"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_approve_issue",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nHội đồng phê duyệt hồ sơ trong bảy ngày [S1], cơ quan cấp giấy phép trong mười ngày kể từ ngày hồ sơ được phê duyệt [S2].",
+      "public_answer_text": "Hội đồng phê duyệt hồ sơ trong bảy ngày [S1], cơ quan cấp giấy phép trong mười ngày kể từ ngày hồ sơ được phê duyệt [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 457,
+      "ttft_ms": 225.45526000249083,
+      "generation_ms": 905.8908520019031,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 457,
+        "output_tokens": 43,
+        "total_tokens": 500
+      },
+      "experiment_total_ms": 907.1338689973345,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_approve_issue|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_notify_receive",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "public_answer_text": "Cơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 457,
+      "ttft_ms": 226.5208620010526,
+      "generation_ms": 620.8967919992574,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 457,
+        "output_tokens": 25,
+        "total_tokens": 482
+      },
+      "experiment_total_ms": 622.147694000887,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_notify_receive|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_sign_publish",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuyết định phải được công bố trong ba ngày làm việc kể từ ngày người có thẩm quyền ký quyết định [S2].",
+      "public_answer_text": "Quyết định phải được công bố trong ba ngày làm việc kể từ ngày người có thẩm quyền ký quyết định [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 464,
+      "ttft_ms": 228.21759799990105,
+      "generation_ms": 777.5455070004682,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 464,
+        "output_tokens": 35,
+        "total_tokens": 499
+      },
+      "experiment_total_ms": 778.8855070029967,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_sign_publish|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_apply_qualify",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "public_answer_text": "Cá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 460,
+      "ttft_ms": 223.28530099912314,
+      "generation_ms": 681.3405280008737,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 460,
+        "output_tokens": 29,
+        "total_tokens": 489
+      },
+      "experiment_total_ms": 682.4402140009624,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_apply_qualify|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_request_decide",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "public_answer_text": "Cơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 463,
+      "ttft_ms": 226.98470099931,
+      "generation_ms": 731.3379070001247,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 463,
+        "output_tokens": 32,
+        "total_tokens": 495
+      },
+      "experiment_total_ms": 732.7453680009057,
+      "checkpoint_key": "synthetic|action_disambiguation|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|action_request_decide|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_create_submit",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nĐơn vị phải xây dựng kế hoạch trước ngày 10 tháng 4 [S1] và gửi kế hoạch cho cơ quan giám sát trước ngày 20 tháng 4 [S2].",
+      "public_answer_text": "Đơn vị phải xây dựng kế hoạch trước ngày 10 tháng 4 [S1] và gửi kế hoạch cho cơ quan giám sát trước ngày 20 tháng 4 [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 637,
+      "ttft_ms": 326.40888300011284,
+      "generation_ms": 1108.004305002396,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 637,
+        "output_tokens": 49,
+        "total_tokens": 686
+      },
+      "experiment_total_ms": 1109.333272997901,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_create_submit|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "ACTION_SUBSTITUTION"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_approve_issue",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nThời hạn cơ quan cấp giấy phép là mười ngày kể từ ngày hồ sơ được phê duyệt [S2].",
+      "public_answer_text": "Thời hạn cơ quan cấp giấy phép là mười ngày kể từ ngày hồ sơ được phê duyệt [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 628,
+      "ttft_ms": 276.7675009999948,
+      "generation_ms": 767.3108369999682,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 628,
+        "output_tokens": 31,
+        "total_tokens": 659
+      },
+      "experiment_total_ms": 768.6894369981019,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_approve_issue|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_notify_receive",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "public_answer_text": "Cơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 628,
+      "ttft_ms": 275.53107399944565,
+      "generation_ms": 668.4676689983462,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 628,
+        "output_tokens": 25,
+        "total_tokens": 653
+      },
+      "experiment_total_ms": 670.3451329995005,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_notify_receive|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_sign_publish",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuyết định phải được công bố trong ba ngày làm việc kể từ ngày ký [S2].",
+      "public_answer_text": "Quyết định phải được công bố trong ba ngày làm việc kể từ ngày ký [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 635,
+      "ttft_ms": 279.5382350013824,
+      "generation_ms": 735.3026839991799,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 635,
+        "output_tokens": 29,
+        "total_tokens": 664
+      },
+      "experiment_total_ms": 736.7072999986704,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_sign_publish|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_apply_qualify",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "public_answer_text": "Cá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 631,
+      "ttft_ms": 274.9226429987175,
+      "generation_ms": 732.8687970002647,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 631,
+        "output_tokens": 29,
+        "total_tokens": 660
+      },
+      "experiment_total_ms": 734.188708000147,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_apply_qualify|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_request_decide",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "public_answer_text": "Cơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 634,
+      "ttft_ms": 280.07914000045275,
+      "generation_ms": 783.4082989975286,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 634,
+        "output_tokens": 32,
+        "total_tokens": 666
+      },
+      "experiment_total_ms": 784.8378190028598,
+      "checkpoint_key": "synthetic|action_disambiguation|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|action_request_decide|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_create_submit",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuy định về thời điểm đơn vị phải xây dựng kế hoạch là trước ngày 10 tháng 4 [S1]. Quy định về thời điểm đơn vị phải gửi kế hoạch cho cơ quan giám sát là trước ngày 20 tháng 4 [S2].",
+      "public_answer_text": "Quy định về thời điểm đơn vị phải xây dựng kế hoạch là trước ngày 10 tháng 4 [S1]. Quy định về thời điểm đơn vị phải gửi kế hoạch cho cơ quan giám sát là trước ngày 20 tháng 4 [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 667,
+      "ttft_ms": 359.6833070005232,
+      "generation_ms": 1373.1755909975618,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 667,
+        "output_tokens": 63,
+        "total_tokens": 730
+      },
+      "experiment_total_ms": 1374.9856959984754,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_create_submit|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "ACTION_SUBSTITUTION"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_approve_issue",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nThời hạn cơ quan cấp giấy phép là mười ngày kể từ ngày hồ sơ được phê duyệt [S2]. Thời hạn Hội đồng phê duyệt hồ sơ là bảy ngày [S1].",
+      "public_answer_text": "Thời hạn cơ quan cấp giấy phép là mười ngày kể từ ngày hồ sơ được phê duyệt [S2]. Thời hạn Hội đồng phê duyệt hồ sơ là bảy ngày [S1].",
+      "citation_source_ids": [
+        "S2",
+        "S1"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 658,
+      "ttft_ms": 297.58464599945,
+      "generation_ms": 1035.0597709984868,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 658,
+        "output_tokens": 46,
+        "total_tokens": 704
+      },
+      "experiment_total_ms": 1036.6527539990784,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_approve_issue|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_notify_receive",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "public_answer_text": "Cơ quan phải thông báo kết quả trong sáu ngày làm việc [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 658,
+      "ttft_ms": 297.6318250002805,
+      "generation_ms": 696.5486320004857,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 658,
+        "output_tokens": 25,
+        "total_tokens": 683
+      },
+      "experiment_total_ms": 697.9791589983506,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_notify_receive|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_sign_publish",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuyết định phải được công bố trong ba ngày làm việc kể từ ngày ký [S2].",
+      "public_answer_text": "Quyết định phải được công bố trong ba ngày làm việc kể từ ngày ký [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 665,
+      "ttft_ms": 295.81115700057126,
+      "generation_ms": 754.6238950017141,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 665,
+        "output_tokens": 29,
+        "total_tokens": 694
+      },
+      "experiment_total_ms": 756.1830450031266,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_sign_publish|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_apply_qualify",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "public_answer_text": "Cá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 661,
+      "ttft_ms": 297.488087999227,
+      "generation_ms": 755.0077419982699,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 661,
+        "output_tokens": 29,
+        "total_tokens": 690
+      },
+      "experiment_total_ms": 756.4268559981429,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_apply_qualify|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "action_disambiguation",
+      "case_id": "action_request_decide",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "public_answer_text": "Cơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 664,
+      "ttft_ms": 298.3688340027584,
+      "generation_ms": 804.353893003281,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 664,
+        "output_tokens": 32,
+        "total_tokens": 696
+      },
+      "experiment_total_ms": 805.8222069994372,
+      "checkpoint_key": "synthetic|action_disambiguation|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|action_request_decide|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_parent_child_rule",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nHồ sơ phải được lưu trong năm năm kể từ ngày kết thúc thủ tục [S2].",
+      "public_answer_text": "Hồ sơ phải được lưu trong năm năm kể từ ngày kết thúc thủ tục [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 453,
+      "ttft_ms": 274.8011379990203,
+      "generation_ms": 714.5416079983988,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 453,
+        "output_tokens": 28,
+        "total_tokens": 481
+      },
+      "experiment_total_ms": 715.8187750028446,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_parent_child_rule|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_two_claims_two_sources",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nChủ tọa cuộc họp ký biên bản [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "public_answer_text": "Chủ tọa cuộc họp ký biên bản [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 450,
+      "ttft_ms": 227.77903899986995,
+      "generation_ms": 743.519659001322,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 450,
+        "output_tokens": 33,
+        "total_tokens": 483
+      },
+      "experiment_total_ms": 745.392863998859,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_two_claims_two_sources|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_condition_child",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nTổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "public_answer_text": "Tổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 458,
+      "ttft_ms": 235.45992800063686,
+      "generation_ms": 725.9235359997547,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 458,
+        "output_tokens": 31,
+        "total_tokens": 489
+      },
+      "experiment_total_ms": 727.1894980003708,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_condition_child|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_rule_exception",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nThời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "public_answer_text": "Thời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 463,
+      "ttft_ms": 223.93627099881996,
+      "generation_ms": 920.9403679997195,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 463,
+        "output_tokens": 44,
+        "total_tokens": 507
+      },
+      "experiment_total_ms": 922.3666750003758,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_rule_exception|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_date_separate",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "public_answer_text": "Quy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 476,
+      "ttft_ms": 226.65297699859366,
+      "generation_ms": 1107.040381000843,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 476,
+        "output_tokens": 55,
+        "total_tokens": 531
+      },
+      "experiment_total_ms": 1108.228955999948,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_date_separate|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_actor_action",
+      "variant": "E0",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nCơ quan cấp phép có trách nhiệm thông báo [S1]. Thông báo được gửi cho người nộp hồ sơ và cơ quan giám sát [S2].",
+      "public_answer_text": "Cơ quan cấp phép có trách nhiệm thông báo [S1]. Thông báo được gửi cho người nộp hồ sơ và cơ quan giám sát [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 458,
+      "ttft_ms": 224.86260000005132,
+      "generation_ms": 876.1841650011775,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 458,
+        "output_tokens": 40,
+        "total_tokens": 498
+      },
+      "experiment_total_ms": 877.2968279990891,
+      "checkpoint_key": "synthetic|citation_alignment|E0|35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf|citation_actor_action|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_parent_child_rule",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nHồ sơ phải được lưu trong 5 năm kể từ ngày kết thúc thủ tục [S2].",
+      "public_answer_text": "Hồ sơ phải được lưu trong 5 năm kể từ ngày kết thúc thủ tục [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 624,
+      "ttft_ms": 333.66544599994086,
+      "generation_ms": 804.9038060016755,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 624,
+        "output_tokens": 29,
+        "total_tokens": 653
+      },
+      "experiment_total_ms": 806.5228689993091,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_parent_child_rule|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_two_claims_two_sources",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nChủ tọa cuộc họp ký biên bản [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "public_answer_text": "Chủ tọa cuộc họp ký biên bản [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 621,
+      "ttft_ms": 287.96956200312707,
+      "generation_ms": 821.7139570006111,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 621,
+        "output_tokens": 33,
+        "total_tokens": 654
+      },
+      "experiment_total_ms": 823.0343280010857,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_two_claims_two_sources|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_condition_child",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nTổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "public_answer_text": "Tổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 629,
+      "ttft_ms": 267.0668049977394,
+      "generation_ms": 759.4212069998321,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 629,
+        "output_tokens": 31,
+        "total_tokens": 660
+      },
+      "experiment_total_ms": 760.8145949998288,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_condition_child|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_rule_exception",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nThời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "public_answer_text": "Thời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 634,
+      "ttft_ms": 287.28091300217784,
+      "generation_ms": 1006.5245910009253,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 634,
+        "output_tokens": 44,
+        "total_tokens": 678
+      },
+      "experiment_total_ms": 1008.5223130008671,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_rule_exception|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_date_separate",
+      "variant": "E1",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "public_answer_text": "Quy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 647,
+      "ttft_ms": 298.40911900100764,
+      "generation_ms": 1189.2780930029403,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 647,
+        "output_tokens": 55,
+        "total_tokens": 702
+      },
+      "experiment_total_ms": 1190.6312640021497,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_date_separate|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_actor_action",
+      "variant": "E1",
+      "answerability_status": "INSUFFICIENT_EVIDENCE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: INSUFFICIENT_EVIDENCE]",
+      "public_answer_text": "",
+      "citation_source_ids": [],
+      "invalid_citations": [],
+      "prompt_tokens": 629,
+      "ttft_ms": 292.21089299971936,
+      "generation_ms": 468.3129170007305,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 629,
+        "output_tokens": 11,
+        "total_tokens": 640
+      },
+      "experiment_total_ms": 469.84784500091337,
+      "checkpoint_key": "synthetic|citation_alignment|E1|ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2|citation_actor_action|1",
+      "diagnostic_score": {
+        "passed": false,
+        "failure_reasons": [
+          "FALSE_ABSTENTION",
+          "CLAIM_SOURCE_MISSING"
+        ],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_parent_child_rule",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nHồ sơ phải được lưu trong 5 năm kể từ ngày kết thúc thủ tục [S2].",
+      "public_answer_text": "Hồ sơ phải được lưu trong 5 năm kể từ ngày kết thúc thủ tục [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 654,
+      "ttft_ms": 371.48059800165356,
+      "generation_ms": 840.5009150010301,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 654,
+        "output_tokens": 29,
+        "total_tokens": 683
+      },
+      "experiment_total_ms": 842.2671770022134,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_parent_child_rule|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_two_claims_two_sources",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nNgười ký biên bản là Chủ tọa cuộc họp [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "public_answer_text": "Người ký biên bản là Chủ tọa cuộc họp [S1]. Biên bản được gửi cho cơ quan giám sát [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 651,
+      "ttft_ms": 303.90407199956826,
+      "generation_ms": 869.4793409995327,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 651,
+        "output_tokens": 35,
+        "total_tokens": 686
+      },
+      "experiment_total_ms": 871.387182000035,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_two_claims_two_sources|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_condition_child",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nTổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "public_answer_text": "Tổ chức phải báo cáo bổ sung khi số liệu đã nộp có sai lệch trọng yếu [S2].",
+      "citation_source_ids": [
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 659,
+      "ttft_ms": 298.44653499822016,
+      "generation_ms": 794.2116929989425,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 659,
+        "output_tokens": 31,
+        "total_tokens": 690
+      },
+      "experiment_total_ms": 795.9464509985992,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_condition_child|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_rule_exception",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nThời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "public_answer_text": "Thời hạn giải quyết là bảy ngày làm việc [S1]. Trường hợp phải xác minh ở địa bàn khác, thời hạn được kéo dài thêm ba ngày [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 664,
+      "ttft_ms": 296.6086960004759,
+      "generation_ms": 1002.9148270004953,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 664,
+        "output_tokens": 44,
+        "total_tokens": 708
+      },
+      "experiment_total_ms": 1004.2847600016103,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_rule_exception|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_date_separate",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nQuy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "public_answer_text": "Quy định có hiệu lực từ ngày 01 tháng 9 năm 2031 [S1]. Hồ sơ đã tiếp nhận trước ngày có hiệu lực tiếp tục được xử lý theo thủ tục cũ [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 677,
+      "ttft_ms": 321.2377050003852,
+      "generation_ms": 1214.9087949983368,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 677,
+        "output_tokens": 55,
+        "total_tokens": 732
+      },
+      "experiment_total_ms": 1216.283955000108,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_date_separate|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    },
+    {
+      "kind": "synthetic",
+      "dataset": "citation_alignment",
+      "case_id": "citation_actor_action",
+      "variant": "E2",
+      "answerability_status": "ANSWERABLE",
+      "answerability_validation": "PASS",
+      "raw_status_marker_count": 1,
+      "raw_provider_text": "[STATUS: ANSWERABLE]\nChủ thể có trách nhiệm thông báo là Cơ quan cấp phép [S1]. Đối tượng nhận thông báo là người nộp hồ sơ và cơ quan giám sát [S2].",
+      "public_answer_text": "Chủ thể có trách nhiệm thông báo là Cơ quan cấp phép [S1]. Đối tượng nhận thông báo là người nộp hồ sơ và cơ quan giám sát [S2].",
+      "citation_source_ids": [
+        "S1",
+        "S2"
+      ],
+      "invalid_citations": [],
+      "prompt_tokens": 659,
+      "ttft_ms": 296.4745560020674,
+      "generation_ms": 1004.8874310014071,
+      "finish_reason": "stop",
+      "provider_usage": {
+        "input_tokens": 659,
+        "output_tokens": 44,
+        "total_tokens": 703
+      },
+      "experiment_total_ms": 1006.4052230009111,
+      "checkpoint_key": "synthetic|citation_alignment|E2|353c0aa1749be65b16eba59fa0708b0bc2c8cee4fbeeabd2dfcae5b3fc668e5f|citation_actor_action|1",
+      "diagnostic_score": {
+        "passed": true,
+        "failure_reasons": [],
+        "valid_marker": true
+      }
+    }
+  ],
+  "summary": {
+    "partial_coverage": {
+      "E0": {
+        "runs": 6,
+        "passed": 6,
+        "failed": 0,
+        "status_valid": 6,
+        "failure_reasons": {}
+      },
+      "E1": {
+        "runs": 6,
+        "passed": 6,
+        "failed": 0,
+        "status_valid": 6,
+        "failure_reasons": {}
+      },
+      "E2": {
+        "runs": 6,
+        "passed": 1,
+        "failed": 5,
+        "status_valid": 6,
+        "failure_reasons": {
+          "STATUS_POLICY_MISMATCH": 4,
+          "UNSUPPORTED_PART_NOT_EXPLICIT": 1
+        }
+      }
+    },
+    "action_disambiguation": {
+      "E0": {
+        "runs": 6,
+        "passed": 5,
+        "failed": 1,
+        "status_valid": 6,
+        "failure_reasons": {
+          "ACTION_SUBSTITUTION": 1
+        }
+      },
+      "E1": {
+        "runs": 6,
+        "passed": 5,
+        "failed": 1,
+        "status_valid": 6,
+        "failure_reasons": {
+          "ACTION_SUBSTITUTION": 1
+        }
+      },
+      "E2": {
+        "runs": 6,
+        "passed": 5,
+        "failed": 1,
+        "status_valid": 6,
+        "failure_reasons": {
+          "ACTION_SUBSTITUTION": 1
+        }
+      }
+    },
+    "citation_alignment": {
+      "E0": {
+        "runs": 6,
+        "passed": 6,
+        "failed": 0,
+        "status_valid": 6,
+        "failure_reasons": {}
+      },
+      "E1": {
+        "runs": 6,
+        "passed": 5,
+        "failed": 1,
+        "status_valid": 6,
+        "failure_reasons": {
+          "CLAIM_SOURCE_MISSING": 1,
+          "FALSE_ABSTENTION": 1
+        }
+      },
+      "E2": {
+        "runs": 6,
+        "passed": 6,
+        "failed": 0,
+        "status_valid": 6,
+        "failure_reasons": {}
+      }
+    }
+  }
+}

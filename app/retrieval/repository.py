@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.indexing.constants import CANONICAL_INDEX_VERSION
 from app.retrieval.types import DenseCandidate, HydratedChunk, LexicalCandidate
+from app.auth.scope import InternalRetrievalScope, RetrievalAccessScope, UserRetrievalScope
 
 
 EMBEDDING_MODEL = "intfloat/multilingual-e5-base"
@@ -15,8 +16,30 @@ LEXICAL_FALLBACK_LEXEME_LIMIT = 4
 
 
 class RetrievalRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, access_scope: RetrievalAccessScope | None = None):
         self.db = db
+        self.access_scope = access_scope or InternalRetrievalScope("trusted-internal")
+
+    def _authorization_filter(self, alias: str = "ci") -> str:
+        if isinstance(self.access_scope, InternalRetrievalScope):
+            return ""
+        return f"""
+          AND (
+            EXISTS (
+              SELECT 1 FROM document_access_grants AS dag
+              WHERE dag.document_id = {alias}.document_id AND dag.user_id = :scope_user_id
+            )
+            OR EXISTS (
+              SELECT 1 FROM global_document_access AS gda
+              WHERE gda.document_id = {alias}.document_id
+            )
+          )
+        """
+
+    def _scope_params(self) -> dict[str, str]:
+        if isinstance(self.access_scope, UserRetrievalScope):
+            return {"scope_user_id": str(self.access_scope.user_id)}
+        return {}
 
     @staticmethod
     def _document_filter(document_ids: Sequence[UUID]) -> str:
@@ -44,6 +67,7 @@ class RetrievalRepository:
               AND ci.embedding_model = :embedding_model
               AND ci.embedding_dimension = :embedding_dimension
               AND ci.index_version = :index_version
+              {self._authorization_filter()}
               {self._document_filter(document_ids)}
             ORDER BY ci.embedding <=> CAST(:query_vector AS vector) ASC
             LIMIT :top_k
@@ -57,6 +81,7 @@ class RetrievalRepository:
         }
         if document_ids:
             params["document_ids"] = [str(document_id) for document_id in document_ids]
+        params.update(self._scope_params())
 
         rows = self.db.execute(text(sql), params).mappings().all()
         return [
@@ -88,6 +113,7 @@ class RetrievalRepository:
                       AND ci.embedding_model = :embedding_model
                       AND ci.embedding_dimension = :embedding_dimension
                       AND ci.index_version = :index_version
+                      {self._authorization_filter()}
                       {self._document_filter(document_ids)}
                 ) AS value
             ),
@@ -103,6 +129,7 @@ class RetrievalRepository:
                  AND ci.embedding_model = :embedding_model
                  AND ci.embedding_dimension = :embedding_dimension
                  AND ci.index_version = :index_version
+                 {self._authorization_filter()}
                  {self._document_filter(document_ids)}
                 GROUP BY nl.lexeme
             ),
@@ -140,6 +167,7 @@ class RetrievalRepository:
               AND ci.embedding_model = :embedding_model
               AND ci.embedding_dimension = :embedding_dimension
               AND ci.index_version = :index_version
+              {self._authorization_filter()}
               {self._document_filter(document_ids)}
             ORDER BY lexical_score DESC, ci.chunk_id ASC
             LIMIT :top_k
@@ -154,6 +182,7 @@ class RetrievalRepository:
         }
         if document_ids:
             params["document_ids"] = [str(document_id) for document_id in document_ids]
+        params.update(self._scope_params())
 
         rows = self.db.execute(text(sql), params).mappings().all()
         return [

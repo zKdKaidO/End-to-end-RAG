@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
-import { CandidateTable, CitedAnswer, EmptyState, ErrorNotice, EvidenceCards, JsonBlock, SourceDrawer, StatusBadge } from "../components/Common";
+import { CandidateTable, CitedAnswer, EmptyState, ErrorNotice, EvidenceCards, JsonBlock, Metric, PageHeading, SourceDrawer, StatusBadge } from "../components/Common";
 import type { Citation, DebugTrace, DocumentPipeline, EvaluationCase } from "../types";
-import { Metric, PageHeading } from "./DocumentsPage";
 
 export function DebugPage() {
   const [query, setQuery] = useState("");
@@ -28,6 +27,7 @@ export function DebugPage() {
   };
   const inspect = (chunkId: string, sourceId?: string) => setSource({ chunkId, sourceId });
   const cite = (citation: Citation) => inspect(citation.chunk_id, citation.source_id);
+  if (typeof error === "object" && error !== null && "status" in error && error.status === 404) return <div className="page"><PageHeading eyebrow="Internal tooling" title="Pipeline Debug" description="This route is intentionally available only in local or development environments." /><EmptyState>Internal diagnostics are disabled by the backend environment contract.</EmptyState></div>;
   return <div className="page">
     <PageHeading eyebrow="Blocks 4 → 5 → 6" title="Pipeline Debug" description="Run one real request and inspect retrieval, context selection, generation, and optional ground truth." />
     <section className="panel debug-controls">
@@ -41,13 +41,16 @@ export function DebugPage() {
     {!trace && !loading && <EmptyState>No trace yet. Ad-hoc runs report observations only; evaluation cases add deterministic expected-vs-actual diagnosis.</EmptyState>}
     {trace && <div className="pipeline">
       <div className="trace-header"><div><span className="eyebrow">Request trace</span><h2>{trace.query_text}</h2></div><code>{trace.request_id}</code></div>
+      <ol className="pipeline-rail" aria-label="RAG pipeline stages">
+        {["Query", "Dense", "Lexical", "RRF", "Hierarchy", "Context build", "Generate"].map((label) => <li key={label}><span aria-hidden="true" />{label}</li>)}
+      </ol>
       <Stage number="4" title="Retrieval" subtitle="Dense, lexical, and Python RRF">
         <div className="metric-grid"><Metric label="Dense" value={trace.retrieval.dense_candidate_count} /><Metric label="Lexical" value={trace.retrieval.lexical_candidate_count} /><Metric label="Overlap" value={trace.retrieval.overlap_count} /><Metric label="Lexical mode" value={<StatusBadge value={trace.retrieval.lexical_mode} />} /></div>
         <div className="signal-note">Scores are diagnostic ranking signals, not calibrated confidence.</div>
-        <details open><summary>Dense candidates</summary><CandidateTable kind="dense" candidates={trace.retrieval.dense_candidates} onInspect={inspect} /></details>
-        <details open><summary>Lexical candidates</summary><CandidateTable kind="lexical" candidates={trace.retrieval.lexical_candidates} onInspect={inspect} /></details>
+        <details><summary>Dense candidates</summary><CandidateTable kind="dense" candidates={trace.retrieval.dense_candidates} onInspect={inspect} /></details>
+        <details><summary>Lexical candidates</summary><CandidateTable kind="lexical" candidates={trace.retrieval.lexical_candidates} onInspect={inspect} /></details>
         <details open><summary>Immutable RRF Top 10</summary><CandidateTable kind="rrf" candidates={trace.retrieval.rrf_candidates ?? trace.retrieval.final_candidates} onInspect={inspect} /></details>
-        <details open><summary>Hierarchy expansion ({trace.retrieval.hierarchy_candidates?.length ?? 0} added)</summary>
+        <details><summary>Hierarchy expansion ({trace.retrieval.hierarchy_candidates?.length ?? 0} added)</summary>
           <div className="signal-note">Direct children only. Server-owned bounds; no hierarchy tuning controls.</div>
           <CandidateTable kind="hierarchy" candidates={trace.retrieval.hierarchy_candidates ?? []} onInspect={inspect} />
           <JsonBlock value={trace.retrieval.hierarchy ?? { status: "NOT_CAPTURED" }} />

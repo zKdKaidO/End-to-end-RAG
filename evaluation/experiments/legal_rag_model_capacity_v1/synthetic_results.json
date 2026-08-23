@@ -1,0 +1,5 @@
+{
+  "status": "NOT_RUN_LOCAL_MODEL_LOAD_OR_RESOURCE_FAILURE",
+  "datasets_changed": false,
+  "reason": "Stopped at the model-feasibility gate before quality measurement."
+}

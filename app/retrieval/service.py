@@ -24,6 +24,8 @@ from app.retrieval.hierarchy_types import (
 from app.retrieval.repository import RetrievalRepository
 from app.retrieval.rrf import reciprocal_rank_fusion
 from app.retrieval.schemas import RetrievedCandidate, RetrievalRequest
+from app.auth.access import DocumentAccessService
+from app.auth.scope import InternalRetrievalScope, RetrievalAccessScope, UserRetrievalScope
 
 
 logger = get_logger(__name__)
@@ -93,8 +95,10 @@ def validate_request(request: RetrievalRequest) -> RetrievalParameters:
 
 
 class RetrievalService:
-    def __init__(self, db, embedder=None, repository=None, hierarchy_expander=None):
-        self.repository = repository or RetrievalRepository(db)
+    def __init__(self, db, embedder=None, repository=None, hierarchy_expander=None, access_scope: RetrievalAccessScope | None = None):
+        self.db = db
+        self.access_scope = access_scope or InternalRetrievalScope("trusted-internal")
+        self.repository = repository or RetrievalRepository(db, self.access_scope)
         self.embedder = embedder
         self.hierarchy_expander = hierarchy_expander
         if self.hierarchy_expander is None and db is not None:
@@ -117,7 +121,12 @@ class RetrievalService:
             reason_codes=["HIERARCHY_EXPANDER_UNAVAILABLE"],
         )
 
+    def require_document_scope(self, document_ids: tuple[UUID, ...]) -> None:
+        if document_ids and isinstance(self.access_scope, UserRetrievalScope):
+            DocumentAccessService(self.db).require_all_accessible(self.access_scope.user_id, document_ids)
+
     def retrieve(self, params: RetrievalParameters) -> list[dict]:
+        self.require_document_scope(params.document_ids)
         request_id = get_contextvars().get("request_id", "unbound")
         total_started = perf_counter()
         timings: dict[str, float] = {}

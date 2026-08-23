@@ -10,6 +10,7 @@ vi.mock("../api/client", () => ({
     chunk: vi.fn(),
   },
 }));
+import { api } from "../api/client";
 import { DebugPage } from "./DebugPage";
 
 const trace = {
@@ -33,5 +34,12 @@ describe("DebugPage", () => {
     expect(screen.getByText("Generation")).toBeInTheDocument();
     expect(screen.getByText("NO GROUND TRUTH")).toBeInTheDocument();
     expect(screen.queryByText("CORRECT")).not.toBeInTheDocument();
+  });
+
+  it("explains the intentional debug gate when the backend returns 404", async () => {
+    const gated = Object.assign(new Error("Debug endpoints are disabled"), { status: 404 });
+    vi.mocked(api.documents).mockRejectedValueOnce(gated);
+    render(<DebugPage />);
+    await waitFor(() => expect(screen.getByText("Internal diagnostics are disabled by the backend environment contract.")).toBeInTheDocument());
   });
 });

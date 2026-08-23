@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "typescript": "latest",
+    "lucide-react": "^1.33.0",
     "react": "latest",
     "react-dom": "latest",
-    "react-router-dom": "latest"
+    "react-resizable-panels": "^4.12.3",
+    "react-router-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "latest",

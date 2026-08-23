@@ -19,6 +19,13 @@ from app.generation.exceptions import (
 )
 from app.generation.profile import get_generation_profile
 from app.generation.runtime import get_llm_client
+from app.auth.access import DocumentAccessService, RESOURCE_NOT_FOUND
+from app.auth.dependencies import require_admin
+from app.auth.principal import Principal
+from app.auth.scope import UserRetrievalScope
+from app.models.chunk import Chunk
+from app.models.document import Document
+from sqlalchemy import select
 
 
 router = APIRouter(prefix="/internal/debug", tags=["internal-debug"])
@@ -48,8 +55,8 @@ def _generation_error(exc: GenerationError) -> HTTPException:
     )
 
 
-@router.get("/status", dependencies=[Depends(require_debug_enabled)])
-async def debug_status():
+@router.get("/status", dependencies=[Depends(require_admin), Depends(require_debug_enabled)])
+async def debug_status(_principal: Principal = Depends(require_admin)):
     profile = get_generation_profile()
     try:
         await get_llm_client().health(profile)
@@ -62,11 +69,16 @@ async def debug_status():
 @router.post(
     "/rag",
     response_model=DebugTrace,
-    dependencies=[Depends(require_debug_enabled)],
+    dependencies=[Depends(require_admin), Depends(require_debug_enabled)],
 )
-async def debug_rag(payload: DebugRagRequest, request: Request, db: Session = Depends(get_db)):
+async def debug_rag(payload: DebugRagRequest, request: Request, db: Session = Depends(get_db), principal: Principal = Depends(require_admin)):
     try:
-        return await DebugRagService(db).run(request.state.request_id, payload)
+        if payload.document_ids:
+            from uuid import UUID
+            DocumentAccessService(db).require_all_accessible(principal.user_id, [UUID(value) for value in payload.document_ids])
+        return await DebugRagService(db, access_scope=UserRetrievalScope(principal.user_id)).run(request.state.request_id, payload)
+    except HTTPException:
+        raise
     except GenerationError as exc:
         raise _generation_error(exc) from exc
     except (ValueError, KeyError) as exc:
@@ -83,10 +95,15 @@ async def debug_rag(payload: DebugRagRequest, request: Request, db: Session = De
 @router.get(
     "/chunks/{chunk_id}",
     response_model=ChunkDetail,
-    dependencies=[Depends(require_debug_enabled)],
+    dependencies=[Depends(require_admin), Depends(require_debug_enabled)],
 )
-def chunk_detail(chunk_id: str, db: Session = Depends(get_db)):
+def chunk_detail(chunk_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_admin)):
     try:
+        from uuid import UUID
+        chunk = db.scalar(select(Chunk).where(Chunk.id == UUID(chunk_id)))
+        if chunk is None:
+            raise KeyError(chunk_id)
+        DocumentAccessService(db).require_accessible(principal.user_id, chunk.document_id)
         return DocumentObservabilityService(db).chunk(chunk_id)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail="Invalid chunk UUID") from exc
@@ -97,19 +114,24 @@ def chunk_detail(chunk_id: str, db: Session = Depends(get_db)):
 @router.get(
     "/documents",
     response_model=list[DocumentPipelineView],
-    dependencies=[Depends(require_debug_enabled)],
+    dependencies=[Depends(require_admin), Depends(require_debug_enabled)],
 )
-def documents(db: Session = Depends(get_db)):
-    return DocumentObservabilityService(db).list()
+def documents(db: Session = Depends(get_db), principal: Principal = Depends(require_admin)):
+    access = DocumentAccessService(db)
+    ids = db.scalars(select(Document.id).where(access.predicate(principal.user_id, Document.id))).all()
+    service = DocumentObservabilityService(db)
+    return [service.detail(str(document_id)) for document_id in ids]
 
 
 @router.get(
     "/documents/{document_id}",
     response_model=DocumentDetailView,
-    dependencies=[Depends(require_debug_enabled)],
+    dependencies=[Depends(require_admin), Depends(require_debug_enabled)],
 )
-def document_detail(document_id: str, db: Session = Depends(get_db)):
+def document_detail(document_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_admin)):
     try:
+        from uuid import UUID
+        DocumentAccessService(db).require_accessible(principal.user_id, UUID(document_id))
         return DocumentObservabilityService(db).detail(document_id)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail="Invalid document UUID") from exc

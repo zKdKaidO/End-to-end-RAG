@@ -1,4 +1,8 @@
 .git
+.env
+.env.*
+!.env.example
+!.env.production.example
 .pytest_cache
 **/__pycache__
 **/*.pyc

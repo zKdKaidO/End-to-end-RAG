@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
@@ -22,6 +22,12 @@ class JobResponse(BaseModel):
     pages_processed: int
     pages_total: int
     error_message: Optional[str]
+
+    @field_validator("error_message")
+    @classmethod
+    def sanitize_error(cls, value):
+        from app.security.errors import safe_public_job_error
+        return safe_public_job_error(value)
 
     class Config:
         from_attributes = True

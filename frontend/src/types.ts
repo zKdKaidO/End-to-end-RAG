@@ -35,6 +35,15 @@ export interface DocumentPipeline {
   chunk_count: number;
   index_count: number;
   chunks?: ChunkDetail[];
+  access_origin?: "PRIVATE" | "GLOBAL" | "PRIVATE + GLOBAL";
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  status: "ACTIVE" | "DISABLED" | "DELETING";
+  must_change_password: boolean;
 }
 
 export interface Candidate {
@@ -91,6 +100,50 @@ export interface Citation {
   metadata_json: Json;
   provenance_json: Json;
   retrieval_final_rank?: number | null;
+  snapshot_id?: string;
+  citation_order?: number;
+  original_legal_unit_id?: string | null;
+  document_title?: string | null;
+  document_filename?: string | null;
+  document_sha256?: string | null;
+  chunk_content_sha256?: string;
+  page_start?: number | null;
+  page_end?: number | null;
+  article?: string | null;
+  clause?: string | null;
+  point?: string | null;
+  evidence_text?: string;
+  availability?: "CURRENT_EQUIVALENT" | "SOURCE_UPDATED" | "SOURCE_UNAVAILABLE";
+  current_document_id?: string | null;
+  current_chunk_id?: string | null;
+}
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  last_message_at: string | null;
+  last_message_preview: string | null;
+  message_count: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  session_id: string;
+  turn_id: string;
+  role: "USER" | "ASSISTANT";
+  sequence_no: number;
+  content: string;
+  delivery_state: "COMMITTED" | "STREAMING" | "COMPLETED" | "FAILED" | "CANCELLED";
+  answer_status: "ANSWERABLE" | "INSUFFICIENT_EVIDENCE" | null;
+  model_id: string | null;
+  prompt_version: string | null;
+  created_at: string;
+  finalized_at: string | null;
+  failure_code: string | null;
+  failure_detail_safe: string | null;
+  citations: Citation[];
 }
 
 export interface GenerationResult {

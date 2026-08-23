@@ -1,0 +1,6 @@
+{
+  "status": "NOT_RUN_LOCAL_MODEL_LOAD_OR_RESOURCE_FAILURE",
+  "required_real_generations": 100,
+  "completed_real_generations": 0,
+  "reason": "The selected same-family 27B comparison model was not operationally feasible under frozen settings."
+}

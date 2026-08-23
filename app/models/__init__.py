@@ -9,6 +9,11 @@ from app.models.legal_unit import LegalUnit
 from app.models.chunk import Chunk
 from app.models.indexing_job import IndexingJob
 from app.models.chunk_index import ChunkIndex
+from app.models.chat import ChatSession, ChatTurn, ChatMessage, MessageCitationSnapshot
+from app.models.auth import (
+    User, AuthSession, DocumentAccessGrant, GlobalDocumentAccess,
+    AccountDeletionJob, AccountDeletionDocumentRef,
+)
 
 __all__ = [
     "Base", 
@@ -21,5 +26,15 @@ __all__ = [
     "LegalUnit",
     "Chunk",
     "IndexingJob",
-    "ChunkIndex"
+    "ChunkIndex",
+    "ChatSession",
+    "ChatTurn",
+    "ChatMessage",
+    "MessageCitationSnapshot",
+    "User",
+    "AuthSession",
+    "DocumentAccessGrant",
+    "GlobalDocumentAccess",
+    "AccountDeletionJob",
+    "AccountDeletionDocumentRef",
 ]

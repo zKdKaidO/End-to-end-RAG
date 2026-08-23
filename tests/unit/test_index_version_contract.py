@@ -13,11 +13,16 @@ def test_manual_indexing_endpoint_creates_canonical_job() -> None:
 
     with (
         patch("app.api.routes.indexing.IndexingJobRepository") as repository_type,
+        patch("app.api.routes.indexing.DocumentAccessService"),
         patch("redis.Redis.from_url"),
         patch("rq.Queue") as queue_type,
     ):
         repository_type.return_value.create_job.return_value = job
-        response = create_index(document_id, db=MagicMock())
+        response = create_index(
+            document_id,
+            db=MagicMock(),
+            principal=SimpleNamespace(user_id=uuid.uuid4()),
+        )
 
     repository_type.return_value.create_job.assert_called_once_with(
         document_id,

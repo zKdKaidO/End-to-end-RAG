@@ -1,0 +1,107 @@
+{
+  "experiment": "legal-rag-model-capacity-ablation-v1",
+  "status": "INCONCLUSIVE",
+  "integrity": {
+    "evaluation_v1": "afb5b2692aefe9e682a1483ce3ff86c885d0527de3a20d7a709fc9274d9f0245",
+    "evaluation_v2": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+    "legal_rag_v2": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee",
+    "legal_rag_v3": "35b0abd69608ef574ac7bbf5c314eadb6ef9decd0dda3dd60e0a170aad243ebf",
+    "e1_strict": "ae7d35a85fdd5db661ed43b198c9dc67c6c6e2513b5a8b3989f83c963bd83da2",
+    "all_pass": true
+  },
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "vram_mib": 16311,
+    "system_ram_gib": 31.79,
+    "disk_free_gib_pre_download": {"C": 50.93, "A": 204.11},
+    "provider": "Ollama 0.32.15"
+  },
+  "models": {
+    "baseline": {"id": "qwen3.5:9b", "parameters": "9.7B", "quantization": "Q4_K_M", "size_gb": 6.6},
+    "comparison": {
+      "id": "qwen3.5:27b",
+      "parameters": "27.8B",
+      "quantization": "Q4_K_M",
+      "size_gb": 17,
+      "reason_selected": "Smallest clearly material dense capacity increase in the same Qwen3.5 family and Ollama provider path."
+    }
+  },
+  "context_fingerprints": {
+    "case_count": 65,
+    "frozen_block5_reproduced": true,
+    "planned_byte_equivalence_across_conditions": true,
+    "file": "evaluation/experiments/legal_rag_model_capacity_v1/context_fingerprints.json"
+  },
+  "feasibility": {
+    "default_runtime": {
+      "attempts": 2,
+      "successes": 0,
+      "failure": "CUDA flash-attention shared object initialization failed (0xc0000409)"
+    },
+    "supported_no_flash_diagnostic": {
+      "smoke_success": true,
+      "output": "OK",
+      "processor_split": "28% CPU / 72% GPU",
+      "vram_used_mib": 15785,
+      "vram_free_mib": 266,
+      "system_ram_free_gib": 1.26,
+      "load_seconds": 34.051,
+      "prompt_eval_seconds": 7.729,
+      "generation_seconds_for_2_tokens": 7.957,
+      "wall_seconds": 51.915,
+      "tokens_per_second": 0.251
+    },
+    "operationally_feasible": false,
+    "stop_rule_applied": true,
+    "settings_reduced_to_fit": false,
+    "alternative_model_substituted": false
+  },
+  "experiment_matrix": {
+    "A": "qwen3.5:9b + legal-rag-v3 — not run",
+    "B": "qwen3.5:9b + E1 strict — not run",
+    "C": "qwen3.5:27b + legal-rag-v3 — not run",
+    "D": "qwen3.5:27b + E1 strict — not run",
+    "contexts_byte_equivalent": "PLANNED_AND_FINGERPRINTED; GENERATION_NOT_RUN",
+    "generation_settings_equivalent": "PLANNED; GENERATION_NOT_RUN"
+  },
+  "quality_results": {
+    "targeted": null,
+    "pure_capacity_effect": null,
+    "capacity_contract_interaction": null,
+    "full_v2": null,
+    "multi_evidence": null,
+    "synthetic": null,
+    "safety": null,
+    "reason": "No quality inference is valid because the larger model failed the local operational-feasibility gate."
+  },
+  "upstream_separation": [
+    "v2_social_effective_transition: effective-date evidence absent",
+    "v2_bank_actual_capital_formula: expected formula source absent",
+    "v2_social_applicable_groups: required groups absent"
+  ],
+  "root_cause": {
+    "classification": "INCONCLUSIVE",
+    "model_capacity_supported_as_primary": null,
+    "model_capacity_contract_interaction_supported": null,
+    "reason": "Capacity effects were not measured. Local deployment feasibility, not grounding quality, blocked the controlled comparison."
+  },
+  "next_architecture_decision": {
+    "choice": "CONDUCT SECOND CAPACITY ABLATION",
+    "reason": "Use a controlled external provider or a machine with sufficient VRAM/RAM for the same Qwen3.5-27B quantization while preserving the frozen prompts, contexts, and generation settings."
+  },
+  "production": {
+    "prompt": "legal-rag-v2",
+    "model": "qwen3.5:9b",
+    "changed": false,
+    "blocks_1_5_changed": false,
+    "schema_changed": false
+  },
+  "regression": {
+    "preflight_backend": "245 passed, 0 failed, 8 warnings, 93.20s",
+    "preflight_frontend": "11 passed, 0 failed",
+    "preflight_build": "PASS",
+    "post_experiment_backend": "245 passed, 0 failed, 8 warnings, 93.73s",
+    "post_experiment_frontend": "11 passed, 0 failed",
+    "post_experiment_build": "PASS"
+  }
+}

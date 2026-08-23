@@ -1,0 +1,201 @@
+{
+  "audit": "DEPLOYMENT_BACKUP_RECOVERY_V1",
+  "completed_at": "2026-08-23T16:37:00Z",
+  "decision": "PASS",
+  "integrity": {
+    "evaluation_v1_sha256": "afb5b2692aefe9e682a1483ce3ff86c885d0527de3a20d7a709fc9274d9f0245",
+    "evaluation_v2_sha256": "ba102b9b05e28633fd0475da558abd1f647e808749a2025c15d5c1be315ae842",
+    "production_prompt": "legal-rag-v2",
+    "production_prompt_sha256": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee",
+    "production_model": "qwen3.5:9b",
+    "production_model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "frozen_semantics_changed": false,
+    "new_production_tables": 0
+  },
+  "release": {
+    "manifest": "deployment/release-manifest.json",
+    "git_commit_sha": "6a6a2551a48f4d861470c1e0534872189abe2617",
+    "alembic_head": "auth_authorization_v1",
+    "postgresql_version": "15.19",
+    "pgvector_version": "0.5.1",
+    "redis_version": "7.4.10",
+    "minio_version": "RELEASE.2025-09-07T16-13-09Z",
+    "ollama_version": "0.32.15",
+    "frontend_build_sha256": "6f2f052cbd9ddaa292fb4d9906bc1fb225d917517baf8adb3cbb65e39939c47b"
+  },
+  "backup": {
+    "backup_id": "20260823T161115Z-54300867",
+    "format_version": 1,
+    "integrity_verified_after_drills": true,
+    "database_dump_bytes": 713106,
+    "database_dump_sha256": "2819b5666c2d6072115d9b5918a80e56172432a4f995fd0b23e0807838f446b9",
+    "minio_object_count": 2,
+    "minio_total_bytes": 664037,
+    "document_count": 2,
+    "chunk_count": 152,
+    "chunk_index_count": 152,
+    "duration_seconds": 0.475,
+    "complete_marker_written_last": true,
+    "checksum_manifest_verified": true,
+    "snapshot_barrier": "POSTGRES_ADVISORY_EXCLUSIVE_CROSS_STORE_BARRIER",
+    "redis_included": false,
+    "model_artifact_included": false
+  },
+  "restore": {
+    "paired_postgres_minio_required": true,
+    "postgres_major_compatible": true,
+    "pgvector_compatible": true,
+    "alembic_compatible": true,
+    "vector_rows_restored": 152,
+    "canonical_hnsw_entries_deferred": 1,
+    "canonical_hnsw_indexes_rebuilt": 1,
+    "hnsw_maintenance_work_mem": "256MB",
+    "hnsw_max_parallel_maintenance_workers": 1,
+    "ollama_running_during_hnsw_rebuild": false,
+    "observed_core_restore_seconds": {
+      "minimum": 0.773,
+      "maximum": 1.179
+    },
+    "observed_hnsw_rebuild_seconds": {
+      "minimum": 0.018,
+      "maximum": 0.026
+    },
+    "observed_product_ready_seconds": {
+      "minimum": 47,
+      "maximum": 53
+    },
+    "sessions_revoked_on_restore": true,
+    "external_deletion_tombstones_replayed": true
+  },
+  "reconciliation": {
+    "healthy_fixture": {
+      "expected": 2,
+      "present": 2,
+      "missing": 0,
+      "hash_mismatch": 0,
+      "orphan": 0,
+      "readiness_blocked": false
+    },
+    "missing_object_injection": {
+      "missing": 1,
+      "readiness_blocked": true,
+      "repair_verified": true
+    },
+    "hash_corruption_injection": {
+      "hash_mismatch": 1,
+      "readiness_blocked": true,
+      "repair_verified": true
+    },
+    "orphan_injection": {
+      "orphan": 1,
+      "readiness_blocked": false,
+      "auto_deleted": false,
+      "operator_cleanup_verified": true
+    }
+  },
+  "job_recovery": {
+    "redis_backup_required": false,
+    "database_is_authoritative": true,
+    "pending_missing_queue_action": "REQUEUE",
+    "processing_live_action": "KEEP",
+    "processing_stale_or_lost_action": "FAIL_OR_REQUEUE_BY_JOB_TYPE",
+    "redis_loss_job_id_prefix": "231d99eb",
+    "redis_loss_job_final_status": "COMPLETED",
+    "history_v1_recovery": "PRESERVED"
+  },
+  "retention": {
+    "backup_retention_days_default": 30,
+    "backup_keep_last_default": 7,
+    "backup_expiry_unit": "WHOLE_BACKUP_ID",
+    "rq_result_ttl_seconds_default": 86400,
+    "rq_failure_ttl_seconds_default": 604800,
+    "docker_log_max_size_default": "10m",
+    "docker_log_max_files_default": 7,
+    "privacy_log_deletion_claimed": false
+  },
+  "destructive_matrix": {
+    "A_full_stack_restart": "PASS",
+    "B_redis_volume_loss": "PASS",
+    "C_postgres_volume_loss": "PASS",
+    "D_minio_volume_loss": "PASS",
+    "E_postgres_and_minio_loss": "PASS",
+    "F_missing_object": "PASS",
+    "G_orphan_object": "PASS",
+    "H_hash_corruption": "PASS",
+    "I_hnsw_rebuild": "PASS",
+    "J_model_loss_fail_closed": "PASS",
+    "K_session_resurrection_blocked": "PASS",
+    "L_account_resurrection_blocked": "PASS"
+  },
+  "security_drills": {
+    "model_loss": {
+      "isolated_ollama_port": 11435,
+      "result": "MODEL_NOT_PROVISIONED",
+      "exit_code": 1,
+      "production_model_store_touched": false
+    },
+    "session_restore": {
+      "backup_id": "20260823T161216Z-26faf3ed",
+      "sessions_revoked": 1,
+      "old_cookie_http_status": 401
+    },
+    "account_restore": {
+      "backup_id": "20260823T161348Z-2d185376",
+      "tombstones_replayed": 1,
+      "deleted_user_present": false,
+      "deleted_user_login_http_status": 401
+    }
+  },
+  "post_restore_product_e2e": {
+    "status": "PASS",
+    "admin_login": "PASS",
+    "user_login": "PASS",
+    "deleted_user_login": "REJECTED",
+    "private_document_indexing": "COMPLETED",
+    "private_document_isolation": "PASS",
+    "admin_rbac": "PASS",
+    "retrieval_result_count": 5,
+    "generation_status": "ANSWERABLE",
+    "citation_snapshot_count": 4,
+    "history_status": "COMPLETED",
+    "production_prompt": "legal-rag-v2"
+  },
+  "regression": {
+    "backend": {
+      "collected": 291,
+      "passed": 291,
+      "failed": 0,
+      "warnings": 8,
+      "duration_seconds": 100.16
+    },
+    "frontend": {
+      "test_files": 8,
+      "tests": 23,
+      "failed": 0,
+      "duration_seconds": 18.78,
+      "production_build": "PASS"
+    },
+    "compose_config": {
+      "development": "PASS",
+      "production": "PASS",
+      "recovery_test": "PASS"
+    }
+  },
+  "rpo_rto": {
+    "configured_default_backup_schedule": "manual",
+    "rpo_statement": "The recoverable point is the newest verified COMPLETE paired backup. With the V1 default manual cadence, no clock-time RPO is claimed; a configured operator schedule bounds RPO by its interval plus backup completion time.",
+    "rto_statement": "Observed on the two-document/152-vector isolated fixture only; the measured restore and product-ready times are diagnostics, not a production SLA."
+  },
+  "known_limitations": [
+    "single-node deployment",
+    "no high availability",
+    "no point-in-time recovery",
+    "no automatic failover",
+    "no multi-region disaster recovery",
+    "manual/operator-oriented recovery",
+    "production backup encryption and separate failure domain are deployment-host responsibilities and are fail-closed by preflight",
+    "model provisioning is explicit and the model artifact is not included in business-data backups",
+    "orphan objects are reported but never automatically deleted",
+    "observed timings are based on a small local fixture"
+  ]
+}

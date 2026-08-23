@@ -2,6 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 
 from app.api.routes.internal_debug import require_debug_enabled, _generation_error
+from app.auth.dependencies import require_admin
+from app.auth.principal import Principal
+from app.auth.scope import UserRetrievalScope
+from app.core.config import settings
 from app.db.database import get_db
 from app.debug.schemas import (
     DebugRagRequest,
@@ -15,10 +19,15 @@ from app.debug.services import DebugRagService, EvaluationArtifactService
 from app.generation.exceptions import GenerationError
 
 
+def require_evaluation_enabled():
+    if not settings.EVALUATION_UI_ENABLED:
+        raise HTTPException(status_code=404, detail="Evaluation endpoints are disabled")
+
+
 router = APIRouter(
     prefix="/internal/evaluation",
     tags=["internal-evaluation"],
-    dependencies=[Depends(require_debug_enabled)],
+    dependencies=[Depends(require_admin), Depends(require_debug_enabled), Depends(require_evaluation_enabled)],
 )
 
 
@@ -55,7 +64,7 @@ def comparison(dataset_id: str = Query(default="legal_eval_v1")):
 
 
 @router.post("/cases/{case_id}/rerun", response_model=DebugTrace)
-async def rerun(case_id: str, request: Request, dataset_id: str = Query(default="legal_eval_v1"), db: Session = Depends(get_db)):
+async def rerun(case_id: str, request: Request, dataset_id: str = Query(default="legal_eval_v1"), db: Session = Depends(get_db), principal: Principal = Depends(require_admin)):
     try:
         case = _artifacts(dataset_id).dataset_case(case_id)
         payload = DebugRagRequest(
@@ -63,7 +72,7 @@ async def rerun(case_id: str, request: Request, dataset_id: str = Query(default=
             document_ids=case.document_ids,
             evaluation_case_id=case.case_id,
         )
-        return await DebugRagService(db).run(request.state.request_id, payload)
+        return await DebugRagService(db, access_scope=UserRetrievalScope(principal.user_id)).run(request.state.request_id, payload)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="Evaluation case not found") from exc
     except GenerationError as exc:

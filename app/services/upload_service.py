@@ -23,13 +23,15 @@ class UploadService:
         self.storage_client = storage_client
         self.queue_client = queue_client
 
-    def process_upload(self, file_bytes: bytes, filename: str, mime_type: str, request_id: str = None):
+    def process_upload(self, file_bytes: bytes, filename: str, mime_type: str, request_id: str = None, on_document_resolved=None):
         # 1. Validate and Hash
         _, sha256 = validate_and_hash_pdf(file_bytes, filename, mime_type)
         
         # 2. Deduplication check
         existing_doc = self.doc_repo.get_by_sha256(sha256)
         if existing_doc:
+            if on_document_resolved:
+                on_document_resolved(existing_doc)
             logger.info("document_deduplicated", sha256=sha256, document_id=str(existing_doc.id))
             return existing_doc, None # Return existing doc, no new job
 
@@ -37,8 +39,23 @@ class UploadService:
         # Using try-except for IntegrityError race condition is standard, but repo doesn't catch it currently.
         # SQLAlchemy will throw IntegrityError if a concurrent upload inserts the same sha256.
         # We will let it bubble up and handle it in the router if necessary, or just fail for now.
-        doc = self.doc_repo.create(filename, mime_type, len(file_bytes), sha256)
+        try:
+            doc = self.doc_repo.create(filename, mime_type, len(file_bytes), sha256)
+        except Exception as exc:
+            from sqlalchemy.exc import IntegrityError
+            if not isinstance(exc, IntegrityError):
+                raise
+            self.doc_repo.db.rollback()
+            doc = self.doc_repo.get_by_sha256(sha256)
+            if doc is None:
+                raise
+            if on_document_resolved:
+                on_document_resolved(doc)
+            logger.info("document_deduplicated_after_race", sha256=sha256, document_id=str(doc.id))
+            return doc, None
         doc_id = str(doc.id)
+        if on_document_resolved:
+            on_document_resolved(doc)
         
         try:
             # 4. Upload to MinIO

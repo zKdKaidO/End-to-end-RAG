@@ -13,14 +13,20 @@ from app.retrieval.exceptions import (
 )
 from app.retrieval.schemas import RetrievalRequest, RetrievalResponse
 from app.retrieval.service import RetrievalService, validate_request
+from app.auth.dependencies import require_authenticated_user
+from app.auth.principal import Principal
+from app.auth.scope import UserRetrievalScope
 
 
 router = APIRouter(tags=["retrieval"])
 logger = get_logger(__name__)
 
 
-def get_retrieval_service(db: Session = Depends(get_db)) -> RetrievalService:
-    return RetrievalService(db)
+def get_retrieval_service(
+    db: Session = Depends(get_db),
+    principal: Principal = Depends(require_authenticated_user),
+) -> RetrievalService:
+    return RetrievalService(db, access_scope=UserRetrievalScope(principal.user_id))
 
 
 @router.post("/retrieve", response_model=RetrievalResponse)
@@ -31,6 +37,9 @@ def retrieve(
     try:
         request = RetrievalRequest.model_validate(payload)
         params = validate_request(request)
+        require_scope = getattr(service, "require_document_scope", None)
+        if require_scope is not None:
+            require_scope(params.document_ids)
         return {"results": service.retrieve(params)}
     except ValidationError as exc:
         message = "; ".join(error["msg"] for error in exc.errors())

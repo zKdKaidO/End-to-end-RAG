@@ -19,6 +19,7 @@ from app.retrieval.repository import (
     RetrievalRepository,
 )
 from app.retrieval.service import RetrievalService
+from app.auth.scope import RetrievalAccessScope, UserRetrievalScope
 from evaluation.context_metrics import context_retention
 from evaluation.dataset_validator import load_dataset
 from evaluation.generation_metrics import classify_failure, expected_source_match
@@ -103,8 +104,8 @@ class CapturingRepository:
 
 
 class CapturingRetrievalService(RetrievalService):
-    def __init__(self, db, capture: CapturingRepository):
-        super().__init__(db, repository=capture)
+    def __init__(self, db, capture: CapturingRepository, access_scope: RetrievalAccessScope | None = None):
+        super().__init__(db, repository=capture, access_scope=access_scope)
         self.capture = capture
 
     def retrieve(self, params):
@@ -118,8 +119,9 @@ class CapturingRetrievalService(RetrievalService):
 
 
 class DebugRagService:
-    def __init__(self, db, llm_client=None):
+    def __init__(self, db, llm_client=None, access_scope: RetrievalAccessScope | None = None):
         self.db = db
+        self.access_scope = access_scope
         self.llm_client = llm_client or get_llm_client()
         self.profile = get_generation_profile()
         self.artifacts = EvaluationArtifactService()
@@ -147,8 +149,8 @@ class DebugRagService:
                 notes=case.notes,
             )
 
-        capture = CapturingRepository(RetrievalRepository(self.db))
-        retrieval_service = CapturingRetrievalService(self.db, capture)
+        capture = CapturingRepository(RetrievalRepository(self.db, self.access_scope))
+        retrieval_service = CapturingRetrievalService(self.db, capture, self.access_scope)
         answer_service = AnswerService(retrieval_service, self.llm_client, self.profile)
         prepared = await answer_service.prepare(
             request_id,
@@ -217,6 +219,15 @@ class DebugRagService:
         if document_ids:
             document_filter = "AND ci.document_id = ANY(CAST(:document_ids AS uuid[]))"
             params["document_ids"] = document_ids
+        authorization_filter = ""
+        if isinstance(self.access_scope, UserRetrievalScope):
+            authorization_filter = """
+              AND (
+                EXISTS (SELECT 1 FROM document_access_grants dag WHERE dag.document_id=ci.document_id AND dag.user_id=:scope_user_id)
+                OR EXISTS (SELECT 1 FROM global_document_access gda WHERE gda.document_id=ci.document_id)
+              )
+            """
+            params["scope_user_id"] = str(self.access_scope.user_id)
         strict = self.db.execute(
             text(
                 f"""
@@ -226,6 +237,7 @@ class DebugRagService:
                       AND ci.embedding_model = :embedding_model
                       AND ci.embedding_dimension = :embedding_dimension
                       AND ci.index_version = :index_version
+                      {authorization_filter}
                       {document_filter}
                 )
                 """
@@ -692,7 +704,7 @@ class DocumentObservabilityService:
             current_stage=row[f"{prefix}_stage"],
             error_stage=row[f"{prefix}_error_stage"],
             error_type=row[f"{prefix}_error_type"],
-            error_message=row[f"{prefix}_error_message"],
+            error_message=("The background operation failed safely." if row[f"{prefix}_error_message"] else None),
         )
 
     @classmethod

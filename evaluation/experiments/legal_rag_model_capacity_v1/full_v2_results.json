@@ -1,0 +1,6 @@
+{
+  "status": "NOT_RUN_LOCAL_MODEL_LOAD_OR_RESOURCE_FAILURE",
+  "required_cases_per_condition": 55,
+  "completed_cases_per_condition": 0,
+  "reason": "Stopped at the explicit model-feasibility gate before quality measurement."
+}

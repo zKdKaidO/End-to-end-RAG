@@ -7,20 +7,29 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.repositories.indexing_job_repo import IndexingJobRepository
 from app.indexing.constants import CANONICAL_INDEX_VERSION
+from app.auth.access import DocumentAccessService, RESOURCE_NOT_FOUND
+from app.auth.dependencies import require_authenticated_user
+from app.auth.principal import Principal
+from app.security.errors import safe_public_job_error
 
 router = APIRouter(tags=['indexing'])
 
 @router.post('/documents/{document_id}/index', status_code=202)
-def create_index(document_id: str, db: Session = Depends(get_db)):
+def create_index(document_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_authenticated_user)):
     repo = IndexingJobRepository(db)
     
     # Frozen block 3 model config
     embedding_model = 'intfloat/multilingual-e5-base'
+    try:
+        parsed_document_id = uuid.UUID(document_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=RESOURCE_NOT_FOUND) from exc
+    DocumentAccessService(db).require_accessible(principal.user_id, parsed_document_id)
     
     try:
         job = repo.create_job(document_id, CANONICAL_INDEX_VERSION, embedding_model)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail="Unable to create indexing job") from e
         
     job_id = str(job.id)
     request_id = str(uuid.uuid4())
@@ -38,6 +47,7 @@ def create_index(document_id: str, db: Session = Depends(get_db)):
             process_indexing,
             kwargs={'indexing_job_id': job_id, 'document_id': document_id, 'request_id': request_id},
             job_id=job_id,
+            job_timeout=settings.INDEXING_JOB_TIMEOUT_SECONDS,
             retry=Retry(max=2, interval=[2, 5])
         )
     except Exception as e:
@@ -47,7 +57,7 @@ def create_index(document_id: str, db: Session = Depends(get_db)):
     return {'job_id': job_id, 'status': 'PENDING'}
 
 @router.get('/indexing-jobs/{job_id}')
-def get_index_job(job_id: str, db: Session = Depends(get_db)):
+def get_index_job(job_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_authenticated_user)):
     repo = IndexingJobRepository(db)
     try:
         uuid.UUID(job_id)
@@ -56,7 +66,8 @@ def get_index_job(job_id: str, db: Session = Depends(get_db)):
         
     job = repo.get_by_id(job_id)
     if not job:
-        raise HTTPException(status_code=404, detail='Job not found')
+        raise HTTPException(status_code=404, detail=RESOURCE_NOT_FOUND)
+    DocumentAccessService(db).require_accessible(principal.user_id, job.document_id)
         
     return {
         'job_id': str(job.id),
@@ -69,19 +80,20 @@ def get_index_job(job_id: str, db: Session = Depends(get_db)):
         'index_version': job.index_version,
         'error_stage': job.error_stage,
         'error_type': job.error_type,
-        'error_message': job.error_message,
+        'error_message': safe_public_job_error(job.error_message),
         'created_at': job.created_at.isoformat() if job.created_at else None,
         'started_at': job.started_at.isoformat() if job.started_at else None,
         'completed_at': job.finished_at.isoformat() if job.finished_at else None
     }
 
 @router.get('/documents/{document_id}/indexing-status')
-def get_indexing_status(document_id: str, db: Session = Depends(get_db)):
+def get_indexing_status(document_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_authenticated_user)):
     repo = IndexingJobRepository(db)
     try:
         uuid.UUID(document_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail='Invalid document_id')
+        raise HTTPException(status_code=404, detail=RESOURCE_NOT_FOUND)
+    DocumentAccessService(db).require_accessible(principal.user_id, uuid.UUID(document_id))
         
     jobs = db.execute(text("SELECT id FROM indexing_jobs WHERE document_id = :did ORDER BY created_at DESC LIMIT 1"), {"did": document_id}).fetchone()
     if not jobs:
@@ -97,11 +109,12 @@ def get_indexing_status(document_id: str, db: Session = Depends(get_db)):
     }
 
 @router.get('/documents/{document_id}/indexes')
-def get_document_indexes(document_id: str, db: Session = Depends(get_db)):
+def get_document_indexes(document_id: str, db: Session = Depends(get_db), principal: Principal = Depends(require_authenticated_user)):
     try:
         uuid.UUID(document_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail='Invalid document_id')
+        raise HTTPException(status_code=404, detail=RESOURCE_NOT_FOUND)
+    DocumentAccessService(db).require_accessible(principal.user_id, uuid.UUID(document_id))
         
     indexes = db.execute(text("""
         SELECT id, chunk_id, document_id, embedding_dimension, embedding_model, index_version, (lexical_tsv IS NOT NULL) as lexical_index_present,

@@ -33,8 +33,8 @@ def test_oversized_pdf():
         "/documents",
         files={"file": ("oversized.pdf", io.BytesIO(oversized), "application/pdf")}
     )
-    assert response.status_code == 400
-    assert "exceeds limit" in response.json()["detail"]
+    assert response.status_code == 413
+    assert "UPLOAD_TOO_LARGE" in response.text or "REQUEST_TOO_LARGE" in response.text
 
 def test_real_pdf_upload():
     file_bytes = read_fixture()
@@ -104,7 +104,7 @@ def test_deduplication():
 
 def test_minio_unavailable_on_upload():
     import uuid
-    file_bytes = b"%PDF-1.4\n" + str(uuid.uuid4()).encode() + b"X" * 100
+    file_bytes = read_fixture() + f"\n%{uuid.uuid4()}".encode()
     with patch("app.services.upload_service.MinioClient.upload_pdf", side_effect=Exception("Storage offline")):
         response = client.post(
             "/documents",
@@ -125,7 +125,7 @@ def test_minio_unavailable_on_upload():
 
 def test_queue_unavailable_on_upload():
     import uuid
-    file_bytes = b"%PDF-1.4\n" + str(uuid.uuid4()).encode() + b"Y" * 100
+    file_bytes = read_fixture() + f"\n%{uuid.uuid4()}".encode()
     with patch("app.services.upload_service.RQClient.enqueue_ingestion_job", side_effect=Exception("Queue offline")):
         response = client.post(
             "/documents",
@@ -178,11 +178,18 @@ import uuid
 from app.models.document import Document
 
 def test_queue_failure_on_index_upload():
+    from app.models.auth import GlobalDocumentAccess
+
     db_session = SessionLocal()
     client = TestClient(app)
     doc_id = str(uuid.uuid4())
     doc = Document(id=doc_id, filename='fake.pdf', mime_type='application/pdf', file_size=123, status='COMPLETED', sha256=doc_id)
     db_session.add(doc)
+    db_session.commit()
+    db_session.add(GlobalDocumentAccess(
+        document_id=doc.id,
+        granted_by_user_id=uuid.UUID("00000000-0000-0000-0000-000000000001"),
+    ))
     db_session.commit()
 
     with patch('rq.Queue.enqueue') as mock_enqueue:

@@ -3,6 +3,7 @@ import time
 import sys
 import os
 import psycopg2
+from app.core.config import settings
 import hashlib
 
 API_URL = "http://localhost:8000"
@@ -21,7 +22,7 @@ def run():
     doc_id = body["document"]["id"]
     print(f"document_id: {doc_id}")
     
-    conn = psycopg2.connect("dbname=rag_db user=postgres password=postgres host=postgres")
+    conn = psycopg2.connect(settings.DATABASE_URL)
     cur = conn.cursor()
     cur.execute("SELECT id FROM ingestion_jobs WHERE document_id = %s;", (doc_id,))
     job_id = cur.fetchone()[0]

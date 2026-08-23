@@ -1,0 +1,49 @@
+{
+  "dataset_id": "synthetic-action-disambiguation-v1",
+  "purpose": "Experiment-only diagnostics for actor/action proposition matching",
+  "benchmark_leakage": "NONE",
+  "cases": [
+    {
+      "case_id": "action_create_submit",
+      "question": "Đơn vị phải gửi kế hoạch trước thời điểm nào?",
+      "evidence": [{"source_id": "S1", "text": "Đơn vị phải xây dựng kế hoạch trước ngày 10 tháng 4."}, {"source_id": "S2", "text": "Đơn vị phải gửi kế hoạch cho cơ quan giám sát trước ngày 20 tháng 4."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["trước ngày 10 tháng 4"]
+    },
+    {
+      "case_id": "action_approve_issue",
+      "question": "Cơ quan cấp giấy phép trong thời hạn nào?",
+      "evidence": [{"source_id": "S1", "text": "Hội đồng phê duyệt hồ sơ trong bảy ngày."}, {"source_id": "S2", "text": "Cơ quan cấp giấy phép trong mười ngày kể từ ngày hồ sơ được phê duyệt."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["cấp giấy phép trong bảy ngày"]
+    },
+    {
+      "case_id": "action_notify_receive",
+      "question": "Cơ quan phải thông báo kết quả trong bao lâu?",
+      "evidence": [{"source_id": "S1", "text": "Bộ phận tiếp nhận xác nhận đã nhận hồ sơ trong hai ngày."}, {"source_id": "S2", "text": "Cơ quan phải thông báo kết quả trong sáu ngày làm việc."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["thông báo kết quả trong hai ngày"]
+    },
+    {
+      "case_id": "action_sign_publish",
+      "question": "Quyết định phải được công bố trong thời hạn nào?",
+      "evidence": [{"source_id": "S1", "text": "Người có thẩm quyền ký quyết định trước ngày 05 tháng 6."}, {"source_id": "S2", "text": "Quyết định phải được công bố trong ba ngày làm việc kể từ ngày ký."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["công bố trước ngày 05 tháng 6"]
+    },
+    {
+      "case_id": "action_apply_qualify",
+      "question": "Cá nhân phải nộp đơn trong thời hạn nào?",
+      "evidence": [{"source_id": "S1", "text": "Cá nhân đủ điều kiện khi có hai năm kinh nghiệm."}, {"source_id": "S2", "text": "Cá nhân phải nộp đơn trong ba mươi ngày kể từ ngày đủ điều kiện."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["nộp đơn khi có hai năm kinh nghiệm"]
+    },
+    {
+      "case_id": "action_request_decide",
+      "question": "Cơ quan phải ra quyết định trong thời hạn nào?",
+      "evidence": [{"source_id": "S1", "text": "Người dân có thể gửi yêu cầu trong mười lăm ngày."}, {"source_id": "S2", "text": "Cơ quan phải ra quyết định trong tám ngày làm việc kể từ ngày nhận yêu cầu hợp lệ."}],
+      "required_source_ids": ["S2"],
+      "forbidden_answer_terms": ["ra quyết định trong mười lăm ngày"]
+    }
+  ]
+}

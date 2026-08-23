@@ -52,6 +52,8 @@ class WorkerThread(threading.Thread):
 
     def stop(self):
         self.worker._stop_requested = True
+        if self.worker.scheduler is not None:
+            self.worker.stop_scheduler()
         self.join(timeout=2)
 
 @pytest.fixture
@@ -65,8 +67,7 @@ def test_worker(queue_name):
     thread = WorkerThread(raw_redis, queue_name)
     thread.start()
     yield thread
-    thread.worker._stop_requested = True
-    thread.join(timeout=2)
+    thread.stop()
 
 def enqueue_test_job(raw_redis, job_id, doc_id, queue_name):
     from rq import Queue, Retry
