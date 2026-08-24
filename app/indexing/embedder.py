@@ -2,6 +2,7 @@ import os
 import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from app.indexing.input_contract import E5InputContract, EMBEDDING_MODEL_NAME
 
 class EmbeddingInputTooLongError(Exception):
     def __init__(self, chunk_id: str, token_count: int, max_tokens: int):
@@ -12,13 +13,14 @@ class EmbeddingInputTooLongError(Exception):
 
 class E5Embedder:
     _instance = None
-    _model_name = "intfloat/multilingual-e5-base"
+    _model_name = EMBEDDING_MODEL_NAME
 
     def __init__(self):
         # Determine device
         device = os.environ.get("EMBEDDING_DEVICE", "cpu")
         self.model = SentenceTransformer(self._model_name, device=device)
         self.max_tokens = self.model.max_seq_length
+        self.input_contract = E5InputContract(self.model.tokenizer, self.max_tokens)
 
     @classmethod
     def get_instance(cls):
@@ -27,11 +29,11 @@ class E5Embedder:
         return cls._instance
 
     def validate_token_length(self, chunk_id: str, passage: str):
-        # We can use the tokenizer directly
-        tokens = self.model.tokenizer.encode(passage)
+        # Validate the exact final prefixed input. Block 3 remains defensive.
+        token_count = self.input_contract.count_tokens(passage)
         # SentenceTransformer max_seq_length
-        if len(tokens) > self.max_tokens:
-            raise EmbeddingInputTooLongError(chunk_id, len(tokens), self.max_tokens)
+        if token_count > self.max_tokens:
+            raise EmbeddingInputTooLongError(chunk_id, token_count, self.max_tokens)
 
     def encode_batch(self, chunks_with_ids: list[tuple[str, str]]) -> list[np.ndarray]:
         if not chunks_with_ids:
@@ -40,7 +42,7 @@ class E5Embedder:
         passages = []
         for chunk_id, text in chunks_with_ids:
             # Prefix for E5 models
-            passage = f"passage: {text}"
+            passage = self.input_contract.build_final_input(text)
             self.validate_token_length(chunk_id, passage)
             passages.append(passage)
 

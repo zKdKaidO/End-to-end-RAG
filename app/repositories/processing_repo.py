@@ -10,6 +10,7 @@ from app.models.document_processing_job import DocumentProcessingJob, Processing
 from app.models.auth import DocumentAccessGrant, GlobalDocumentAccess
 from app.processing.parser import LegalUnitData
 from app.core.exceptions import DatabaseError
+from app.indexing.input_contract import get_e5_input_contract
 import uuid
 
 
@@ -32,6 +33,12 @@ class ProcessingRepository:
         chunk_dicts: List[Dict[str, Any]],
     ) -> Tuple[int, int, bool] | None:
         try:
+            # Producer-side contract guard runs before lifecycle locks or any
+            # delete/insert. Invalid sets therefore fail atomically.
+            input_contract = get_e5_input_contract()
+            for chunk in chunk_dicts:
+                input_contract.validate(str(chunk.get("chunk_index", "unassigned")), chunk["embedding_text"])
+
             # CPU transformation is complete before this method is entered. End
             # any read transaction, then serialize the short durable boundary
             # with canonical GC using the same Document row lock.

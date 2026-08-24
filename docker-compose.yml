@@ -97,6 +97,8 @@ services:
       AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
       RECOVERY_CONTROL_DIR: /recovery-control
       BACKUP_DESTINATION: /backups
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -162,6 +164,9 @@ services:
     build: .
     command: python -m app.processing_worker_main
     env_file: .env
+    environment:
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -171,6 +176,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
+      - model_cache:/root/.cache/huggingface
     mem_limit: 2g
     cpus: 1.5
     pids_limit: 256
@@ -183,6 +189,8 @@ services:
     env_file: .env
     environment:
       - EMBEDDING_DEVICE=cpu
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
     depends_on:
       migrate:
         condition: service_completed_successfully

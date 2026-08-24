@@ -66,6 +66,27 @@ def _continue_processing(repo, processing_job_id: str, document_id: str, stage: 
         f"Processing lifecycle conflict at {stage.value}: canonical document exists but active job transition failed"
     )
 
+
+def enrich_chunk_provenance(chunk_dicts, metadata, document_id, reconstructor, page_offset_map):
+    for chunk in chunk_dicts:
+        chunk["metadata_json"] = metadata
+        start_page = reconstructor.get_page_for_offset(chunk["char_start"], page_offset_map)
+        # char_end is exclusive; map the last source character rather than a
+        # boundary that may belong to the next page.
+        final_char_offset = max(chunk["char_start"], chunk["char_end"] - 1)
+        end_page = reconstructor.get_page_for_offset(final_char_offset, page_offset_map)
+        chunk["page_start"] = start_page
+        chunk["page_end"] = end_page
+        chunk["provenance_json"] = {
+            "document_id": document_id,
+            "page_start": start_page,
+            "page_end": end_page,
+            "char_start": chunk["char_start"],
+            "char_end": chunk["char_end"],
+        }
+        if "split" in chunk:
+            chunk["provenance_json"]["split"] = chunk["split"]
+
 def process_document(processing_job_id: str, document_id: str, request_id: str = None):
     from structlog.contextvars import clear_contextvars, bind_contextvars
     clear_contextvars()
@@ -140,20 +161,12 @@ def process_document(processing_job_id: str, document_id: str, request_id: str =
         from app.processing.chunker import Chunker
         chunker = Chunker()
         chunk_dicts = chunker.generate_chunks(normalized_text, units, metadata)
+        # Complete producer pass while the job is still authoritatively in the
+        # CHUNKING stage. Persistence performs the same guard defensively.
+        chunker.validate_chunks(chunk_dicts)
         
         # 8. Provenance and Metadata Enrichment
-        for c in chunk_dicts:
-            c["metadata_json"] = metadata
-            
-            start_page = reconstructor.get_page_for_offset(c["char_start"], page_offset_map)
-            end_page = reconstructor.get_page_for_offset(c["char_end"], page_offset_map)
-            c["page_start"] = start_page
-            c["page_end"] = end_page
-            c["provenance_json"] = {
-                "document_id": document_id,
-                "page_start": start_page,
-                "page_end": end_page
-            }
+        enrich_chunk_provenance(chunk_dicts, metadata, document_id, reconstructor, page_offset_map)
             
         # Recursive page mapping for units
         def map_unit_pages(u):

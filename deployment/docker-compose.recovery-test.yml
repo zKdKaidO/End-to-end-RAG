@@ -129,6 +129,7 @@ services:
     command: python -m app.processing_worker_main
     env_file: ../.env
     environment: *recovery-environment
+    volumes: [model_cache:/root/.cache/huggingface]
     depends_on:
       db-migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
