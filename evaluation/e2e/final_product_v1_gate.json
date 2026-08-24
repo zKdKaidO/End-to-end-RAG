@@ -1,0 +1,155 @@
+{
+  "gate": "FINAL_END_TO_END_PRODUCT_V1",
+  "repair_cycle": "PROCESSING_WORKER_DELETION_RACE_V1",
+  "gate_run_id": "20260824T081814Z-ba667e",
+  "started_at": "2026-08-24T08:18:14.664153Z",
+  "completed_at": "2026-08-24T08:24:12.666997Z",
+  "decision": "READY",
+  "production_changed": false,
+  "previous_candidate": {
+    "decision": "NOT READY",
+    "api_worker_image": "sha256:b5d9acbc4bcaa3e7b62372aedbcd1426bfa68410605ef0a620c32366183ae478",
+    "p1_findings": 2,
+    "archived_json": "evaluation/e2e/final_product_v1_gate_previous_failed.json",
+    "archived_json_sha256": "6b67b2601fb62abb54abc2878b510f96f8758c5e0a24bf9448ee8d9783613f54",
+    "archived_markdown": "docs/verification/final-end-to-end-product-v1-gate-previous-failed.md",
+    "archived_markdown_sha256": "14c7436d5a1b5f27c3b4e1736eda4a26aab2fb5f6c1969ad054a07668e826a14"
+  },
+  "release_candidate": {
+    "api_worker_image": "sha256:0b7bd04429e2cdbb6459866832fbcfd836591ba4c2c384f99a7658b5b05783a0",
+    "frontend_image": "sha256:0609b046064912f679fd589cc6563c97b01ce21a0f6c5673eea70273e7e6dc74",
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "prompt": "legal-rag-v2",
+    "prompt_sha256": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee",
+    "alembic_head": "auth_authorization_v1",
+    "pgvector": "0.5.1",
+    "backup_id": "20260823T161115Z-54300867",
+    "release_manifest": "deployment/release-manifest.json"
+  },
+  "root_cause": {
+    "document_delete_race": "A long-running worker retained stale job assumptions after cascade deletion, then attempted an ORM stage update and raised StaleDataError.",
+    "account_delete_race": "After unique-canonical GC removed the document, the worker attempted a late reconstruction insert and raised ForeignKeyViolation/IntegrityError.",
+    "shared": "Block 2 had no short canonical-document lifecycle fence at its durable persistence/finalization boundary."
+  },
+  "repair": {
+    "mechanism": "After CPU transformation, the worker starts a short transaction and locks/rechecks the canonical Document row with SELECT FOR UPDATE before writing derived data.",
+    "atomic_boundary": "Reconstruction, legal units, chunks, processing counts, COMPLETED status, DONE stage, and finished_at commit atomically under the lifecycle guard.",
+    "stage_transitions": "Conditional bulk UPDATE transitions use rowcount; a missing job plus missing canonical document is an expected clean lifecycle exit, while a missing job with a live document remains a genuine conflict.",
+    "index_handoff": "The canonical document is locked/rechecked before Block 3 job creation; deleted or unreferenced targets do not create a late indexing side effect.",
+    "long_lock": false,
+    "exception_suppression_used": false
+  },
+  "deterministic_race_tests": {
+    "test_file": "tests/integration/test_processing_deletion_race.py",
+    "document_delete_wins": "PASS",
+    "account_delete_unique_canonical": "PASS",
+    "account_delete_shared_canonical": "PASS",
+    "worker_persistence_wins": "PASS",
+    "passed": 4,
+    "failed": 0,
+    "warnings": 6,
+    "duration_seconds": 1.22,
+    "stale_data_errors": 0,
+    "foreign_key_violations": 0,
+    "unexpected_lifecycle_exceptions": 0,
+    "failed_registry_jobs": 0
+  },
+  "regression": {
+    "focused_backend": {"passed": 24, "failed": 0, "warnings": 7, "duration_seconds": 67.19},
+    "backend": {"collected": 295, "passed": 295, "failed": 0, "warnings": 8, "duration_seconds": 99.65},
+    "frontend": {"test_files_passed": 8, "tests_passed": 23, "tests_failed": 0, "duration_seconds": 1.60, "production_build": "PASS"}
+  },
+  "invariants": {
+    "functional": "PASS",
+    "grounding": "PASS",
+    "authorization": "PASS",
+    "lifecycle": "PASS",
+    "historical": "PASS"
+  },
+  "scenarios": {
+    "test_data_isolation": "PASS",
+    "fresh_user_journey": "PASS",
+    "mid_ingestion_query": "PASS",
+    "concurrent_duplicate_upload": "PASS",
+    "authorization_isolation_full_stack": "PASS",
+    "grounded_generation_and_citations": "PASS",
+    "mid_stream_auth_revocation": "PASS",
+    "ghost_generation_orphan_callback": "PASS",
+    "client_abort_during_generation": "PASS",
+    "dangling_history_and_document_deletion": "PASS",
+    "delete_document_while_ingestion_active": "PASS",
+    "account_deletion_e2e": "PASS",
+    "account_deletion_while_ingestion_active": "PASS",
+    "security_rate_limit_csrf_and_direct_api": "PASS",
+    "restart_persistence_and_resurrection": "PASS"
+  },
+  "lifecycle_evidence": {
+    "document_delete": {
+      "document_id": "d20e0516-b5d7-4206-a854-8e5228d21181",
+      "rq_job_id": "a7d05469-859e-4717-9683-56dea6fc0a96",
+      "rq_status": "finished",
+      "diagnostic": "PROCESSING_ABORTED_TARGET_DELETED",
+      "attempted_stage": "LEGAL_PARSING",
+      "documents_after_settle": 0,
+      "chunks_after_settle": 0,
+      "indexes_after_settle": 0,
+      "active_jobs_after_settle": 0
+    },
+    "account_delete": {
+      "document_id": "1440fa04-8ab3-495a-af3e-0da7e492e1ce",
+      "rq_job_id": "ef64fa8c-8023-4328-8a80-293abd7bec34",
+      "rq_status": "finished",
+      "diagnostic": "PROCESSING_ABORTED_TARGET_DELETED",
+      "attempted_stage": "PERSISTENCE",
+      "documents_after_settle": 0,
+      "chunks_after_settle": 0,
+      "indexes_after_settle": 0,
+      "active_jobs_after_settle": 0
+    },
+    "stale_data_errors": 0,
+    "foreign_key_violations": 0,
+    "integrity_errors": 0,
+    "unexpected_server_exceptions": 0,
+    "expected_restart_redis_disconnect_traces": true
+  },
+  "rq_failed_registry": {
+    "preexisting_rejected_candidate_job_ids": [
+      "b9b3a086-c651-4728-a866-5025b47509ab",
+      "654c0d9b-5676-4dca-8376-775f5cdb87e7"
+    ],
+    "preexisting_latest_ended_at": "2026-08-24T05:54:18.226539Z",
+    "new_gate_started_at": "2026-08-24T08:18:14.664153Z",
+    "new_failed_lifecycle_job_ids": [],
+    "new_failed_lifecycle_job_count": 0
+  },
+  "readiness": {
+    "http": 200,
+    "status": "ready",
+    "postgresql": "ok",
+    "pgvector": "0.5.1",
+    "alembic_revision": "auth_authorization_v1",
+    "redis_workers": "ok",
+    "minio": "ok",
+    "missing": 0,
+    "hash_mismatch": 0,
+    "orphans": 0,
+    "deletion_ledger": "ok",
+    "ollama": "ok",
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7"
+  },
+  "findings": {"unexpected_server_exceptions": 0, "p0": 0, "p1": 0, "p2": 0},
+  "core_change_audit": {
+    "block_1_algorithm_changed": false,
+    "block_1_lifecycle_boundary_changed": false,
+    "block_2_processing_algorithm_changed": false,
+    "block_2_lifecycle_persistence_boundary_changed": true,
+    "block_3_changed": false,
+    "block_4_ranking_changed": false,
+    "block_5_changed": false,
+    "block_6_changed": false
+  },
+  "raw_runtime_evidence": "evaluation/e2e/final_product_v1_gate_runtime.json",
+  "raw_runtime_evidence_sha256": "f5349958258948d879ad4790a9122245e28f1e6eb3f3f4897d3f5fa9c99450f5"
+}

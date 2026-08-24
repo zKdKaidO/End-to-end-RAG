@@ -1,0 +1,93 @@
+services:
+  db-migrate:
+    image: deployment-api:latest
+    build: !reset null
+    environment: &final-gate-environment
+      APP_ENV: final-gate
+      DEPLOYMENT_PROFILE: production
+      RELEASE_ID: deployment-backup-recovery-v1
+      GIT_COMMIT_SHA: 6a6a2551a48f4d861470c1e0534872189abe2617
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-rag_db}
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      RECOVERY_CONTROL_DIR: /recovery-control
+      BACKUP_DESTINATION: /backups
+      BACKUP_DESTINATION_ENCRYPTED: "true"
+      BACKUP_DESTINATION_SEPARATE_FAILURE_DOMAIN: "true"
+      EXPECTED_MODEL_DIGEST: 6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7
+      AUTH_COOKIE_SECURE: "true"
+      SECURITY_HSTS_ENABLED: "true"
+      AUTH_TRUSTED_ORIGINS: https://localhost:15443
+      TRUSTED_PROXY_CIDRS: 172.16.0.0/12
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+    volumes: !override
+      - recovery_control:/recovery-control
+      - recovery_backups:/backups
+
+  api:
+    image: deployment-api:latest
+    build: !reset null
+    environment:
+      <<: *final-gate-environment
+      DEBUG_UI_ENABLED: "true"
+      EVALUATION_UI_ENABLED: "true"
+    volumes: !override
+      - recovery_control:/recovery-control
+      - recovery_backups:/backups
+      - model_cache:/root/.cache/huggingface
+
+  worker:
+    image: deployment-api:latest
+    build: !reset null
+    environment: *final-gate-environment
+    volumes: !override
+      - recovery_control:/recovery-control
+
+  processing-worker:
+    image: deployment-api:latest
+    build: !reset null
+    environment: *final-gate-environment
+
+  indexing-worker:
+    image: deployment-api:latest
+    build: !reset null
+    environment:
+      <<: *final-gate-environment
+      EMBEDDING_DEVICE: cpu
+
+  deployment-tool:
+    image: deployment-api:latest
+    build: !reset null
+    environment: *final-gate-environment
+    volumes: !override
+      - recovery_control:/recovery-control
+      - recovery_backups:/backups
+
+  # The recovery fixture's default 59000/59001 host ports may fall inside a
+  # Windows/Hyper-V excluded range after Docker Desktop restarts. The final
+  # gate reaches MinIO over the Compose network; these alternate loopback-only
+  # diagnostic ports do not change the recovered service or its volumes.
+  minio:
+    ports: !override
+      - "127.0.0.1:49000:9000"
+      - "127.0.0.1:49001:9001"
+
+  frontend:
+    image: deployment-frontend:latest
+    build: !reset null
+
+  final-gate-edge:
+    image: nginx:1.29.1-alpine
+    ports:
+      - "127.0.0.1:15080:80"
+      - "127.0.0.1:15443:443"
+    volumes:
+      - ./nginx-edge.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${FINAL_GATE_TLS_DIR:?FINAL_GATE_TLS_DIR required}/tls.crt:/etc/nginx/tls/tls.crt:ro
+      - ${FINAL_GATE_TLS_DIR:?FINAL_GATE_TLS_DIR required}/tls.key:/etc/nginx/tls/tls.key:ro
+    depends_on:
+      api: {condition: service_healthy}
+      frontend: {condition: service_started}
+    networks: [provider]

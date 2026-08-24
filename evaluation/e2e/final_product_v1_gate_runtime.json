@@ -1,0 +1,618 @@
+{
+  "blocked": false,
+  "documents": {
+    "account_delete_active": "1440fa04-8ab3-495a-af3e-0da7e492e1ce",
+    "alice_conflict": "a3d9fd79-cb49-4071-be07-33216055b796",
+    "alice_private": "999255de-93d2-4d3b-b9b0-aafa3c737494",
+    "bob_private": "239bd1e6-1008-4731-a17b-4b2a22552f23",
+    "concurrent_duplicate": "b95c3c9f-3f6e-4d67-9bc5-a8ae47e0e11c",
+    "delete_during_ingestion": "d20e0516-b5d7-4206-a854-8e5228d21181",
+    "global_document": "6b8a6b39-744b-4721-8cd7-ffea718937ab",
+    "mid_ingestion": "f185d811-dac5-420c-b703-b1c6a7c81b31"
+  },
+  "findings": [],
+  "gate": "FINAL_END_TO_END_PRODUCT_V1",
+  "identities": {
+    "account_race": {
+      "email": "gate-account-race-20260824T081814Z-ba667e@example.invalid",
+      "id": "4de50504-1d9e-4cba-9385-1b4b7c6dcf7d"
+    },
+    "admin": {
+      "email": "gate-admin-20260824T081814Z-ba667e@example.invalid",
+      "id": "2bf85f79-486f-4adc-9621-fa5c84ceb957"
+    },
+    "alice": {
+      "email": "gate-alice-20260824T081814Z-ba667e@example.invalid",
+      "id": "404c0af3-f0bc-4849-90b1-4586f8b62193"
+    },
+    "bob": {
+      "email": "gate-bob-20260824T081814Z-ba667e@example.invalid",
+      "id": "1dbe02f2-dc45-4e82-a308-d1548b18c776"
+    },
+    "delete_race": {
+      "email": "gate-delete-race-20260824T081814Z-ba667e@example.invalid",
+      "id": "ab770868-4810-4e16-8085-7d627938c25b"
+    },
+    "rate": {
+      "email": "gate-rate-20260824T081814Z-ba667e@example.invalid",
+      "id": "80ab8dff-fdb3-4f00-9029-ff19be6f23c9"
+    }
+  },
+  "release": {
+    "alembic_head": "auth_authorization_v1",
+    "api_worker_image": "sha256:0b7bd04429e2cdbb6459866832fbcfd836591ba4c2c384f99a7658b5b05783a0",
+    "backup_id": "20260823T161115Z-54300867",
+    "frontend_image": "sha256:0609b046064912f679fd589cc6563c97b01ce21a0f6c5673eea70273e7e6dc74",
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "pgvector": "0.5.1",
+    "prompt": "legal-rag-v2",
+    "prompt_sha256": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee"
+  },
+  "run_id": "20260824T081814Z-ba667e",
+  "scenarios": [
+    {
+      "actual": "Six new QA identities provisioned through the frozen operator contract.",
+      "evidence": [
+        {
+          "identity_ids": {
+            "account_race": "4de50504-1d9e-4cba-9385-1b4b7c6dcf7d",
+            "admin": "2bf85f79-486f-4adc-9621-fa5c84ceb957",
+            "alice": "404c0af3-f0bc-4849-90b1-4586f8b62193",
+            "bob": "1dbe02f2-dc45-4e82-a308-d1548b18c776",
+            "delete_race": "ab770868-4810-4e16-8085-7d627938c25b",
+            "rate": "80ab8dff-fdb3-4f00-9029-ff19be6f23c9"
+          }
+        }
+      ],
+      "expected": "New uniquely named QA identities are provisioned without reusing prior E2E accounts.",
+      "notes": "Auth V1 has no public registration route; new-user registration uses the frozen operator provisioning CLI.",
+      "scenario": "test_data_isolation",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:18:28.552426+00:00"
+    },
+    {
+      "actual": "A new user completed upload-to-index, retrieval, two new generations, citation open, refresh, logout/relogin, and history reopen.",
+      "evidence": [
+        {
+          "citation_count": 1,
+          "document_id": "999255de-93d2-4d3b-b9b0-aafa3c737494",
+          "lifecycle": [
+            {
+              "document": null,
+              "indexing": "PROCESSING",
+              "ingestion": "COMPLETED",
+              "processing": "COMPLETED"
+            },
+            {
+              "document": null,
+              "indexing": "COMPLETED",
+              "ingestion": "COMPLETED",
+              "processing": "COMPLETED"
+            }
+          ],
+          "retrieval_count": 1,
+          "second_status": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "expected": "A completely new user completes the full product journey with new grounded generations, citations, persistent history, and valid session behavior.",
+      "notes": "Every request used Secure HttpOnly session-cookie handling through the local HTTPS edge and a trusted browser Origin.",
+      "scenario": "fresh_user_journey",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:19:22.708375+00:00"
+    },
+    {
+      "actual": "Active document returned no partial evidence and insufficient-evidence status; after indexing it retrieved and generated a cited 91-day answer.",
+      "evidence": [
+        {
+          "active_state": {
+            "access_origin": "PRIVATE",
+            "chunk_count": 0,
+            "chunks": [],
+            "created_at": "2026-08-24T08:19:22.964683",
+            "document_id": "f185d811-dac5-420c-b703-b1c6a7c81b31",
+            "file_size": 181748,
+            "filename": "gate_mid_ingestion_20260824T081814Z-ba667e.pdf",
+            "index_count": 0,
+            "indexing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "ingestion": {
+              "current_stage": "QUEUE",
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "PENDING"
+            },
+            "legal_unit_count": 0,
+            "mime_type": "application/pdf",
+            "page_count": 0,
+            "processing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "updated_at": "2026-08-24T08:19:23.001030"
+          },
+          "document_id": "f185d811-dac5-420c-b703-b1c6a7c81b31",
+          "ready_retrieval_count": 10,
+          "states": [
+            {
+              "document": null,
+              "indexing": "NOT_STARTED",
+              "ingestion": "PROCESSING",
+              "processing": "NOT_STARTED"
+            },
+            {
+              "document": null,
+              "indexing": "PENDING",
+              "ingestion": "COMPLETED",
+              "processing": "COMPLETED"
+            },
+            {
+              "document": null,
+              "indexing": "PROCESSING",
+              "ingestion": "COMPLETED",
+              "processing": "COMPLETED"
+            },
+            {
+              "document": null,
+              "indexing": "COMPLETED",
+              "ingestion": "COMPLETED",
+              "processing": "COMPLETED"
+            }
+          ]
+        }
+      ],
+      "expected": "A query during PROCESSING/INDEXING is safe and excludes partial evidence; the same query works after READY.",
+      "notes": "The large 350-page PDF made the frozen asynchronous state observable without changing worker configuration.",
+      "scenario": "mid_ingestion_query",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:19:52.846239+00:00"
+    },
+    {
+      "actual": "Two synchronized uploads resolved to one document, grant, and ingestion pipeline with one consistent chunk/index set.",
+      "evidence": [
+        {
+          "counts": {
+            "canonical_documents": 1,
+            "chunks": 2,
+            "grants": 1,
+            "indexes": 2,
+            "ingestion_jobs": 1
+          },
+          "document_id": "b95c3c9f-3f6e-4d67-9bc5-a8ae47e0e11c",
+          "http_outcomes": [
+            202,
+            202
+          ],
+          "sha256": "e6d129f43df9163f36afa60b491281afe21eae63f905e2b98dfcb1e1eb3de37f"
+        }
+      ],
+      "expected": "Two simultaneous identical uploads create one canonical document and one durable processing pipeline without HTTP 500 or storage/index duplication.",
+      "notes": "MinIO uniqueness is checked again by final storage reconciliation.",
+      "scenario": "concurrent_duplicate_upload",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:19:58.576489+00:00"
+    },
+    {
+      "actual": "Listings, direct APIs, deletion, retrieval, generation, citations, and history remained private in both directions while the global document stayed visible.",
+      "evidence": [
+        {
+          "alice_answer_status": "INSUFFICIENT_EVIDENCE",
+          "alice_retrieval_count": 10,
+          "bob_answer_status": "INSUFFICIENT_EVIDENCE",
+          "direct_statuses": [
+            [
+              "alice_get_bob",
+              404
+            ],
+            [
+              "bob_get_alice",
+              404
+            ],
+            [
+              "alice_delete_bob",
+              404
+            ],
+            [
+              "bob_delete_alice",
+              404
+            ]
+          ]
+        }
+      ],
+      "expected": "Alice and Bob cannot cross private boundaries through any product layer; global evidence remains shared.",
+      "notes": "No private sentinel value crossed the authorization boundary.",
+      "scenario": "authorization_isolation_full_stack",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:20:22.962738+00:00"
+    },
+    {
+      "actual": "Strong evidence was cited; weak and absent evidence abstained; conflict was either explicitly cited as a conflict or conservatively abstained.",
+      "evidence": [
+        {
+          "conflict_citations": 2,
+          "conflict_status": "ANSWERABLE",
+          "none_status": "INSUFFICIENT_EVIDENCE",
+          "strong_citations": 1,
+          "weak_status": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "expected": "Strong, weak, absent, and conflicting evidence follow legal-rag-v2 grounding and citation rules.",
+      "notes": "Citation checks followed answer -> snapshot -> original chunk/document and authorized scope.",
+      "scenario": "grounded_generation_and_citations",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:21:14.210167+00:00"
+    },
+    {
+      "actual": "The request-start-authorized stream settled, the revoked session rejected new requests, and history reached a terminal state.",
+      "evidence": [
+        {
+          "logout_http": 204,
+          "stream_http": 200,
+          "turn": {
+            "failure_code": null,
+            "state": "COMPLETED"
+          }
+        }
+      ],
+      "expected": "Under the frozen request-start policy, the accepted stream settles safely while every new request after logout is rejected and history is terminal.",
+      "notes": "Frozen V1 resolves authorization at request start; it does not promise continuous token checks during an accepted stream.",
+      "scenario": "mid_stream_auth_revocation",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:21:20.951152+00:00"
+    },
+    {
+      "actual": "Active chat deletion was either atomically rejected as busy or safely deleted; no orphan completed output was written.",
+      "evidence": [
+        {
+          "db": {
+            "completed": 0,
+            "sessions": 0
+          },
+          "delete_http": 204,
+          "stream_http": 200
+        }
+      ],
+      "expected": "Late LLM output cannot recreate or write completed history into a deleted chat/session.",
+      "notes": "The frozen busy-session guard is an acceptable lifecycle policy.",
+      "scenario": "ghost_generation_orphan_callback",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:21:25.629914+00:00"
+    },
+    {
+      "actual": "Closing the SSE client immediately after the start event did not create a completed answer; history remained failed or recoverable under the frozen orphan contract.",
+      "evidence": [
+        {
+          "last_events": [
+            "event: start"
+          ],
+          "turn": {
+            "failure_code": "CLIENT_CANCELLED",
+            "state": "CANCELLED"
+          }
+        }
+      ],
+      "expected": "A client disconnected immediately after SSE start does not produce an incorrectly completed answer or orphan transaction.",
+      "notes": "Client disconnect cancellation is a V1 contract verified by the frozen unit suite and this live abort.",
+      "scenario": "client_abort_during_generation",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:22:38.321517+00:00"
+    },
+    {
+      "actual": "The old citation snapshot remained renderable while the deleted canonical source, chunks, index, direct API, retrieval, and new generation stayed dead.",
+      "evidence": [
+        {
+          "document_id": "999255de-93d2-4d3b-b9b0-aafa3c737494",
+          "new_status": "ANSWERABLE",
+          "post_delete_counts": {
+            "chunks": 0,
+            "documents": 0,
+            "indexes": 0
+          },
+          "snapshot_id": "f4f2791e-a24b-4067-b7ac-4087e2a5ca58"
+        }
+      ],
+      "expected": "Historical citation snapshots survive source deletion without making the deleted source live or retrievable.",
+      "notes": "Historical evidence remained snapshot-only and did not re-enter retrieval.",
+      "scenario": "dangling_history_and_document_deletion",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:22:58.710930+00:00"
+    },
+    {
+      "actual": "Deleting an active document left no document, chunk, index, retrieval result, active job, or late READY transition.",
+      "evidence": [
+        {
+          "active_state": {
+            "access_origin": "PRIVATE",
+            "chunk_count": 0,
+            "chunks": [],
+            "created_at": "2026-08-24T08:23:01.482888",
+            "document_id": "d20e0516-b5d7-4206-a854-8e5228d21181",
+            "file_size": 253650,
+            "filename": "gate_delete_race_20260824T081814Z-ba667e.pdf",
+            "index_count": 0,
+            "indexing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "ingestion": {
+              "current_stage": "QUEUE",
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "PENDING"
+            },
+            "legal_unit_count": 0,
+            "mime_type": "application/pdf",
+            "page_count": 0,
+            "processing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "updated_at": "2026-08-24T08:23:01.519713"
+          },
+          "counts": {
+            "chunks": 0,
+            "documents": 0,
+            "indexes": 0
+          },
+          "counts_after_settle": {
+            "chunks": 0,
+            "documents": 0,
+            "indexes": 0
+          },
+          "document_id": "d20e0516-b5d7-4206-a854-8e5228d21181",
+          "jobs": []
+        }
+      ],
+      "expected": "Deletion during ingestion settles all jobs and cannot create late chunks, vectors, objects, READY state, or retrieval ghosts.",
+      "notes": "A later normal restart checks resurrection again.",
+      "scenario": "delete_document_while_ingestion_active",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:23:11.679371+00:00"
+    },
+    {
+      "actual": "Alice authorization was revoked immediately; user, sessions, private grants/documents/chunks/history were purged while Bob and global resources were unchanged.",
+      "evidence": [
+        {
+          "account_counts": {
+            "auth_sessions": 0,
+            "chat_sessions": 0,
+            "grants": 0,
+            "users": 0
+          },
+          "bob_document_count": 9,
+          "global_access": 1,
+          "private_document_ids": [
+            "f185d811-dac5-420c-b703-b1c6a7c81b31",
+            "a3d9fd79-cb49-4071-be07-33216055b796"
+          ],
+          "user_id": "404c0af3-f0bc-4849-90b1-4586f8b62193"
+        }
+      ],
+      "expected": "Accepted account deletion immediately revokes access, purges Alice private state, and cannot damage Bob or global data.",
+      "notes": "The external tombstone ledger is checked during final reconciliation and restart.",
+      "scenario": "account_deletion_e2e",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:23:23.511062+00:00"
+    },
+    {
+      "actual": "Deleting an account during ingestion revoked access and left no account, document, semantic footprint, or active retrying job.",
+      "evidence": [
+        {
+          "active_state": {
+            "access_origin": "PRIVATE",
+            "chunk_count": 0,
+            "chunks": [],
+            "created_at": "2026-08-24T08:23:26.233211",
+            "document_id": "1440fa04-8ab3-495a-af3e-0da7e492e1ce",
+            "file_size": 254323,
+            "filename": "gate_account_race_20260824T081814Z-ba667e.pdf",
+            "index_count": 0,
+            "indexing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "ingestion": {
+              "current_stage": "QUEUE",
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "PENDING"
+            },
+            "legal_unit_count": 0,
+            "mime_type": "application/pdf",
+            "page_count": 0,
+            "processing": {
+              "current_stage": null,
+              "error_message": null,
+              "error_stage": null,
+              "error_type": null,
+              "status": "NOT_STARTED"
+            },
+            "updated_at": "2026-08-24T08:23:26.267579"
+          },
+          "counts_after_settle": {
+            "chunks": 0,
+            "documents": 0,
+            "indexes": 0
+          },
+          "document_counts": {
+            "chunks": 0,
+            "documents": 0,
+            "indexes": 0
+          },
+          "document_id": "1440fa04-8ab3-495a-af3e-0da7e492e1ce",
+          "jobs": [],
+          "user_counts": {
+            "auth_sessions": 0,
+            "chat_sessions": 0,
+            "grants": 0,
+            "users": 0
+          },
+          "user_id": "4de50504-1d9e-4cba-9385-1b4b7c6dcf7d"
+        }
+      ],
+      "expected": "Account deletion during active ingestion revokes immediately and prevents late account/document/object/chunk/vector resurrection or poisoned jobs.",
+      "notes": "A later normal restart checks tombstone-backed resurrection prevention.",
+      "scenario": "account_deletion_while_ingestion_active",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:23:34.893057+00:00"
+    },
+    {
+      "actual": "Legitimate Origin mutations succeeded throughout the journey; missing-Origin mutation returned 403, deliberate login burst returned controlled 429, and deleted credentials returned 401.",
+      "evidence": [
+        {
+          "deleted_login_http": 401,
+          "missing_origin_http": 403,
+          "rate_attempts": [
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": null,
+              "status": 401
+            },
+            {
+              "retry_after": "4",
+              "status": 429
+            }
+          ]
+        }
+      ],
+      "expected": "Browser-style requests work normally; invalid Origin, deliberate bursts, stale credentials, and cross-user IDs receive controlled rejection without HTTP 500.",
+      "notes": "Normal user flows recorded no 403/429. Only the deliberate machine-speed limiter probe received 429.",
+      "scenario": "security_rate_limit_csrf_and_direct_api",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:23:55.775463+00:00"
+    },
+    {
+      "actual": "The full isolated stack restarted without restore; frontend/readiness, login, documents, retrieval, new generation, citations, history, and deletion non-resurrection all passed.",
+      "evidence": [
+        {
+          "bob_document_count": 9,
+          "deleted_login_statuses": [
+            401,
+            401
+          ],
+          "post_restart_answer_status": "ANSWERABLE",
+          "post_restart_retrieval_count": 1,
+          "ready": {
+            "blockers": [],
+            "checks": {
+              "configuration": {
+                "ok": true
+              },
+              "deletion_ledger": {
+                "ok": true
+              },
+              "minio": {
+                "ok": true
+              },
+              "model": {
+                "digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+                "name": "qwen3.5:9b",
+                "ok": true
+              },
+              "postgresql": {
+                "alembic_revision": "auth_authorization_v1",
+                "expected_head": "auth_authorization_v1",
+                "ok": true,
+                "pgvector": "0.5.1"
+              },
+              "reconciliation": {
+                "hash_mismatch": 0,
+                "missing": 0,
+                "ok": true,
+                "orphans": 0
+              },
+              "recovery_mode": {
+                "ok": true
+              },
+              "redis_workers": {
+                "ok": true,
+                "queues": [
+                  "account-deletion",
+                  "document-gc",
+                  "document-indexing",
+                  "document-processing",
+                  "ingestion"
+                ]
+              }
+            },
+            "status": "ready"
+          }
+        }
+      ],
+      "expected": "A normal full-stack restart preserves live product state and new generation while deleted documents/accounts remain absent.",
+      "notes": "No volumes were deleted or restored.",
+      "scenario": "restart_persistence_and_resurrection",
+      "severity": null,
+      "status": "PASS",
+      "timestamp": "2026-08-24T08:24:12.664910+00:00"
+    }
+  ],
+  "sessions": {
+    "abort": "87521519-d510-4880-874b-427750f39eea",
+    "alice_isolation": "7e13ecef-80f7-4b67-a46b-b4ae66e8a26a",
+    "alice_primary": "5f536672-c1fc-44cb-ac87-8b02120e0899",
+    "bob_isolation": "60005ac2-9ed8-45de-aca2-1d142aa4e863",
+    "ghost": "02370be1-8477-4c10-8be4-784212462556",
+    "grounding": "514ad39f-b0ef-43f9-8186-101cd1e295d0",
+    "midstream": "5e585673-de4a-425a-b5d2-41c88d20fc90"
+  },
+  "started_at": "2026-08-24T08:18:14.664153+00:00",
+  "updated_at": "2026-08-24T08:24:12.666997+00:00"
+}

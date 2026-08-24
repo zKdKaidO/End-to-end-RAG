@@ -1,0 +1,278 @@
+{
+  "gate": "FINAL_END_TO_END_PRODUCT_V1",
+  "gate_run_id": "20260824T054924Z-bcbac1",
+  "started_at": "2026-08-24T05:49:24Z",
+  "completed_at": "2026-08-24T06:01:02Z",
+  "decision": "NOT READY",
+  "production_changed": false,
+  "release_candidate": {
+    "api_worker_image": "sha256:b5d9acbc4bcaa3e7b62372aedbcd1426bfa68410605ef0a620c32366183ae478",
+    "frontend_image": "sha256:0609b046064912f679fd589cc6563c97b01ce21a0f6c5673eea70273e7e6dc74",
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "prompt": "legal-rag-v2",
+    "prompt_sha256": "a41efc38ab53ad84550de27d913b13b4b6742aabe7a55a67f92685d132f303ee",
+    "alembic_head": "auth_authorization_v1",
+    "pgvector": "0.5.1",
+    "backup_id": "20260823T161115Z-54300867",
+    "release_manifest": "deployment/release-manifest.json"
+  },
+  "invariants": {
+    "functional": "PASS",
+    "grounding": "PASS",
+    "authorization": "PASS",
+    "lifecycle": "FAIL",
+    "historical": "PASS"
+  },
+  "test_identities": {
+    "admin": "dbae8e9e-5db5-465d-b109-823570c2ac0a",
+    "alice": "e6f981be-ccac-4f03-b454-a4e0af005759",
+    "bob": "38edc8bc-1d07-447c-a92b-6680ed7e197a",
+    "delete_race": "2c17604b-19dd-4241-8247-d66c1fac758c",
+    "account_race": "97ea6615-d4b3-47da-922d-1ac602421297",
+    "rate_probe": "3614e55d-0612-4f03-85ef-e1d6cb643875"
+  },
+  "test_documents": {
+    "alice_private": "af136ef8-08c3-48dc-aa46-c47f4b8af9eb",
+    "alice_conflict": "1f65c12d-564b-405f-9295-026404d80847",
+    "bob_private": "5cecb747-c8d1-4cae-99cb-49e234b95b5b",
+    "global": "2be0076e-2503-4dab-9556-b4af06e0579f",
+    "mid_ingestion": "12f79509-0248-47e9-ae6a-b202302a2a84",
+    "concurrent_duplicate": "ec613c68-d5b6-438e-9584-5c9ef0a2be79",
+    "delete_during_ingestion": "d0f3e005-b21c-45ca-987a-d558ae30e15f",
+    "account_delete_during_ingestion": "a57974a2-a35d-4dbf-b1a9-2ac322cef7a9"
+  },
+  "scenarios": [
+    {
+      "scenario": "pre_gate_readiness",
+      "status": "PASS",
+      "severity": null,
+      "expected": "The exact frozen release candidate is healthy and ready without artifact or configuration drift.",
+      "actual": "HTTPS frontend returned 200 and API readiness returned HTTP 200/ready with PostgreSQL, pgvector 0.5.1, Alembic auth_authorization_v1, Redis workers, MinIO, deletion ledger, Ollama model digest, and reconciliation all healthy.",
+      "evidence": [{"http": 200, "ready": true, "missing": 0, "hash_mismatch": 0, "orphans": 0, "required_queues": ["account-deletion", "document-gc", "document-indexing", "document-processing", "ingestion"]}],
+      "notes": "All application containers ran the exact expected image digests through the local production TLS edge."
+    },
+    {
+      "scenario": "test_data_isolation",
+      "status": "PASS",
+      "severity": null,
+      "expected": "New uniquely named QA identities and sentinel documents are used.",
+      "actual": "Six new identities were provisioned through the frozen operator contract and unique documents were uploaded.",
+      "evidence": [{"run_id": "20260824T054924Z-bcbac1", "identity_count": 6}],
+      "notes": "Auth V1 exposes no public registration route; no password, cookie, or token is stored here."
+    },
+    {
+      "scenario": "fresh_user_journey",
+      "status": "PASS",
+      "severity": null,
+      "expected": "A new user completes upload, indexing, retrieval, new generation, citation, refresh, relogin, and history reuse.",
+      "actual": "Alice completed the full journey with a newly generated grounded answer and valid citation.",
+      "evidence": [{"document_id": "af136ef8-08c3-48dc-aa46-c47f4b8af9eb", "retrieval_count": 1, "citation_count": 1, "indexing": "COMPLETED", "logout_http": 204}],
+      "notes": "The client used Secure HttpOnly cookies and a trusted HTTPS Origin."
+    },
+    {
+      "scenario": "mid_ingestion_query",
+      "status": "PASS",
+      "severity": null,
+      "expected": "An active document contributes no partial evidence; the same query works after indexing completes.",
+      "actual": "During processing the answer was insufficient with no partial evidence; after completion retrieval returned 10 candidates and generation produced the cited 91-day result.",
+      "evidence": [{"document_id": "12f79509-0248-47e9-ae6a-b202302a2a84", "active_chunk_count": 0, "active_index_count": 0, "ready_retrieval_count": 10}],
+      "notes": "A 350-page generated PDF made the asynchronous state observable."
+    },
+    {
+      "scenario": "concurrent_duplicate_upload",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Two synchronized identical uploads create one canonical document and processing pipeline.",
+      "actual": "Both requests returned 202 and converged on one canonical document, grant, ingestion job, and chunk/index set.",
+      "evidence": [{"http": [202, 202], "document_id": "ec613c68-d5b6-438e-9584-5c9ef0a2be79", "canonical_documents": 1, "grants": 1, "ingestion_jobs": 1, "chunks": 2, "indexes": 2}],
+      "notes": "The requests were synchronized; storage reconciliation later reported zero orphans."
+    },
+    {
+      "scenario": "authorization_isolation_full_stack",
+      "status": "PASS",
+      "severity": null,
+      "expected": "No private evidence crosses Alice/Bob boundaries through listings, direct APIs, retrieval, generation, citations, or history.",
+      "actual": "Private boundaries held in both directions and the global document remained visible.",
+      "evidence": [{"alice_get_bob": 404, "bob_get_alice": 404, "alice_delete_bob": 404, "bob_delete_alice": 404, "private_sentinel_leaks": 0}],
+      "notes": "No P0 authorization finding."
+    },
+    {
+      "scenario": "grounded_generation_and_citations",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Strong evidence is cited, weak/absent evidence abstains, and conflicts are preserved or conservatively refused.",
+      "actual": "Strong evidence had one correct citation; weak and absent queries abstained; the conflict answer cited both authorized sources and preserved both values.",
+      "evidence": [{"strong_citations": 1, "weak_status": "INSUFFICIENT_EVIDENCE", "none_status": "INSUFFICIENT_EVIDENCE", "conflict_status": "ANSWERABLE", "conflict_citations": 2}],
+      "notes": "Citation identity was resolved using the frozen current_document_id/original_document_id History V1 schema."
+    },
+    {
+      "scenario": "citation_verification",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Every used citation maps to authorized source evidence and a valid history snapshot.",
+      "actual": "The answer-to-snapshot-to-original chunk/document chain was valid for strong and conflicting evidence.",
+      "evidence": [{"alice_document_id": "af136ef8-08c3-48dc-aa46-c47f4b8af9eb", "snapshot_id": "35de0949-2de9-4360-bd76-d6bda90bc704", "fabricated_sources": 0}],
+      "notes": "Near-miss citation syntax was not accepted by the harness."
+    },
+    {
+      "scenario": "mid_stream_auth_revocation",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Under request-start authorization, an accepted stream settles while new post-logout requests fail.",
+      "actual": "The accepted stream completed consistently, logout returned 204, and subsequent requests were unauthorized.",
+      "evidence": [{"stream_http": 200, "logout_http": 204, "turn_state": "COMPLETED"}],
+      "notes": "This follows the frozen request-start authorization contract."
+    },
+    {
+      "scenario": "ghost_generation_orphan_callback",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Late generation output cannot recreate a deleted chat or leave an orphan completion.",
+      "actual": "Chat deletion returned 204 and no session or completed turn remained.",
+      "evidence": [{"stream_http": 200, "delete_http": 204, "remaining_sessions": 0, "completed_turns": 0}],
+      "notes": "No ghost chat row was observed."
+    },
+    {
+      "scenario": "client_abort_during_generation",
+      "status": "PASS",
+      "severity": null,
+      "expected": "A client disconnected immediately after SSE start does not create a completed answer.",
+      "actual": "The turn reached the frozen terminal cancellation state.",
+      "evidence": [{"observed_event": "start", "turn_state": "CANCELLED", "failure_code": "CLIENT_CANCELLED"}],
+      "notes": "No done event was consumed by the aborting client."
+    },
+    {
+      "scenario": "dangling_history_and_document_deletion",
+      "status": "PASS",
+      "severity": null,
+      "expected": "History snapshot remains renderable while the deleted source stays dead and cannot become retrieval evidence.",
+      "actual": "The snapshot remained readable; document, chunks, indexes, direct fetch, retrieval, and new-source citation stayed absent.",
+      "evidence": [{"document_id": "af136ef8-08c3-48dc-aa46-c47f4b8af9eb", "documents": 0, "chunks": 0, "indexes": 0, "snapshot_id": "35de0949-2de9-4360-bd76-d6bda90bc704"}],
+      "notes": "Historical evidence did not re-enter live retrieval."
+    },
+    {
+      "scenario": "delete_document_while_ingestion_active",
+      "status": "FAIL",
+      "severity": "P1",
+      "expected": "Deletion during processing leaves no late writes, retries, READY transition, ghost retrieval, or worker exception.",
+      "actual": "Resource cleanup and non-resurrection passed, but the processing worker raised StaleDataError while updating the deleted processing job and retained the job in the failed registry.",
+      "evidence": [{"document_id": "d0f3e005-b21c-45ca-987a-d558ae30e15f", "job_id": "b9b3a086-c651-4728-a866-5025b47509ab", "request_id": "d29ab8c3-2ece-4cf6-93c1-02cf57fb6ab7", "exception": "sqlalchemy.orm.exc.StaleDataError", "documents": 0, "chunks": 0, "indexes": 0}],
+      "notes": "Exact failure point: processing_job_repo.update_stage commit after concurrent deletion. No fix or retry was attempted."
+    },
+    {
+      "scenario": "account_deletion_e2e",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Account deletion revokes access and purges Alice private state without damaging Bob/global state.",
+      "actual": "Alice user, sessions, grants, private documents/chunks/history were removed; Bob and global access remained intact.",
+      "evidence": [{"user_id": "e6f981be-ccac-4f03-b454-a4e0af005759", "users": 0, "auth_sessions": 0, "chat_sessions": 0, "grants": 0, "global_access": 1}],
+      "notes": "Old credentials returned 401 and remained rejected after restart."
+    },
+    {
+      "scenario": "account_deletion_while_ingestion_active",
+      "status": "FAIL",
+      "severity": "P1",
+      "expected": "Account deletion during ingestion prevents recreation and settles workers without DB exceptions or poisoned jobs.",
+      "actual": "Authorization revocation, cleanup, and non-resurrection passed, but the processing worker attempted a late reconstruction insert and raised ForeignKeyViolation/IntegrityError; the job remained failed.",
+      "evidence": [{"document_id": "a57974a2-a35d-4dbf-b1a9-2ac322cef7a9", "job_id": "654c0d9b-5676-4dca-8376-775f5cdb87e7", "request_id": "6fef902c-3ece-4cf6-93c1-02cf57fb6ab7", "exception": "psycopg2.errors.ForeignKeyViolation / sqlalchemy.exc.IntegrityError", "documents": 0, "chunks": 0, "indexes": 0}],
+      "notes": "Exact failure point: processing_repo.save_processing_results attempted document_reconstructions insert after account cleanup deleted the document. No fix or retry was attempted."
+    },
+    {
+      "scenario": "security_rate_limit_csrf_and_direct_api",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Normal browser flows pass; missing Origin, stale credentials, cross-user access, and deliberate bursts fail controllably.",
+      "actual": "Normal flows had no security interference; missing Origin returned 403, stale deleted login returned 401, and the eighth deliberate bad-login attempt returned 429 with Retry-After 4.",
+      "evidence": [{"missing_origin_http": 403, "deleted_login_http": 401, "burst_statuses": [401, 401, 401, 401, 401, 401, 401, 429], "retry_after": "4"}],
+      "notes": "Security controls were not disabled or bypassed."
+    },
+    {
+      "scenario": "restart_persistence_and_resurrection",
+      "status": "PASS",
+      "severity": null,
+      "expected": "A normal full-stack restart preserves live state and new generation while deleted documents/accounts remain absent.",
+      "actual": "Frontend/readiness, Bob login/documents, retrieval, a new grounded generation/citation, and prior history passed after restart; deleted logins returned 401.",
+      "evidence": [{"ready_http": 200, "post_restart_retrieval_count": 1, "post_restart_answer_status": "ANSWERABLE", "deleted_login_statuses": [401, 401]}],
+      "notes": "No volume deletion or backup restore occurred."
+    },
+    {
+      "scenario": "log_integrity",
+      "status": "FAIL",
+      "severity": "P1",
+      "expected": "Adversarial scenarios produce no unexpected traceback, ForeignKeyViolation, IntegrityError, 500, crash, or retry storm.",
+      "actual": "API had no unexpected 500 and workers remained alive, but two processing jobs logged error tracebacks: one StaleDataError and one ForeignKeyViolation/IntegrityError. Redis connection errors were separately classified as expected during the deliberate full-stack restart.",
+      "evidence": [{"log_source": "docker logs rag_recovery_v1-processing-worker-1 since 2026-08-24T05:49:24Z", "unexpected_error_events": 2, "api_500": 0, "worker_restart_count_after_restart": 0}],
+      "notes": "The two error events are the same two P1 lifecycle findings, not additional findings."
+    },
+    {
+      "scenario": "queue_worker_quiescence",
+      "status": "FAIL",
+      "severity": "P1",
+      "expected": "All live queues settle, required workers remain alive, and no deleted-resource failures remain poisoned.",
+      "actual": "All queued/started/deferred/scheduled counts were zero and workers were idle/alive, but document-processing retained exactly two failed jobs from the lifecycle races.",
+      "evidence": [{"ingestion": {"queued": 0, "failed": 0}, "document_processing": {"queued": 0, "started": 0, "failed": 2}, "document_indexing": {"queued": 0, "failed": 0}, "document_gc": {"queued": 0, "failed": 0}, "account_deletion": {"queued": 0, "failed": 0}}],
+      "notes": "Failed jobs are retained by the frozen failure TTL; they were not cleared during audit."
+    },
+    {
+      "scenario": "storage_reconciliation",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Non-destructive reconciliation reports no missing, corrupt, or orphan objects.",
+      "actual": "All 26 expected objects were healthy.",
+      "evidence": [{"expected": 26, "present": 26, "missing": 0, "hash_mismatch": 0, "orphans": 0, "readiness_blocked": false, "verified_at": "2026-08-24T05:57:10.959851Z"}],
+      "notes": "No reconciliation repair was run."
+    },
+    {
+      "scenario": "full_regression",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Backend 291/291, frontend 23/23, and production build pass without test modification.",
+      "actual": "All frozen regression suites and the frontend production build passed.",
+      "evidence": [{"backend_collected": 291, "backend_passed": 291, "backend_failed": 0, "backend_warnings": 8, "backend_duration_seconds": 102.32, "frontend_test_files": 8, "frontend_tests": 23, "frontend_failed": 0, "frontend_duration_seconds": 16.69, "frontend_build": "PASS"}],
+      "notes": "No tests or product code were modified."
+    },
+    {
+      "scenario": "release_artifact_consistency",
+      "status": "PASS",
+      "severity": null,
+      "expected": "Running images, manifest, model, prompt, migrations, backup evidence, and frozen semantics remain the exact candidate.",
+      "actual": "Running application/frontend digests match the frozen values; manifest references them; model, prompt hash, Alembic head, pgvector, and backup ID match. Host/image differences in six auth files were trailing-newline-only and semantically identical.",
+      "evidence": [{"api_worker_image_match": true, "frontend_image_match": true, "model_digest_match": true, "prompt_sha_match": true, "alembic_match": true, "manifest_image_match": true, "semantic_core_diff": false}],
+      "notes": "No image was rebuilt and no candidate container used a source bind mount."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "P1",
+      "scenario": "delete_document_while_ingestion_active",
+      "expected": "Deletion race settles without worker exception.",
+      "actual": "Processing stage update raced with deleted processing_job row and raised StaleDataError/DatabaseError.",
+      "exact_failure_point": "app.repositories.processing_job_repo.update_stage -> SQLAlchemy commit",
+      "http_db_queue_state": {"delete_http": 202, "final_document_count": 0, "final_chunk_count": 0, "final_index_count": 0, "queue": "document-processing", "job_state": "FAILED"},
+      "relevant_logs": ["rag_recovery_v1-processing-worker-1 at 2026-08-24T05:53:53.680165Z"],
+      "suspected_component": "document-processing worker deletion-race handling",
+      "reproduction_steps": ["Upload a sufficiently large private PDF", "Confirm ingestion/processing is active", "Delete the document", "Wait for workers to settle", "Inspect document-processing failed registry and processing-worker logs"]
+    },
+    {
+      "severity": "P1",
+      "scenario": "account_deletion_while_ingestion_active",
+      "expected": "Account deletion race settles without late writes or worker exception.",
+      "actual": "Processing attempted to insert document_reconstructions after account cleanup removed the document, raising ForeignKeyViolation/IntegrityError.",
+      "exact_failure_point": "app.repositories.processing_repo.save_processing_results -> document_reconstructions INSERT",
+      "http_db_queue_state": {"delete_account_http": 202, "final_user_count": 0, "final_document_count": 0, "final_chunk_count": 0, "final_index_count": 0, "queue": "document-processing", "job_state": "FAILED"},
+      "relevant_logs": ["rag_recovery_v1-processing-worker-1 at 2026-08-24T05:54:18.223583Z"],
+      "suspected_component": "document-processing worker account-deletion race handling",
+      "reproduction_steps": ["Upload a sufficiently large private PDF", "Confirm ingestion/processing is active", "Delete the owning account", "Wait for workers to settle", "Inspect document-processing failed registry and processing-worker logs"]
+    }
+  ],
+  "finding_counts": {"P0": 0, "P1": 2, "P2": 0, "P3": 0},
+  "unexpected_server_exceptions": 2,
+  "audit_harness_notes": [
+    "A preliminary citation check used a non-existent document_id field; preserved evidence proved current_document_id/original_document_id matched the expected source. The auditor mapping was corrected without changing acceptance semantics.",
+    "A preliminary disconnect attempt was rejected by the frozen generation limiter after unrealistic test cadence; the auditor waited outside the limiter window while leaving the dedicated limiter probe intact.",
+    "A preliminary stream consumed done because no delta was emitted; the auditor changed the transport probe to close immediately after start.",
+    "The frozen terminal client-disconnect state is CANCELLED with CLIENT_CANCELLED; the auditor accepted that exact contract only."
+  ],
+  "final_reason": "Functional, grounding, authorization, historical, persistence, reconciliation, and regression checks passed, but Product V1 cannot freeze with two reproducible P1 processing-worker lifecycle race failures and two retained failed jobs."
+}

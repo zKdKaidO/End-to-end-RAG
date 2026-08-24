@@ -13,10 +13,29 @@ from app.indexing.constants import CANONICAL_INDEX_VERSION
 logger = get_logger(__name__)
 
 
+# Test-only deterministic pause immediately before the durable persistence
+# boundary. Production leaves this unset.
+LIFECYCLE_TEST_HOOK = None
+
+
 def enqueue_canonical_indexing(document_id: str, request_id: str | None, db):
     """Create and enqueue the canonical Block 3 job after Block 2 completes."""
     from app.repositories.indexing_job_repo import IndexingJobRepository
     from app.queue.rq_client import rq_client
+
+    from sqlalchemy import select
+    from app.models.document import Document
+
+    # Canonical GC uses the same lock. If deletion won after Block 2 commit,
+    # indexing handoff is an expected no-op rather than a late FK write.
+    db.rollback()
+    document = db.scalar(
+        select(Document).where(Document.id == document_id).with_for_update()
+    )
+    if document is None:
+        db.rollback()
+        logger.info("processing_index_handoff_skipped_target_deleted")
+        return None
 
     repo = IndexingJobRepository(db)
     job = repo.create_job(
@@ -31,6 +50,22 @@ def enqueue_canonical_indexing(document_id: str, request_id: str | None, db):
     )
     return job
 
+
+def _continue_processing(repo, processing_job_id: str, document_id: str, stage: ProcessingStage) -> bool:
+    if repo.update_stage(processing_job_id, stage):
+        return True
+    if not repo.document_exists(document_id):
+        repo.db.rollback()
+        logger.info(
+            "processing_aborted_target_deleted",
+            lifecycle_reason="PROCESSING_ABORTED_TARGET_DELETED",
+            attempted_stage=stage.value,
+        )
+        return False
+    raise RuntimeError(
+        f"Processing lifecycle conflict at {stage.value}: canonical document exists but active job transition failed"
+    )
+
 def process_document(processing_job_id: str, document_id: str, request_id: str = None):
     from structlog.contextvars import clear_contextvars, bind_contextvars
     clear_contextvars()
@@ -44,13 +79,22 @@ def process_document(processing_job_id: str, document_id: str, request_id: str =
     try:
         from app.repositories.processing_job_repo import ProcessingJobRepository
         repo = ProcessingJobRepository(db)
-        
+
         # Mark PROCESSING
         success = repo.transition_to_processing(processing_job_id)
         if not success:
-            logger.warning("processing_transition_skipped_or_failed")
+            if not repo.document_exists(document_id):
+                repo.db.rollback()
+                logger.info(
+                    "processing_aborted_target_deleted",
+                    lifecycle_reason="PROCESSING_ABORTED_TARGET_DELETED",
+                    attempted_stage="PROCESSING",
+                )
+                return
+            raise RuntimeError("Processing lifecycle conflict: canonical document exists but job cannot start")
             
-        repo.update_stage(processing_job_id, ProcessingStage.CLEANING)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.CLEANING):
+            return
         
         # 1. Load Document Pages
         from app.models.document_page import DocumentPage
@@ -63,31 +107,36 @@ def process_document(processing_job_id: str, document_id: str, request_id: str =
         cleaned_pages = [cleaner.clean(pt) for pt in page_texts]
         
         # 3. Header/Footer Removal
-        repo.update_stage(processing_job_id, ProcessingStage.HEADER_FOOTER_REMOVAL)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.HEADER_FOOTER_REMOVAL):
+            return
         from app.processing.header_footer import HeaderFooterRemover
         hf_remover = HeaderFooterRemover()
         hf_cleaned = hf_remover.remove_headers_footers(cleaned_pages)
         
         # 4. Reconstruction
-        repo.update_stage(processing_job_id, ProcessingStage.RECONSTRUCTION)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.RECONSTRUCTION):
+            return
         from app.processing.reconstruction import DocumentReconstructor
         reconstructor = DocumentReconstructor()
         normalized_text, page_offset_map = reconstructor.reconstruct(hf_cleaned)
         
         # 5. Metadata Extraction
-        repo.update_stage(processing_job_id, ProcessingStage.METADATA_EXTRACTION)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.METADATA_EXTRACTION):
+            return
         from app.processing.metadata_extractor import MetadataExtractor
         metadata_extractor = MetadataExtractor()
         metadata = metadata_extractor.extract(normalized_text)
         
         # 6. Legal Parsing
-        repo.update_stage(processing_job_id, ProcessingStage.LEGAL_PARSING)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.LEGAL_PARSING):
+            return
         from app.processing.parser import LegalParser
         parser = LegalParser()
         units = parser.parse(normalized_text)
         
         # 7. Chunking
-        repo.update_stage(processing_job_id, ProcessingStage.CHUNKING)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.CHUNKING):
+            return
         from app.processing.chunker import Chunker
         chunker = Chunker()
         chunk_dicts = chunker.generate_chunks(normalized_text, units, metadata)
@@ -116,18 +165,35 @@ def process_document(processing_job_id: str, document_id: str, request_id: str =
             map_unit_pages(u)
             
         # 9. Persistence
-        repo.update_stage(processing_job_id, ProcessingStage.PERSISTENCE)
+        if not _continue_processing(repo, processing_job_id, document_id, ProcessingStage.PERSISTENCE):
+            return
+        if LIFECYCLE_TEST_HOOK is not None:
+            LIFECYCLE_TEST_HOOK("BEFORE_PERSISTENCE", document_id, processing_job_id)
         from app.repositories.processing_repo import ProcessingRepository
         proc_repo = ProcessingRepository(db)
         
-        units_created, chunks_created = proc_repo.save_processing_results(document_id, normalized_text, page_offset_map, units, chunk_dicts)
-        
-        # 10. Mark Completed
-        repo.update_counts(processing_job_id, units_created, chunks_created)
-        repo.mark_completed(processing_job_id)
-        
-        # 11. Enqueue Indexing Job
-        enqueue_canonical_indexing(document_id, request_id, db)
+        outcome = proc_repo.save_processing_results(
+            processing_job_id, document_id, normalized_text, page_offset_map, units, chunk_dicts
+        )
+        if outcome is None:
+            logger.info(
+                "processing_aborted_target_deleted",
+                lifecycle_reason="PROCESSING_ABORTED_TARGET_DELETED",
+                attempted_stage=ProcessingStage.PERSISTENCE.value,
+            )
+            return
+        _units_created, _chunks_created, has_access_reference = outcome
+        if not has_access_reference:
+            logger.info(
+                "processing_index_handoff_skipped_unreferenced",
+                lifecycle_reason="PROCESSING_TARGET_HAS_NO_ACCESS_REFERENCE",
+            )
+            return
+
+        # 10. Enqueue Indexing Job. Completion was committed atomically with
+        # derived data under the lifecycle guard above.
+        if enqueue_canonical_indexing(document_id, request_id, db) is None:
+            return
         
         logger.info("processing_job_completed")
     except Exception as e:
