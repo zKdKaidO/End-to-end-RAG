@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Activity, FileText, FlaskConical, LogOut, Moon, Search, Sun } from "lucide-react";
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { api } from "./api/client";
 import { StatusBadge } from "./components/Common";
 import { AskPage } from "./pages/AskPage";
@@ -26,10 +26,11 @@ function initialTheme(): Theme {
 }
 
 export function App() {
+  const location = useLocation();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [status, setStatus] = useState({ api: "checking", provider: "checking", model_id: "Resolving model…" });
-  const [internalTools, setInternalTools] = useState(false);
+  const [internalTools, setInternalTools] = useState<boolean | null>(null);
   const [theme, setTheme] = useState<Theme>(initialTheme);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function App() {
 
   useEffect(() => {
     if (!user) return;
+    if (user.role === "ADMIN") setInternalTools(null);
     let active = true;
     const check = async () => {
       const health = await api.health().catch(() => ({ status: "unavailable", service: "api" }));
@@ -79,11 +81,14 @@ export function App() {
     try { await api.logout(); } finally { setUser(null); }
   };
 
-  return <div className="app-shell">
-    <aside className="sidebar">
+  const normalizedPath = location.pathname.replace(/\/+$/, "") || "/";
+  const isProductRoute = normalizedPath === "/ask" || normalizedPath === "/documents";
+
+  return <div className={`app-shell ${isProductRoute ? "product-route-shell" : ""}`}>
+    {!isProductRoute ? <aside className="sidebar">
       <div className="brand"><span className="brand-mark" aria-hidden="true">§</span><div className="brand-copy"><strong>Legal RAG</strong><small>Research workstation</small></div></div>
       <nav aria-label="Primary navigation">
-        {NAVIGATION.filter((item) => !item.admin || (user.role === "ADMIN" && internalTools)).map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} title={label}><Icon size={17} aria-hidden="true" /><span>{label}</span></NavLink>)}
+        {NAVIGATION.filter((item) => !item.admin || (user.role === "ADMIN" && internalTools === true)).map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} title={label}><Icon size={17} aria-hidden="true" /><span>{label}</span></NavLink>)}
       </nav>
       <div className="sidebar-footer">
         <div className="signed-in-user"><strong>{user.email}</strong><small>{user.role}</small></div>
@@ -93,12 +98,12 @@ export function App() {
         </button>
         <div className="runtime-status"><div><span>API</span><StatusBadge value={status.api} /></div><div><span>LLM</span><StatusBadge value={status.provider} /></div><small title={status.model_id}>{status.model_id}</small></div>
       </div>
-    </aside>
+    </aside> : null}
     <main><Routes>
-      <Route path="/documents" element={<DocumentsPage user={user} />} />
-      <Route path="/ask" element={<AskPage />} />
-      {user.role === "ADMIN" && internalTools ? <Route path="/debug" element={<DebugPage />} /> : null}
-      {user.role === "ADMIN" && internalTools ? <Route path="/evaluation" element={<EvaluationPage />} /> : null}
+      <Route path="/documents" element={<DocumentsPage user={user} onLogout={() => void logout()} />} />
+      <Route path="/ask" element={<AskPage user={user} onLogout={() => void logout()} />} />
+      {user.role === "ADMIN" && internalTools !== false ? <Route path="/debug" element={internalTools ? <DebugPage /> : <div className="auth-loading">Checking internal tool access…</div>} /> : null}
+      {user.role === "ADMIN" && internalTools !== false ? <Route path="/evaluation" element={internalTools ? <EvaluationPage /> : <div className="auth-loading">Checking internal tool access…</div>} /> : null}
       <Route path="*" element={<Navigate to="/ask" replace />} />
     </Routes></main>
   </div>;

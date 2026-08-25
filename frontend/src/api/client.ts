@@ -71,6 +71,8 @@ export const api = {
     form.append("file", file);
     return apiFetch<{ document: { id: string; filename: string; status: string } }>(`/documents?access=${access}`, { method: "POST", body: form });
   },
+  deleteDocument: (id: string) => apiFetch<Record<string, unknown>>(`/documents/${id}`, { method: "DELETE" }),
+  indexDocument: (id: string) => apiFetch<Record<string, unknown>>(`/documents/${id}/index`, { method: "POST" }),
   createChatSession: (title?: string) => apiFetch<ChatSession>("/api/v1/chat/sessions", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(title ? { title } : {}),
   }),
