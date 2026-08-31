@@ -1,7 +1,15 @@
 services:
   api:
     environment:
+      DEPLOYMENT_PROFILE: pc_tunnel
       # Public Tunnel traffic is HTTPS at the browser and same-origin through nginx.
+      AUTH_COOKIE_SECURE: "true"
+      AUTH_TRUSTED_ORIGINS: ${CLOUDFLARE_PUBLIC_ORIGIN:?CLOUDFLARE_PUBLIC_ORIGIN must be set}
+      SECURITY_HSTS_ENABLED: "true"
+
+  migrate:
+    environment:
+      DEPLOYMENT_PROFILE: pc_tunnel
       AUTH_COOKIE_SECURE: "true"
       AUTH_TRUSTED_ORIGINS: ${CLOUDFLARE_PUBLIC_ORIGIN:?CLOUDFLARE_PUBLIC_ORIGIN must be set}
       SECURITY_HSTS_ENABLED: "true"

@@ -1,4 +1,31 @@
+from enum import Enum
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class DeploymentProfile(str, Enum):
+    """Deployment topology only; RAG behavior is intentionally profile-neutral."""
+
+    LOCAL_DEV = "local_dev"
+    PC_TUNNEL = "pc_tunnel"
+    SELF_HOSTED = "self_hosted"
+    CLOUD_CONTROL_PLANE = "cloud_control_plane"
+
+
+_DEPLOYMENT_PROFILE_ALIASES = {
+    "development": DeploymentProfile.LOCAL_DEV,
+    "production": DeploymentProfile.SELF_HOSTED,
+}
+
+
+def resolve_deployment_profile(value: str) -> DeploymentProfile:
+    normalized = str(value or "").strip().casefold()
+    if normalized in _DEPLOYMENT_PROFILE_ALIASES:
+        return _DEPLOYMENT_PROFILE_ALIASES[normalized]
+    try:
+        return DeploymentProfile(normalized)
+    except ValueError as exc:
+        raise ValueError(f"UNKNOWN_DEPLOYMENT_PROFILE:{value}") from exc
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "End-to-End RAG (Block 1)"
@@ -35,9 +62,9 @@ class Settings(BaseSettings):
     REQUEST_ID_MAX_LENGTH: int = 128
     SECURITY_HSTS_ENABLED: bool = False
 
-    # Deployment + Backup + Recovery V1. Development defaults remain local
-    # and deliberately fail the stricter production preflight.
-    DEPLOYMENT_PROFILE: str = "development"
+    # Deployment topology only. Legacy development/production values remain
+    # accepted as aliases for local_dev/self_hosted during the transition.
+    DEPLOYMENT_PROFILE: str = DeploymentProfile.LOCAL_DEV.value
     RELEASE_ID: str = "development"
     EXPECTED_MODEL_DIGEST: str = ""
     TRUSTED_PROXY_CIDRS: str = ""
@@ -79,6 +106,11 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "documents"
     MINIO_SECURE: bool = False
     MINIO_VERSION: str = "RELEASE.2025-09-07T16-13-09Z"
+
+    # The canonical E5 artifact is provisioned by the deployment, never
+    # selected by a runtime profile. Containers mount this path explicitly.
+    EMBEDDING_DEVICE: str = "cpu"
+    EMBEDDING_MODEL_CACHE_DIR: str = "/root/.cache/huggingface"
 
     # Block 4 frozen defaults and safety bounds. Limits reject excessive work
     # and never clamp caller values.
@@ -126,5 +158,8 @@ class Settings(BaseSettings):
     CHAT_SESSION_TITLE_MAX_LENGTH: int = 100
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    def resolved_deployment_profile(self) -> DeploymentProfile:
+        return resolve_deployment_profile(self.DEPLOYMENT_PROFILE)
 
 settings = Settings()

@@ -3,6 +3,7 @@
 !.env.example
 !.env.production.example
 !.env.cloudflare.example
+!.env.cloud-control-plane.example
 *.pyc
 __pycache__/
 .pytest_cache/

@@ -1,0 +1,105 @@
+# Application-only portable control-plane topology. PostgreSQL, Redis, and
+# S3-compatible object storage are external services supplied by P2/P3.
+# Images contain application source; this file deliberately has no .:/app mount.
+x-default-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: ${LOG_MAX_SIZE:-10m}
+    max-file: ${LOG_MAX_FILES:-7}
+
+x-runtime-env: &runtime-env
+  env_file: ${CLOUD_CONTROL_PLANE_ENV_FILE:-../.env.cloud-control-plane}
+  environment:
+    DEPLOYMENT_PROFILE: cloud_control_plane
+    RECOVERY_CONTROL_DIR: /recovery-control
+    BACKUP_DESTINATION: /backups
+    EMBEDDING_MODEL_CACHE_DIR: /model-cache
+    HF_HUB_OFFLINE: "1"
+    TRANSFORMERS_OFFLINE: "1"
+
+services:
+  db-migrate:
+    build: {context: ..}
+    command: >-
+      sh -c "python -m app.deployment.cli preflight &&
+      alembic upgrade head &&
+      python -m app.deployment.cli migration-check"
+    <<: *runtime-env
+    volumes:
+      - ${RECOVERY_CONTROL_HOST_PATH:?RECOVERY_CONTROL_HOST_PATH must be durable}:/recovery-control
+      - ${BACKUP_DESTINATION_HOST_PATH:?BACKUP_DESTINATION_HOST_PATH must be durable}:/backups
+      - ${EMBEDDING_MODEL_CACHE_HOST_PATH:?EMBEDDING_MODEL_CACHE_HOST_PATH must contain canonical E5}:/model-cache:ro
+    networks: [control_plane]
+    profiles: [operations]
+    logging: *default-logging
+
+  api:
+    build: {context: ..}
+    command: >-
+      sh -c 'uvicorn app.main:app --host 0.0.0.0 --port 8000
+      --proxy-headers --forwarded-allow-ips "$${TRUSTED_PROXY_CIDRS}"'
+    <<: *runtime-env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+    volumes:
+      - ${RECOVERY_CONTROL_HOST_PATH:?RECOVERY_CONTROL_HOST_PATH must be durable}:/recovery-control
+      - ${BACKUP_DESTINATION_HOST_PATH:?BACKUP_DESTINATION_HOST_PATH must be durable}:/backups
+      - ${EMBEDDING_MODEL_CACHE_HOST_PATH:?EMBEDDING_MODEL_CACHE_HOST_PATH must contain canonical E5}:/model-cache:ro
+    networks: [edge, control_plane]
+    restart: unless-stopped
+    logging: *default-logging
+
+  frontend:
+    build:
+      context: ../frontend
+      args: {VITE_API_BASE_URL: /api}
+    networks: [edge]
+    restart: unless-stopped
+    logging: *default-logging
+
+  worker:
+    build: {context: ..}
+    command: python -m app.worker_main
+    <<: *runtime-env
+    volumes:
+      - ${RECOVERY_CONTROL_HOST_PATH:?RECOVERY_CONTROL_HOST_PATH must be durable}:/recovery-control
+    networks: [control_plane]
+    restart: unless-stopped
+    logging: *default-logging
+
+  processing-worker:
+    build: {context: ..}
+    command: python -m app.processing_worker_main
+    <<: *runtime-env
+    networks: [control_plane]
+    restart: unless-stopped
+    logging: *default-logging
+
+  indexing-worker:
+    build: {context: ..}
+    command: python -m app.indexing_worker_main
+    <<: *runtime-env
+    volumes:
+      - ${EMBEDDING_MODEL_CACHE_HOST_PATH:?EMBEDDING_MODEL_CACHE_HOST_PATH must contain canonical E5}:/model-cache:ro
+    networks: [control_plane]
+    restart: unless-stopped
+    logging: *default-logging
+
+  deployment-tool:
+    build: {context: ..}
+    command: python -m app.deployment.cli --help
+    <<: *runtime-env
+    volumes:
+      - ${RECOVERY_CONTROL_HOST_PATH:?RECOVERY_CONTROL_HOST_PATH must be durable}:/recovery-control
+      - ${BACKUP_DESTINATION_HOST_PATH:?BACKUP_DESTINATION_HOST_PATH must be durable}:/backups
+      - ${EMBEDDING_MODEL_CACHE_HOST_PATH:?EMBEDDING_MODEL_CACHE_HOST_PATH must contain canonical E5}:/model-cache:ro
+    networks: [control_plane]
+    profiles: [operations]
+    logging: *default-logging
+
+networks:
+  edge:
+  control_plane:

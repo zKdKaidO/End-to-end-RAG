@@ -1,7 +1,7 @@
-import os
 import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from app.core.config import settings
 from app.indexing.input_contract import E5InputContract, EMBEDDING_MODEL_NAME
 
 class EmbeddingInputTooLongError(Exception):
@@ -17,8 +17,12 @@ class E5Embedder:
 
     def __init__(self):
         # Determine device
-        device = os.environ.get("EMBEDDING_DEVICE", "cpu")
-        self.model = SentenceTransformer(self._model_name, device=device)
+        device = settings.EMBEDDING_DEVICE
+        self.model = SentenceTransformer(
+            self._model_name,
+            device=device,
+            cache_folder=settings.EMBEDDING_MODEL_CACHE_DIR,
+        )
         self.max_tokens = self.model.max_seq_length
         self.input_contract = E5InputContract(self.model.tokenizer, self.max_tokens)
 

@@ -7,7 +7,7 @@ from redis import Redis
 from rq import Worker
 from sqlalchemy import text
 
-from app.core.config import settings
+from app.core.config import DeploymentProfile, settings
 from app.db.database import engine
 from app.deployment.model import ModelProvisioningError, verify_expected_model
 from app.deployment.preflight import DeploymentPreflightError, validate_deployment_configuration
@@ -49,6 +49,11 @@ def readiness_report() -> dict:
         checks["recovery_mode"] = {"ok": True}
 
     try:
+        profile = settings.resolved_deployment_profile()
+    except ValueError:
+        profile = None
+
+    try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
             vector_version = connection.execute(
@@ -74,7 +79,8 @@ def readiness_report() -> dict:
         workers = Worker.all(connection=redis)
         worker_queues = sorted({queue.name for worker in workers for queue in worker.queues})
         required = {"ingestion", "document-processing", "document-indexing", "account-deletion", "document-gc"}
-        worker_ok = settings.DEPLOYMENT_PROFILE.casefold() != "production" or required.issubset(set(worker_queues))
+        worker_required = profile in {DeploymentProfile.SELF_HOSTED, DeploymentProfile.CLOUD_CONTROL_PLANE}
+        worker_ok = not worker_required or required.issubset(set(worker_queues))
         checks["redis_workers"] = {"ok": worker_ok, "queues": worker_queues}
         if not worker_ok:
             blockers.append("REQUIRED_WORKERS_UNAVAILABLE")
@@ -87,12 +93,18 @@ def readiness_report() -> dict:
     if not minio_ok:
         blockers.append("MINIO_UNAVAILABLE")
 
-    try:
-        model = verify_expected_model()
-        checks["model"] = {"ok": True, "name": model.name, "digest": model.digest}
-    except ModelProvisioningError as exc:
-        checks["model"] = {"ok": False, "reason": str(exc)}
-        blockers.append(str(exc))
+    if profile is DeploymentProfile.CLOUD_CONTROL_PLANE:
+        # P1 deliberately keeps generation transitional until P4. The cloud
+        # control plane still validates its configured endpoint at preflight,
+        # but readiness must not make a local Qwen runtime mandatory.
+        checks["model"] = {"ok": True, "required": False, "reason": "P4_GENERATION_TRANSITION"}
+    else:
+        try:
+            model = verify_expected_model()
+            checks["model"] = {"ok": True, "name": model.name, "digest": model.digest}
+        except ModelProvisioningError as exc:
+            checks["model"] = {"ok": False, "reason": str(exc)}
+            blockers.append(str(exc))
 
     report_path = _control_path("reconciliation-latest.json")
     if report_path.exists():

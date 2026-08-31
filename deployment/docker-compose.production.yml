@@ -90,7 +90,7 @@ services:
       python -m app.deployment.cli migration-check"
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
       RECOVERY_CONTROL_DIR: /recovery-control
@@ -110,7 +110,7 @@ services:
       --proxy-headers --forwarded-allow-ips "$${TRUSTED_PROXY_CIDRS}"'
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
       OLLAMA_BASE_URL: http://ollama:11434
@@ -166,7 +166,7 @@ services:
     command: python -m app.worker_main
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
       RECOVERY_CONTROL_DIR: /recovery-control
@@ -188,7 +188,7 @@ services:
     command: python -m app.processing_worker_main
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
     depends_on:
@@ -206,7 +206,7 @@ services:
     command: python -m app.indexing_worker_main
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
       EMBEDDING_DEVICE: cpu
@@ -229,7 +229,7 @@ services:
     command: python -m app.deployment.cli --help
     env_file: ${PRODUCTION_ENV_FILE:-../.env.production}
     environment:
-      DEPLOYMENT_PROFILE: production
+      DEPLOYMENT_PROFILE: self_hosted
       AUTH_COOKIE_SECURE: "true"
       SECURITY_HSTS_ENABLED: "true"
       OLLAMA_BASE_URL: http://ollama:11434
