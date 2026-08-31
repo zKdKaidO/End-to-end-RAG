@@ -126,6 +126,23 @@ def validate_deployment_configuration(*, create_control_dir: bool = True) -> Pre
             "EXTERNAL_GENERATION_ENDPOINT", "EMBEDDING_MODEL_CACHE_DIR",
         ))
 
+    if resolved_profile is DeploymentProfile.BENCHMARK:
+        database_name = database.path.lstrip("/")
+        if settings.BENCHMARK_RUNTIME_MARKER != "rag-benchmark-v1":
+            raise DeploymentPreflightError("BENCHMARK_RUNTIME_MARKER_INVALID")
+        if _endpoint_host(settings.DATABASE_URL, url=True) != "benchmark-postgres" or database_name != "rag_benchmark":
+            raise DeploymentPreflightError("BENCHMARK_DATABASE_TARGET_INVALID")
+        if _endpoint_host(settings.REDIS_URL, url=True) != "benchmark-redis":
+            raise DeploymentPreflightError("BENCHMARK_REDIS_TARGET_INVALID")
+        if _endpoint_host(settings.MINIO_ENDPOINT, url=False) != "benchmark-minio":
+            raise DeploymentPreflightError("BENCHMARK_OBJECT_STORAGE_TARGET_INVALID")
+        if settings.MINIO_BUCKET != "benchmark-documents":
+            raise DeploymentPreflightError("BENCHMARK_BUCKET_TARGET_INVALID")
+        checks.extend((
+            "BENCHMARK_RUNTIME_MARKER", "BENCHMARK_DATABASE_TARGET",
+            "BENCHMARK_REDIS_TARGET", "BENCHMARK_OBJECT_STORAGE_TARGET",
+        ))
+
     if settings.BACKUP_RETENTION_DAYS < 0 or settings.BACKUP_KEEP_LAST < 0:
         raise DeploymentPreflightError("INVALID_BACKUP_RETENTION")
     if settings.RESTORE_MAX_PARALLEL_MAINTENANCE_WORKERS < 0:

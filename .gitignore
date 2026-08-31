@@ -4,6 +4,7 @@
 !.env.production.example
 !.env.cloudflare.example
 !.env.cloud-control-plane.example
+!.env.benchmark.example
 *.pyc
 __pycache__/
 .pytest_cache/

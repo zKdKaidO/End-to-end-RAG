@@ -10,6 +10,7 @@ class DeploymentProfile(str, Enum):
     PC_TUNNEL = "pc_tunnel"
     SELF_HOSTED = "self_hosted"
     CLOUD_CONTROL_PLANE = "cloud_control_plane"
+    BENCHMARK = "benchmark"
 
 
 _DEPLOYMENT_PROFILE_ALIASES = {
@@ -65,6 +66,9 @@ class Settings(BaseSettings):
     # Deployment topology only. Legacy development/production values remain
     # accepted as aliases for local_dev/self_hosted during the transition.
     DEPLOYMENT_PROFILE: str = DeploymentProfile.LOCAL_DEV.value
+    # Reserved for the physically isolated capacity benchmark environment.
+    # It is never a user-selectable product runtime profile.
+    BENCHMARK_RUNTIME_MARKER: str = ""
     RELEASE_ID: str = "development"
     EXPECTED_MODEL_DIGEST: str = ""
     TRUSTED_PROXY_CIDRS: str = ""
