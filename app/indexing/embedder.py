@@ -1,3 +1,5 @@
+import threading
+
 import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -27,6 +29,10 @@ class E5Embedder:
             device=device,
             cache_folder=settings.EMBEDDING_MODEL_CACHE_DIR,
         )
+        # Hugging Face fast tokenizers temporarily mutate padding/truncation
+        # state while encoding. Query retrieval and passage indexing share this
+        # model/tokenizer object, so a single lock belongs to its owner.
+        self.inference_lock = threading.RLock()
         self.max_tokens = self.model.max_seq_length
         self.input_contract = E5InputContract(self.model.tokenizer, self.max_tokens)
 
@@ -47,20 +53,21 @@ class E5Embedder:
         if not chunks_with_ids:
             return []
 
-        passages = []
-        for chunk_id, text in chunks_with_ids:
-            # Prefix for E5 models
-            passage = self.input_contract.build_final_input(text)
-            self.validate_token_length(chunk_id, passage)
-            passages.append(passage)
+        with self.inference_lock:
+            passages = []
+            for chunk_id, text in chunks_with_ids:
+                # Prefix for E5 models
+                passage = self.input_contract.build_final_input(text)
+                self.validate_token_length(chunk_id, passage)
+                passages.append(passage)
 
-        # encode with normalize_embeddings=True to get L2 normalized float32 vectors
-        embeddings = self.model.encode(
-            passages,
-            batch_size=len(passages),
-            normalize_embeddings=True,
-            convert_to_numpy=True
-        )
+            # encode with normalize_embeddings=True to get L2 normalized float32 vectors
+            embeddings = self.model.encode(
+                passages,
+                batch_size=len(passages),
+                normalize_embeddings=True,
+                convert_to_numpy=True
+            )
 
         return embeddings
 

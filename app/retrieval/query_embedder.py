@@ -38,23 +38,28 @@ class QueryEmbedder:
 
     def encode(self, query_text: str) -> np.ndarray:
         prefixed_query = f"query: {query_text}"
-        token_count = len(self._base_embedder.model.tokenizer.encode(prefixed_query))
-        if token_count > self.max_tokens:
-            raise QueryInputTooLongError(token_count, self.max_tokens)
+        # FastTokenizer mutates temporary padding/truncation configuration
+        # during both explicit validation and SentenceTransformer.encode().
+        # The E5 owner supplies one shared lock so every user of the same
+        # canonical tokenizer/model pair observes one safe inference section.
+        with self._base_embedder.inference_lock:
+            token_count = len(self._base_embedder.model.tokenizer.encode(prefixed_query))
+            if token_count > self.max_tokens:
+                raise QueryInputTooLongError(token_count, self.max_tokens)
 
-        try:
-            encoded = self._base_embedder.model.encode(
-                [prefixed_query],
-                batch_size=1,
-                normalize_embeddings=True,
-                convert_to_numpy=True,
-            )
-        except QueryInputTooLongError:
-            raise
-        except Exception as exc:
-            raise RetrievalDependencyError(
-                "QUERY_EMBEDDING", "Embedding model is unavailable"
-            ) from exc
+            try:
+                encoded = self._base_embedder.model.encode(
+                    [prefixed_query],
+                    batch_size=1,
+                    normalize_embeddings=True,
+                    convert_to_numpy=True,
+                )
+            except QueryInputTooLongError:
+                raise
+            except Exception as exc:
+                raise RetrievalDependencyError(
+                    "QUERY_EMBEDDING", "Embedding model is unavailable"
+                ) from exc
 
         vector = np.asarray(encoded[0], dtype=np.float32)
         if vector.shape != (768,):
