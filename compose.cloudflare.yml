@@ -1,0 +1,30 @@
+services:
+  api:
+    environment:
+      # Public Tunnel traffic is HTTPS at the browser and same-origin through nginx.
+      AUTH_COOKIE_SECURE: "true"
+      AUTH_TRUSTED_ORIGINS: ${CLOUDFLARE_PUBLIC_ORIGIN:?CLOUDFLARE_PUBLIC_ORIGIN must be set}
+      SECURITY_HSTS_ENABLED: "true"
+
+  frontend:
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks: [provider, tunnel_ingress]
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.2
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?CLOUDFLARE_TUNNEL_TOKEN must be set}
+    depends_on:
+      frontend:
+        condition: service_healthy
+    networks: [tunnel_ingress]
+    restart: unless-stopped
+
+networks:
+  tunnel_ingress:

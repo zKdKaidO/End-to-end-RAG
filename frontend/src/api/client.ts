@@ -11,7 +11,20 @@ import type {
   AuthUser,
 } from "../types";
 
-export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/+$/, "");
+
+/**
+ * Maps existing backend routes onto the same-origin /api gateway without
+ * changing the FastAPI route contract. The nginx/Vite gateway preserves
+ * backend /api/v1 routes and strips /api for all other backend routes.
+ */
+export function apiUrl(path: string) {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  if (API_BASE === "/api" && normalizedPath.startsWith("/api/")) {
+    return `${API_BASE}${normalizedPath.slice(4)}`;
+  }
+  return `${API_BASE}${normalizedPath}`;
+}
 
 export class ApiError extends Error {
   constructor(message: string, public status: number, public requestId?: string) {
@@ -20,7 +33,7 @@ export class ApiError extends Error {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, { credentials: "include", ...init });
+  const response = await fetch(apiUrl(path), { credentials: "include", ...init });
   const requestId = response.headers.get("X-Request-ID") ?? undefined;
   if (!response.ok) {
     if (response.status === 401) window.dispatchEvent(new Event("legal-rag:unauthorized"));
@@ -37,7 +50,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 async function apiFetchVoid(path: string, init?: RequestInit): Promise<void> {
-  const response = await fetch(`${API_BASE}${path}`, { credentials: "include", ...init });
+  const response = await fetch(apiUrl(path), { credentials: "include", ...init });
   if (!response.ok) {
     if (response.status === 401) window.dispatchEvent(new Event("legal-rag:unauthorized"));
     throw new ApiError(`Request failed (${response.status})`, response.status, response.headers.get("X-Request-ID") ?? undefined);
@@ -150,7 +163,7 @@ export async function streamAnswer(
   handlers: SseHandlers,
   signal?: AbortSignal,
 ): Promise<void> {
-  const response = await fetch(`${API_BASE}/answer/stream`, {
+  const response = await fetch(apiUrl("/answer/stream"), {
     credentials: "include",
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -198,7 +211,7 @@ async function streamSse(
   handlers: SseHandlers,
   signal?: AbortSignal,
 ): Promise<void> {
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(apiUrl(path), {
     method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal,
   });
   if (!response.ok || !response.body) {

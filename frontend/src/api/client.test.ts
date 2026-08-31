@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { parseSseBlock } from "./client";
+import { apiUrl, parseSseBlock } from "./client";
+
+describe("same-origin API gateway", () => {
+  it("prefixes non-versioned backend routes exactly once", () => {
+    expect(apiUrl("/documents")).toBe("/api/documents");
+    expect(apiUrl("/answer/stream")).toBe("/api/answer/stream");
+  });
+
+  it("preserves existing backend /api/v1 routes without a duplicate api segment", () => {
+    expect(apiUrl("/api/v1/auth/me")).toBe("/api/v1/auth/me");
+    expect(apiUrl("/api/v1/chat/sessions")).toBe("/api/v1/chat/sessions");
+  });
+});
 
 describe("POST SSE parser", () => {
   it("parses start, delta, done, and error payloads", () => {
