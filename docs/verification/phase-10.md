@@ -1,7 +1,7 @@
 # Phase 10 Verification - End-to-End Verification Audit
 
 ## 1. Clean Canonical E2E Ingestion
-**Action**: Ran `tests/integration/verify_e2e.py` on a clean, truncated database using `tests/fixtures/sample_legal.pdf`.
+**Action**: Ran the historical one-off E2E harness on a clean, truncated database using `tests/fixtures/sample_legal.pdf`. The harness was later removed during repository hygiene after maintained integration tests superseded it.
 **HTTP Response**:
 - **Status Code**: `202 Accepted`
 - **Body**: `{'document': {'id': '16347e1d-b298-42ac-a640-6328967137b3', 'filename': 'sample_legal.pdf', 'status': 'COMPLETED', 'sha256': 'e2847829f8323e9773ced4610a7016a966fac11e13d4ad26bff4606b8b9ee1aa', 'page_count': None, 'created_at': '2026-08-17T09:55:40.417154'}}`

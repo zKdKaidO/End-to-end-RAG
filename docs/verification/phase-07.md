@@ -29,7 +29,7 @@ Integration tests (Worker end-to-end):
 tests/integration/test_worker.py::test_process_ingestion_success PASSED  [ 33%]
 ```
 
-**Idempotency Execution Output** (via `tests/integration/verify_e2e.py`):
+**Historical idempotency execution output** (captured by the one-off E2E harness that was removed after maintained integration coverage superseded it):
 ```text
 === 4. Prove page persistence idempotency explicitly ===
 Executing batch_upsert_pages with the same data again...

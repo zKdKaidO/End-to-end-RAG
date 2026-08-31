@@ -2,7 +2,7 @@
 
 1. Reprocessing integrity:
 PASS
-Evidence: Ran reprocessing E2E test (`verify_reprocess.py`) which triggered a second processing run on the same document. It successfully wiped old records without failing FK constraints due to proper `TRUNCATE`/bulk `DELETE`. The assertions proved `1` active reconstruction, `76` chunks, `76` units, and no invalid dangling references.
+Evidence: Ran a historical one-off reprocessing E2E harness, which triggered a second processing run on the same document. It successfully wiped old records without failing FK constraints due to proper `TRUNCATE`/bulk `DELETE`. The assertions proved `1` active reconstruction, `76` chunks, `76` units, and no invalid dangling references. The one-off harness was removed during repository hygiene after maintained integration coverage superseded it.
 Fix if any: Unified the deletion and insertion phases inside `ProcessingRepository.save_processing_results` into a single SQL transaction ensuring Atomicity.
 
 2. Header/Footer:

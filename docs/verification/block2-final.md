@@ -15,10 +15,10 @@ Prove that Block 2 (Legal Document Processing) successfully processes a raw uplo
   7. Hierarchical context is prepended to generate chunks.
   8. Records persisted idempotently to `document_reconstructions`, `legal_units`, and `chunks`.
 
-## 3. Command Executed
-```bash
-docker compose exec api python verify_e2e_block2.py
-```
+## 3. Historical execution
+The output below was captured by the one-off Block 2 verification harness used
+during the freeze audit. That harness was removed during repository hygiene
+after its assertions were covered by the maintained unit and integration suite.
 
 ## 4. Actual Outputs
 ```text
