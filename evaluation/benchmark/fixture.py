@@ -7,7 +7,11 @@ import json
 from pathlib import Path
 
 
-FIXTURE_PATH = Path("evaluation/benchmark/fixtures/legal_retrieval_v1.json")
+FIXTURE_PATH = Path("evaluation/benchmark/fixtures/legal_retrieval_v2.json")
+
+
+def fixture_object_root() -> Path:
+    return FIXTURE_PATH.parent / "objects"
 
 
 def load_fixture() -> dict:

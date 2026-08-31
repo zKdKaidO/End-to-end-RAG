@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import json
 import hashlib
+import io
+import json
 from datetime import datetime
-from pathlib import Path
 from uuid import UUID
 
 from sqlalchemy import select, text
@@ -17,7 +17,7 @@ from app.models.document import Document, DocumentStatus
 from app.models.document_page import DocumentPage
 from app.models.legal_unit import LegalUnit
 from app.storage.minio_client import minio_client
-from evaluation.benchmark.fixture import fixture_sha256, load_fixture
+from evaluation.benchmark.fixture import fixture_object_root, fixture_sha256, load_fixture
 from evaluation.benchmark.runtime import assert_benchmark_runtime
 from evaluation.benchmark.snapshot import snapshot
 
@@ -35,13 +35,13 @@ def _digest(items) -> str:
 
 
 def _expected_snapshot(fixture: dict) -> dict:
-    document_id = fixture["document"]["id"]
     return {
-        "documents": 1, "chunks": len(fixture["chunks"]), "chunk_indexes": len(fixture["chunk_indexes"]), "objects": 1,
-        "document_ids_sha256": _digest([document_id]),
+        "documents": len(fixture["documents"]), "chunks": len(fixture["chunks"]),
+        "chunk_indexes": len(fixture["chunk_indexes"]), "objects": len(fixture["objects"]),
+        "document_ids_sha256": _digest(row["id"] for row in fixture["documents"]),
         "chunk_ids_sha256": _digest(row["id"] for row in fixture["chunks"]),
         "chunk_index_ids_sha256": _digest(row["id"] for row in fixture["chunk_indexes"]),
-        "object_names_sha256": _digest([f"{document_id}/original.pdf"]),
+        "object_names_sha256": _digest(row["key"] for row in fixture["objects"]),
     }
 
 
@@ -60,11 +60,7 @@ def _assert_empty_or_seeded(db, fixture: dict) -> bool:
 def seed() -> dict:
     assert_benchmark_runtime()
     fixture = load_fixture()
-    document_row = fixture["document"]
-    source_pdf = Path(fixture["source_pdf_path"])
-    if not source_pdf.is_file():
-        raise RuntimeError("BENCHMARK_FIXTURE_SOURCE_PDF_MISSING")
-    if fixture["fixture_version"] != "legal-retrieval-v1":
+    if fixture["fixture_version"] != "legal-retrieval-v2":
         raise RuntimeError("BENCHMARK_FIXTURE_VERSION_UNSUPPORTED")
 
     db = SessionLocal()
@@ -72,13 +68,14 @@ def seed() -> dict:
         already_seeded = _assert_empty_or_seeded(db, fixture)
         if already_seeded:
             return {"already_seeded": True, "fixture_sha256": fixture_sha256(), **snapshot()}
-        document = Document(
-            id=_uuid(document_row["id"]), user_id=document_row["user_id"], filename=document_row["filename"],
-            mime_type=document_row["mime_type"], file_size=document_row["file_size"], sha256=document_row["sha256"],
-            storage_uri=f"minio://{minio_client.bucket}/{document_row['id']}/original.pdf", page_count=document_row["page_count"],
-            status=DocumentStatus(document_row["status"]), created_at=_datetime(document_row["created_at"]), updated_at=_datetime(document_row["updated_at"]),
+        db.add_all(
+            Document(
+                id=_uuid(row["id"]), user_id=row["user_id"], filename=row["filename"], mime_type=row["mime_type"],
+                file_size=row["file_size"], sha256=row["sha256"], storage_uri=f"minio://{minio_client.bucket}/{row['id']}/original.pdf",
+                page_count=row["page_count"], status=DocumentStatus(row["status"]), created_at=_datetime(row["created_at"]),
+                updated_at=_datetime(row["updated_at"]),
+            ) for row in fixture["documents"]
         )
-        db.add(document)
         db.flush()
         db.add_all(
             DocumentPage(
@@ -120,10 +117,17 @@ def seed() -> dict:
     finally:
         db.close()
 
-    pdf_bytes = source_pdf.read_bytes()
-    if __import__("hashlib").sha256(pdf_bytes).hexdigest() != document_row["sha256"]:
-        raise RuntimeError("BENCHMARK_FIXTURE_SOURCE_PDF_HASH_MISMATCH")
-    minio_client.upload_pdf(document_row["id"], pdf_bytes)
+    object_root = fixture_object_root()
+    for object_row in fixture["objects"]:
+        source_object = object_root / object_row["key"]
+        if not source_object.is_file():
+            raise RuntimeError("BENCHMARK_FIXTURE_SOURCE_OBJECT_MISSING")
+        object_bytes = source_object.read_bytes()
+        if hashlib.sha256(object_bytes).hexdigest() != object_row["sha256"]:
+            raise RuntimeError("BENCHMARK_FIXTURE_SOURCE_OBJECT_HASH_MISMATCH")
+        minio_client.client.put_object(
+            minio_client.bucket, object_row["key"], io.BytesIO(object_bytes), len(object_bytes), content_type="application/pdf"
+        )
     return {"fixture_sha256": fixture_sha256(), **snapshot()}
 
 

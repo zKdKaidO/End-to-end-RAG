@@ -8,11 +8,13 @@ This environment is intentionally separate from normal development. It uses Dock
 2. Run `docker compose -p rag-benchmark --env-file .env.benchmark -f deployment/docker-compose.benchmark.yml up -d --build`.
 3. Verify targets with `docker compose -p rag-benchmark --env-file .env.benchmark -f deployment/docker-compose.benchmark.yml exec benchmark-api python -m evaluation.benchmark.snapshot`.
 
-The migration and seed services create the independent schema and load the committed `legal_retrieval_v1.json` fixture. The seed refuses non-empty targets and all benchmark tools require the `benchmark` profile, `rag-benchmark-v1` marker, benchmark Postgres/Redis hosts, and `benchmark-documents` bucket.
+The migration and seed services create the independent schema and load the committed `legal_retrieval_v2.json` fixture. The seed refuses a non-empty target unless its deterministic snapshot exactly matches that fixture. All benchmark tools require the `benchmark` profile, `rag-benchmark-v1` marker, benchmark Postgres/Redis hosts, and `benchmark-documents` bucket.
 
 ## Fixture and smoke proof
 
-The fixture contains one real indexed legal document, 18 pages, 115 legal units, 121 chunks, and 121 real 768-D Block 3 embeddings. Its source PDF is the checked-in corpus input whose SHA-256 is verified before upload to the benchmark bucket.
+The fixture is a frozen read-only copy of the representative development corpus state: 44 documents, 613 chunks, 613 real normalized 768-D Block 3 embeddings, legal hierarchy/page metadata, and 18 source objects. Object bytes and SHA-256 values are committed under `fixtures/objects`, so future benchmark startup has no runtime dependency on mutable development storage and does not re-embed canonical data.
+
+The optional benchmark worker profile contains only the processing and indexing workers. The generic lifecycle worker is deliberately excluded: its deletion queues would make a read-only capacity benchmark mutable.
 
 Run `docker compose -p rag-benchmark --env-file .env.benchmark -f deployment/docker-compose.benchmark.yml exec benchmark-api python -m evaluation.benchmark.smoke`. It snapshots before/after the real retrieval path and fails if it detects any mutation. It never calls generation.
 

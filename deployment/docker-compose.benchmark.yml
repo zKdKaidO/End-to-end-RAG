@@ -105,21 +105,6 @@ services:
         condition: service_healthy
     networks: [benchmark_backend]
 
-  benchmark-worker:
-    profiles: ["workers"]
-    build:
-      context: ..
-    command: python -m app.worker_main
-    env_file: ../.env.benchmark
-    volumes:
-      - ../:/app
-    depends_on:
-      benchmark-seed:
-        condition: service_completed_successfully
-      benchmark-redis:
-        condition: service_healthy
-    networks: [benchmark_backend]
-
   benchmark-processing-worker:
     profiles: ["workers"]
     build:

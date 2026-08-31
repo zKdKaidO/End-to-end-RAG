@@ -3,6 +3,7 @@ import pytest
 from app.core.config import DeploymentProfile, resolve_deployment_profile, settings
 from app.deployment.preflight import DeploymentPreflightError, validate_deployment_configuration
 from evaluation.benchmark.runtime import BenchmarkTargetError, assert_benchmark_runtime
+from evaluation.benchmark.fixture import load_fixture
 
 
 def _benchmark_settings(monkeypatch, tmp_path):
@@ -36,3 +37,12 @@ def test_benchmark_runtime_rejects_normal_service_targets(monkeypatch, tmp_path,
         assert_benchmark_runtime()
     with pytest.raises(DeploymentPreflightError, match=preflight_error):
         validate_deployment_configuration(create_control_dir=False)
+
+
+def test_large_frozen_fixture_preserves_representative_retrieval_inputs():
+    fixture = load_fixture()
+    assert fixture["fixture_version"] == "legal-retrieval-v2"
+    assert len(fixture["documents"]) == 44
+    assert len(fixture["chunks"]) == len(fixture["chunk_indexes"]) == 613
+    assert len(fixture["objects"]) == 18
+    assert {row["embedding_dimension"] for row in fixture["chunk_indexes"]} == {768}
