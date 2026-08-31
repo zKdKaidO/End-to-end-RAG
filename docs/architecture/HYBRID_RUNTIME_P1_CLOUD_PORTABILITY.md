@@ -57,8 +57,10 @@ start this topology.
   the existing `minio://` logical object identifier is deliberately unchanged.
 - The frozen `intfloat/multilingual-e5-base` artifact remains CPU-configured,
   offline, 768-dimensional, normalized, and prefix-compatible. Its cache path
-  is now explicit (`EMBEDDING_MODEL_CACHE_DIR`) and the portable Compose mounts
-  it read-only. A missing cache fails model initialization; P1 never downloads
+  is now explicit (`EMBEDDING_MODEL_CACHE_DIR`). Its value is the Hugging Face
+  hub cache directory that directly contains the canonical `models--…` entry;
+  the portable Compose mounts that directory read-only. A missing or incomplete
+  cache fails model initialization and readiness before a model lookup; P1 never downloads
   an alternate model or reindexes.
 - `OLLAMA_BASE_URL` remains a runtime setting. `cloud_control_plane` validates
   that it is externally addressed, but readiness intentionally does not demand

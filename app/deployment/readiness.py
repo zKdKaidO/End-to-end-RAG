@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from app.core.config import DeploymentProfile, settings
 from app.db.database import engine
+from app.indexing.artifact import CanonicalEmbeddingArtifactError, validate_canonical_e5_artifact
 from app.deployment.model import ModelProvisioningError, verify_expected_model
 from app.deployment.preflight import DeploymentPreflightError, validate_deployment_configuration
 from app.deployment.release import expected_alembic_head
@@ -47,6 +48,13 @@ def readiness_report() -> dict:
         blockers.append("RECOVERY_IN_PROGRESS")
     else:
         checks["recovery_mode"] = {"ok": True}
+
+    try:
+        validate_canonical_e5_artifact(settings.EMBEDDING_MODEL_CACHE_DIR)
+        checks["embedding_artifact"] = {"ok": True}
+    except CanonicalEmbeddingArtifactError as exc:
+        checks["embedding_artifact"] = {"ok": False, "reason": str(exc)}
+        blockers.append(str(exc))
 
     try:
         profile = settings.resolved_deployment_profile()

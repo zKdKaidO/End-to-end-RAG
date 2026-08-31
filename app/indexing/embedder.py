@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from app.core.config import settings
+from app.indexing.artifact import validate_canonical_e5_artifact
 from app.indexing.input_contract import E5InputContract, EMBEDDING_MODEL_NAME
 
 class EmbeddingInputTooLongError(Exception):
@@ -18,6 +19,9 @@ class E5Embedder:
     def __init__(self):
         # Determine device
         device = settings.EMBEDDING_DEVICE
+        # Validate the provisioned artifact before SentenceTransformer can
+        # attempt a Hugging Face lookup. The value is the HF hub cache dir.
+        validate_canonical_e5_artifact(settings.EMBEDDING_MODEL_CACHE_DIR)
         self.model = SentenceTransformer(
             self._model_name,
             device=device,

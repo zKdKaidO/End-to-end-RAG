@@ -4,6 +4,22 @@ import pytest
 
 from app.core.config import DeploymentProfile, resolve_deployment_profile, settings
 from app.deployment.preflight import DeploymentPreflightError, validate_deployment_configuration
+from app.indexing.artifact import CanonicalEmbeddingArtifactError, validate_canonical_e5_artifact
+from app.indexing.embedder import E5Embedder
+
+
+def _canonical_e5_cache(root: Path) -> Path:
+    revision = "0123456789abcdef"
+    snapshot = root / "models--intfloat--multilingual-e5-base" / "snapshots" / revision
+    snapshot.mkdir(parents=True, exist_ok=True)
+    (root / "models--intfloat--multilingual-e5-base" / "refs").mkdir(exist_ok=True)
+    (root / "models--intfloat--multilingual-e5-base" / "refs" / "main").write_text(
+        revision, encoding="utf-8"
+    )
+    for filename in ("config.json", "modules.json", "tokenizer_config.json"):
+        (snapshot / filename).write_text("{}", encoding="utf-8")
+    (snapshot / "model.safetensors").write_bytes(b"canonical-test-artifact")
+    return root
 
 
 def _cloud_settings(monkeypatch, tmp_path: Path) -> None:
@@ -28,7 +44,7 @@ def _cloud_settings(monkeypatch, tmp_path: Path) -> None:
         "BACKUP_DESTINATION_SEPARATE_FAILURE_DOMAIN": True,
         "EMBEDDING_MODEL_CACHE_DIR": str(tmp_path / "e5-cache"),
     }
-    (tmp_path / "e5-cache").mkdir()
+    _canonical_e5_cache(tmp_path / "e5-cache")
     for name, value in values.items():
         monkeypatch.setattr(settings, name, value)
 
@@ -67,6 +83,11 @@ def test_cloud_profile_requires_external_services_and_e5_artifact(monkeypatch, t
     with pytest.raises(DeploymentPreflightError, match="CLOUD_PROFILE_LOCAL_ENDPOINT:DATABASE_URL"):
         validate_deployment_configuration(create_control_dir=False)
 
+    _cloud_settings(monkeypatch, tmp_path)
+    monkeypatch.setattr(settings, "EMBEDDING_MODEL_CACHE_DIR", str(tmp_path / "missing-e5-hub"))
+    with pytest.raises(DeploymentPreflightError, match="CANONICAL_E5_ARTIFACT_UNAVAILABLE"):
+        validate_deployment_configuration(create_control_dir=False)
+
 
 def test_cloud_profile_rejects_insecure_object_storage_and_relative_recovery_path(monkeypatch, tmp_path):
     _cloud_settings(monkeypatch, tmp_path)
@@ -95,6 +116,55 @@ def test_cloud_template_contains_placeholders_not_runtime_secrets():
     assert "replace-password" in template
     assert "rag.zkd.id.vn" not in template
     assert "6488c96fa5fa" not in template
+
+
+def test_embedding_cache_contract_is_the_hugging_face_hub_cache(tmp_path):
+    cache = _canonical_e5_cache(tmp_path / "hub")
+    snapshot = validate_canonical_e5_artifact(str(cache))
+    assert snapshot.parent.parent.name == "models--intfloat--multilingual-e5-base"
+    assert snapshot.name == "0123456789abcdef"
+
+
+def test_unavailable_embedding_artifact_fails_before_model_lookup(monkeypatch, tmp_path):
+    monkeypatch.setattr(settings, "EMBEDDING_MODEL_CACHE_DIR", str(tmp_path / "missing-hub"))
+    called = False
+
+    def unexpected_model(*_args, **_kwargs):
+        nonlocal called
+        called = True
+        raise AssertionError("model lookup must not run when canonical cache is absent")
+
+    monkeypatch.setattr("app.indexing.embedder.SentenceTransformer", unexpected_model)
+    with pytest.raises(CanonicalEmbeddingArtifactError, match="CANONICAL_E5_ARTIFACT_UNAVAILABLE"):
+        E5Embedder()
+    assert called is False
+
+
+def test_embedder_passes_the_canonical_hub_cache_without_changing_profile(monkeypatch, tmp_path):
+    cache = _canonical_e5_cache(tmp_path / "hub")
+    monkeypatch.setattr(settings, "EMBEDDING_MODEL_CACHE_DIR", str(cache))
+    monkeypatch.setattr(settings, "EMBEDDING_DEVICE", "cpu")
+    captured = {}
+
+    class FakeModel:
+        max_seq_length = 512
+
+        class tokenizer:
+            is_fast = True
+
+    def fake_model(model_name, **kwargs):
+        captured["model_name"] = model_name
+        captured.update(kwargs)
+        return FakeModel()
+
+    monkeypatch.setattr("app.indexing.embedder.SentenceTransformer", fake_model)
+    embedder = E5Embedder()
+    assert captured == {
+        "model_name": "intfloat/multilingual-e5-base",
+        "device": "cpu",
+        "cache_folder": str(cache),
+    }
+    assert embedder.embedding_dimension == 768
 
 
 def test_portable_compose_uses_immutable_app_images_and_no_public_stateful_services():

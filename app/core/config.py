@@ -110,7 +110,9 @@ class Settings(BaseSettings):
     # The canonical E5 artifact is provisioned by the deployment, never
     # selected by a runtime profile. Containers mount this path explicitly.
     EMBEDDING_DEVICE: str = "cpu"
-    EMBEDDING_MODEL_CACHE_DIR: str = "/root/.cache/huggingface"
+    # Hugging Face hub cache directory: directly contains models--<org>--<id>.
+    # This is intentionally not the parent Hugging Face home directory.
+    EMBEDDING_MODEL_CACHE_DIR: str = "/root/.cache/huggingface/hub"
 
     # Block 4 frozen defaults and safety bounds. Limits reject excessive work
     # and never clamp caller values.

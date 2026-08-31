@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 from app.core.config import DeploymentProfile, resolve_deployment_profile, settings
+from app.indexing.artifact import CanonicalEmbeddingArtifactError, validate_canonical_e5_artifact
 
 
 class DeploymentPreflightError(RuntimeError):
@@ -115,9 +116,11 @@ def validate_deployment_configuration(*, create_control_dir: bool = True) -> Pre
             raise DeploymentPreflightError("CLOUD_OBJECT_STORAGE_TLS_REQUIRED")
         _require_absolute_path("RECOVERY_CONTROL_DIR", settings.RECOVERY_CONTROL_DIR)
         _require_absolute_path("BACKUP_DESTINATION", settings.BACKUP_DESTINATION)
-        cache_dir = _require_absolute_path("EMBEDDING_MODEL_CACHE_DIR", settings.EMBEDDING_MODEL_CACHE_DIR)
-        if not cache_dir.is_dir():
-            raise DeploymentPreflightError("EMBEDDING_ARTIFACT_CACHE_UNAVAILABLE")
+        _require_absolute_path("EMBEDDING_MODEL_CACHE_DIR", settings.EMBEDDING_MODEL_CACHE_DIR)
+        try:
+            validate_canonical_e5_artifact(settings.EMBEDDING_MODEL_CACHE_DIR)
+        except CanonicalEmbeddingArtifactError as exc:
+            raise DeploymentPreflightError(str(exc)) from exc
         checks.extend((
             "EXTERNAL_DATABASE_URL", "EXTERNAL_REDIS_URL", "EXTERNAL_OBJECT_STORAGE",
             "EXTERNAL_GENERATION_ENDPOINT", "EMBEDDING_MODEL_CACHE_DIR",
