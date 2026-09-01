@@ -5,6 +5,7 @@ import hmac
 import json
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 import httpx
@@ -16,6 +17,7 @@ from app.local_compute.jobs import LocalJobStore
 from app.local_compute.runtime import LocalComputeRuntime, RuntimeState
 from app.local_compute.server import LoopbackControlServer
 from app.local_compute.settings import PRODUCT_ORIGIN, LocalComputeSettings
+from app.local_compute.sessions import request_mac
 
 
 @pytest.fixture
@@ -136,6 +138,51 @@ def test_authentication_rejects_missing_invalid_replayed_and_body_hash_mismatch(
     response = client.post("/v1/probe/binary", content=body, headers=wrong)
     assert response.status_code == 401
     assert response.json()["error"]["code"] == "AUTH_INVALID"
+
+
+def test_canonical_proof_binds_method_path_body_and_session_secret(client):
+    timestamp = "1700000000"
+    nonce = "fixed-nonce"
+    body = b'{"query_text":"doanh nghiep"}'
+    proof = request_mac("session-secret-a", "POST", "/v1/queries", timestamp, nonce, body)
+    assert proof != request_mac("session-secret-b", "POST", "/v1/queries", timestamp, nonce, body)
+    assert proof != request_mac("session-secret-a", "GET", "/v1/queries", timestamp, nonce, body)
+    assert proof != request_mac("session-secret-a", "POST", "/v1/answers", timestamp, nonce, body)
+    assert proof != request_mac("session-secret-a", "POST", "/v1/queries", timestamp, nonce, body + b" ")
+
+
+def test_proof_for_wrong_method_or_path_is_rejected(client):
+    session = _session(client)
+    body = b""
+    wrong_method = _signed_headers(session, "GET", "/v1/runtime", body)
+    assert client.post("/v1/probe/binary", content=body, headers=wrong_method).status_code == 401
+    wrong_path = _signed_headers(session, "POST", "/v1/answers", body)
+    assert client.post("/v1/probe/binary", content=body, headers=wrong_path).status_code == 401
+
+
+def test_replay_nonce_check_is_atomic(runtime):
+    session = runtime.sessions.create_session(PRODUCT_ORIGIN)
+    timestamp = str(int(time.time()))
+    nonce = str(uuid.uuid4())
+    body = b"atomic-replay"
+    headers = {
+        "X-ZKD-Local-Session": session.session_id,
+        "X-ZKD-Timestamp": timestamp,
+        "X-ZKD-Nonce": nonce,
+        "X-ZKD-MAC": request_mac(session.session_key, "POST", "/v1/probe/binary", timestamp, nonce, body),
+    }
+
+    def validate_once():
+        try:
+            runtime.sessions.validate("POST", "/v1/probe/binary", body, PRODUCT_ORIGIN, headers, "documents")
+            return "accepted"
+        except Exception as error:
+            return getattr(error, "code", None)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = list(executor.map(lambda _: validate_once(), range(2)))
+    assert outcomes.count("accepted") == 1
+    assert outcomes.count(LocalComputeErrorCode.REPLAY_DETECTED) == 1
 
 
 def test_protocol_mismatch_and_session_expiry(client, runtime, monkeypatch):

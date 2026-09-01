@@ -12,6 +12,7 @@ from .sessions import DevelopmentGrantVerifier, LocalSessionManager, Unavailable
 from .grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
 from .settings import LocalComputeSettings
 from .credentials import DeviceCredentialStore, UnavailableDeviceCredentialStore
+from .errors import LocalComputeError, LocalComputeErrorCode
 
 
 class RuntimeState(str, Enum):
@@ -89,6 +90,15 @@ class LocalComputeRuntime:
         self.endpoint_generation = str(uuid.uuid4())
         self.catalog.set_metadata("endpoint_generation", self.endpoint_generation)
         self.sessions.invalidate_all()
+
+    def validate_session_binding(self, session) -> None:
+        if self.state in {RuntimeState.REVOKED, RuntimeState.UPDATE_REQUIRED}:
+            raise LocalComputeError(LocalComputeErrorCode.NOT_PAIRED)
+        if session.device_id is None:
+            return  # explicit development bootstrap
+        paired = self.catalog.get_paired_device_state()
+        if not paired or session.device_id != paired["device_id"] or session.credential_epoch != int(paired["credential_epoch"]) or session.endpoint_generation != self.endpoint_generation:
+            raise LocalComputeError(LocalComputeErrorCode.SESSION_BINDING_INVALID)
 
     def runtime_info(self) -> dict:
         return {

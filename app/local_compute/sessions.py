@@ -7,9 +7,37 @@ import hmac
 import secrets
 import time
 import uuid
+import threading
 from dataclasses import dataclass
 
 from .errors import LocalComputeError, LocalComputeErrorCode
+
+
+def canonical_request_transcript(
+    method: str,
+    path: str,
+    timestamp: str,
+    nonce: str,
+    body: bytes,
+) -> bytes:
+    """Return the P2C.4A request proof transcript for an exact HTTP request."""
+    body_hash = hashlib.sha256(body).hexdigest()
+    return "|".join((method.upper(), path, timestamp, nonce, body_hash)).encode("utf-8")
+
+
+def request_mac(
+    session_key: str,
+    method: str,
+    path: str,
+    timestamp: str,
+    nonce: str,
+    body: bytes,
+) -> str:
+    return hmac.new(
+        session_key.encode("utf-8"),
+        canonical_request_transcript(method, path, timestamp, nonce, body),
+        hashlib.sha256,
+    ).hexdigest()
 
 
 @dataclass
@@ -51,6 +79,7 @@ class LocalSessionManager:
         self._nonce_lifetime_seconds = nonce_lifetime_seconds
         self._sessions: dict[str, LocalSession] = {}
         self._revoked = False
+        self._lock = threading.Lock()
 
     def create_session(self, origin: str, *, user_id: str | None = None, device_id: str | None = None, credential_epoch: int | None = None, endpoint_generation: str | None = None, browser_nonce: str | None = None, allowed_operations: frozenset[str] = frozenset()) -> LocalSession:
         now = int(time.time())
@@ -74,7 +103,7 @@ class LocalSessionManager:
     def invalidate_all(self) -> None:
         self._sessions.clear()
 
-    def validate(self, method: str, path: str, body: bytes, origin: str, headers) -> LocalSession:
+    def validate(self, method: str, path: str, body: bytes, origin: str, headers, operation: str | None = None) -> LocalSession:
         if self._revoked:
             raise LocalComputeError(LocalComputeErrorCode.NOT_PAIRED, "Device is revoked.")
         session_id = headers.get("X-ZKD-Local-Session")
@@ -83,28 +112,29 @@ class LocalSessionManager:
         mac = headers.get("X-ZKD-MAC")
         if not all((session_id, timestamp, nonce, mac)):
             raise LocalComputeError(LocalComputeErrorCode.AUTH_REQUIRED)
-        session = self._sessions.get(session_id)
         now = int(time.time())
-        if session is None or now >= session.expires_at:
-            self._sessions.pop(session_id, None)
-            raise LocalComputeError(LocalComputeErrorCode.SESSION_EXPIRED)
-        if origin != session.origin:
-            raise LocalComputeError(LocalComputeErrorCode.AUTH_INVALID, "Session origin does not match.")
         try:
             request_time = int(timestamp)
         except ValueError as exc:
             raise LocalComputeError(LocalComputeErrorCode.AUTH_INVALID, "Invalid timestamp.") from exc
         if abs(now - request_time) > self._nonce_lifetime_seconds:
             raise LocalComputeError(LocalComputeErrorCode.SESSION_EXPIRED, "Request timestamp expired.")
-        self._purge_nonces(session, now)
-        if nonce in session.used_nonces:
-            raise LocalComputeError(LocalComputeErrorCode.REPLAY_DETECTED)
-        body_hash = hashlib.sha256(body).hexdigest()
-        payload = "|".join((method.upper(), path, timestamp, nonce, body_hash)).encode("utf-8")
-        expected = hmac.new(session.session_key.encode("utf-8"), payload, hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(mac, expected):
-            raise LocalComputeError(LocalComputeErrorCode.AUTH_INVALID, "Request proof is invalid.")
-        session.used_nonces[nonce] = now + self._nonce_lifetime_seconds
+        with self._lock:
+            session = self._sessions.get(session_id)
+            if session is None or now >= session.expires_at:
+                self._sessions.pop(session_id, None)
+                raise LocalComputeError(LocalComputeErrorCode.SESSION_EXPIRED)
+            if origin != session.origin:
+                raise LocalComputeError(LocalComputeErrorCode.AUTH_INVALID, "Session origin does not match.")
+            self._purge_nonces(session, now)
+            if nonce in session.used_nonces:
+                raise LocalComputeError(LocalComputeErrorCode.REPLAY_DETECTED)
+            expected = request_mac(session.session_key, method, path, timestamp, nonce, body)
+            if not hmac.compare_digest(mac, expected):
+                raise LocalComputeError(LocalComputeErrorCode.AUTH_INVALID, "Request proof is invalid.")
+            if operation and session.allowed_operations and operation not in session.allowed_operations:
+                raise LocalComputeError(LocalComputeErrorCode.OPERATION_NOT_ALLOWED)
+            session.used_nonces[nonce] = now + self._nonce_lifetime_seconds
         return session
 
     def _purge_nonces(self, session: LocalSession, now: int) -> None:

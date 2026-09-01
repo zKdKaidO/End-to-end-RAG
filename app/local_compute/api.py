@@ -24,6 +24,20 @@ from .grants import PlatformGrantVerifier
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
 ALLOWED_HEADERS = "Content-Type, X-ZKD-Local-Grant, X-ZKD-Local-Session, X-ZKD-Timestamp, X-ZKD-Nonce, X-ZKD-MAC, X-ZKD-Protocol-Version"
 
+ROUTE_OPERATIONS = {
+    ("GET", "/v1/runtime"): "jobs",
+    ("GET", "/v1/capabilities"): "jobs",
+    ("POST", "/v1/probe/binary"): "documents",
+    ("PUT", "/v1/documents/{document_id}/source"): "documents",
+    ("POST", "/v1/documents/{document_id}/prepare"): "documents",
+    ("GET", "/v1/documents/{document_id}"): "documents",
+    ("GET", "/v1/jobs/{job_id}"): "jobs",
+    ("POST", "/v1/jobs/{job_id}:cancel"): "jobs",
+    ("POST", "/v1/documents/{document_id}/index"): "documents",
+    ("POST", "/v1/queries"): "retrieval",
+    ("POST", "/v1/answers"): "answer",
+}
+
 
 def _error_response(error: LocalComputeError, request_id: str) -> JSONResponse:
     return JSONResponse(
@@ -126,7 +140,27 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
             "allowed_operations": sorted(session.allowed_operations),
         }
 
-    async def authenticate(request: Request) -> None:
+    def operation_for(request: Request) -> str:
+        def part_matches(template_part: str, path_part: str) -> bool:
+            if "{" not in template_part:
+                return template_part == path_part
+            prefix, _, remainder = template_part.partition("{")
+            _, closing, suffix = remainder.partition("}")
+            return bool(closing) and path_part.startswith(prefix) and path_part.endswith(suffix) and len(path_part) > len(prefix) + len(suffix)
+
+        path = request.url.path
+        for (method, route_template), operation in ROUTE_OPERATIONS.items():
+            if method != request.method:
+                continue
+            template_parts = route_template.strip("/").split("/")
+            path_parts = path.strip("/").split("/")
+            if len(template_parts) != len(path_parts):
+                continue
+            if all(part_matches(template_part, path_part) for template_part, path_part in zip(template_parts, path_parts)):
+                return operation
+        raise LocalComputeError(LocalComputeErrorCode.OPERATION_NOT_ALLOWED)
+
+    async def authenticate(request: Request, *, max_bytes: int | None = None) -> None:
         origin = request.headers.get("origin")
         if not origin:
             raise LocalComputeError(LocalComputeErrorCode.ORIGIN_NOT_ALLOWED)
@@ -136,9 +170,17 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
             runtime.set_update_required()
             raise LocalComputeError(LocalComputeErrorCode.UPDATE_REQUIRED)
         body = await request.body()
-        if len(body) > runtime.settings.request_body_max_bytes:
+        if len(body) > (max_bytes or runtime.settings.request_body_max_bytes):
             raise LocalComputeError(LocalComputeErrorCode.PAYLOAD_TOO_LARGE)
-        runtime.sessions.validate(request.method, request.url.path, body, origin, request.headers)
+        session = runtime.sessions.validate(
+            request.method,
+            request.url.path,
+            body,
+            origin,
+            request.headers,
+            operation_for(request),
+        )
+        runtime.validate_session_binding(session)
 
     @app.get("/v1/runtime")
     async def get_runtime(request: Request):
@@ -172,7 +214,7 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
 
     @app.put("/v1/documents/{document_id}/source")
     async def accept_document(document_id: str, request: Request):
-        await authenticate(request)
+        await authenticate(request, max_bytes=runtime.settings.source_pdf_max_bytes)
         body = await request.body()
         filename = request.headers.get("X-ZKD-Filename", "document.pdf")
         result = LocalDocumentStore(runtime.settings, runtime.catalog).accept_document(document_id, (body,), filename, request.headers.get("content-type", ""))

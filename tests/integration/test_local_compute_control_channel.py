@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import base64
 import json
+import time
 import uuid
 
 import pytest
+import pymupdf
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from sqlalchemy import delete
 
@@ -19,8 +21,18 @@ from app.local_compute.runtime import LocalComputeRuntime, RuntimeState
 from app.local_compute.settings import LocalComputeSettings
 from app.local_compute.grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
 from app.local_compute.api import create_local_compute_app
+from app.local_compute.sessions import request_mac
 from app.models.auth import User, UserRole, UserStatus
 from app.models.compute_control import ComputeDevice, ComputeLocalSessionGrant, ComputePairingChallenge, ComputePresence, ComputeReplayNonce, LocalDocumentManifest
+
+
+def _pdf_bytes(text: str) -> bytes:
+    document = pymupdf.open()
+    page = document.new_page()
+    page.insert_text((72, 72), text, fontsize=11)
+    result = document.tobytes()
+    document.close()
+    return result
 
 
 class ServiceTransport:
@@ -107,3 +119,213 @@ def test_real_platform_grant_is_consumed_once_and_creates_memory_only_session(tm
         assert runtime.state==RuntimeState.REVOKED and not runtime.sessions._sessions
         assert client.post("/v1/sessions",headers=headers).status_code==403
     finally: runtime.shutdown()
+
+
+def test_platform_session_authenticates_raw_binary_enforces_operation_and_revocation(tmp_path, platform_db):
+    from fastapi.testclient import TestClient
+
+    db, user = platform_db
+    runtime, _, platform, device, _ = paired_runtime(tmp_path, db, user)
+    signing = Ed25519PrivateKey.generate()
+    platform.grant_key = base64.b64encode(signing.private_bytes_raw()).decode()
+    public = base64.b64encode(signing.public_key().public_bytes_raw()).decode()
+    runtime.control_channel.tick()
+    runtime.grant_verifier = PlatformGrantVerifier(runtime, PlatformGrantVerificationKeyProvider(public))
+    origin = "https://rag.zkd.id.vn"
+    grant, _ = platform.issue_grant(user.id, device.id, "bound-browser-nonce", origin)
+    client = TestClient(create_local_compute_app(runtime))
+
+    def signed_headers(session: dict, method: str, path: str, body: bytes, *, nonce: str | None = None):
+        timestamp = str(int(time.time()))
+        nonce = nonce or str(uuid.uuid4())
+        return {
+            "Origin": origin,
+            "X-ZKD-Local-Session": session["local_session_id"],
+            "X-ZKD-Timestamp": timestamp,
+            "X-ZKD-Nonce": nonce,
+            "X-ZKD-MAC": request_mac(session["session_key"], method, path, timestamp, nonce, body),
+            "X-ZKD-Protocol-Version": runtime.settings.protocol_version,
+        }
+
+    try:
+        session_response = client.post(
+            "/v1/sessions",
+            headers={"Origin": origin, "X-ZKD-Local-Grant": grant, "X-ZKD-Browser-Nonce": "bound-browser-nonce"},
+        )
+        assert session_response.status_code == 200
+        session = session_response.json()
+        body = b"raw-binary-proof"
+        headers = signed_headers(session, "POST", "/v1/probe/binary", body)
+        assert client.post("/v1/probe/binary", content=body, headers=headers).status_code == 200
+        assert client.post("/v1/probe/binary", content=body, headers=headers).status_code == 409
+
+        document_id = str(uuid.uuid4())
+        rejected_source = client.put(
+            f"/v1/documents/{document_id}/source",
+            content=b"not-a-pdf",
+            headers={
+                "Origin": origin,
+                "X-ZKD-Local-Session": session["local_session_id"],
+                "X-ZKD-Protocol-Version": runtime.settings.protocol_version,
+            },
+        )
+        assert rejected_source.status_code == 401
+        assert not (runtime.settings.documents_path / document_id).exists()
+
+        source_body = b"not-a-pdf"
+        source_headers = signed_headers(
+            session,
+            "PUT",
+            f"/v1/documents/{document_id}/source",
+            source_body,
+        )
+        authenticated_source = client.put(
+            f"/v1/documents/{document_id}/source",
+            content=source_body,
+            headers=source_headers,
+        )
+        assert authenticated_source.status_code == 400
+        assert authenticated_source.json()["error"]["code"] == "INVALID_PDF"
+
+        tampered = signed_headers(session, "POST", "/v1/probe/binary", body)
+        tampered["X-ZKD-MAC"] = "0" * 64
+        assert client.post("/v1/probe/binary", content=body, headers=tampered).status_code == 401
+
+        local_session = runtime.sessions._sessions[session["local_session_id"]]
+        local_session.allowed_operations = frozenset({"retrieval"})
+        query_path = "/v1/queries"
+        query_body = json.dumps({"query_text": "doanh nghiệp"}).encode()
+        assert client.post(
+            query_path,
+            content=query_body,
+            headers={**signed_headers(session, "POST", query_path, query_body), "Content-Type": "application/json"},
+        ).status_code == 200
+        answer_path = "/v1/answers"
+        answer_body = json.dumps({"query_text": "doanh nghiệp"}).encode()
+        assert client.post(
+            answer_path,
+            content=answer_body,
+            headers={**signed_headers(session, "POST", answer_path, answer_body), "Content-Type": "application/json"},
+        ).status_code == 403
+        forbidden = signed_headers(session, "POST", "/v1/probe/binary", body)
+        assert client.post("/v1/probe/binary", content=body, headers=forbidden).status_code == 403
+
+        local_session.allowed_operations = frozenset({"documents"})
+        altered_pairing = runtime.catalog.get_paired_device_state()
+        assert altered_pairing is not None
+        altered_pairing["credential_epoch"] = device.credential_epoch + 1
+        runtime.catalog.set_paired_device_state(altered_pairing)
+        binding_invalid = signed_headers(session, "POST", "/v1/probe/binary", body)
+        assert client.post("/v1/probe/binary", content=body, headers=binding_invalid).status_code == 401
+
+        runtime.revoke()
+        revoked = signed_headers(session, "POST", "/v1/probe/binary", body)
+        revoked_response = client.post("/v1/probe/binary", content=body, headers=revoked)
+        assert revoked_response.status_code == 503
+        assert revoked_response.json()["error"]["code"] == "NOT_PAIRED"
+    finally:
+        runtime.shutdown()
+
+
+def test_authenticated_local_protocol_e2e_survives_platform_outage_then_revocation(tmp_path, platform_db):
+    from fastapi.testclient import TestClient
+
+    db, user = platform_db
+    runtime, transport, platform, device, _ = paired_runtime(tmp_path, db, user)
+    signing = Ed25519PrivateKey.generate()
+    platform.grant_key = base64.b64encode(signing.private_bytes_raw()).decode()
+    public = base64.b64encode(signing.public_key().public_bytes_raw()).decode()
+    runtime.control_channel.tick()
+    runtime.grant_verifier = PlatformGrantVerifier(runtime, PlatformGrantVerificationKeyProvider(public))
+    origin = "https://rag.zkd.id.vn"
+    browser_nonce = "e2e-browser-nonce"
+    grant, _ = platform.issue_grant(user.id, device.id, browser_nonce, origin)
+    client = TestClient(create_local_compute_app(runtime))
+
+    def signed_headers(session: dict, method: str, path: str, body: bytes) -> dict[str, str]:
+        timestamp = str(int(time.time()))
+        nonce = str(uuid.uuid4())
+        return {
+            "Origin": origin,
+            "X-ZKD-Local-Session": session["local_session_id"],
+            "X-ZKD-Timestamp": timestamp,
+            "X-ZKD-Nonce": nonce,
+            "X-ZKD-MAC": request_mac(session["session_key"], method, path, timestamp, nonce, body),
+            "X-ZKD-Protocol-Version": runtime.settings.protocol_version,
+        }
+
+    try:
+        session_response = client.post(
+            "/v1/sessions",
+            headers={"Origin": origin, "X-ZKD-Local-Grant": grant, "X-ZKD-Browser-Nonce": browser_nonce},
+        )
+        assert session_response.status_code == 200
+        session = session_response.json()
+        document_id = str(uuid.uuid4())
+        source = _pdf_bytes(
+            "NGHỊ ĐỊNH\nSố: 01/2026\nĐiều 1. Phạm vi điều chỉnh.\n"
+            "Quy định này áp dụng cho doanh nghiệp."
+        )
+        source_path = f"/v1/documents/{document_id}/source"
+        source_response = client.put(
+            source_path,
+            content=source,
+            headers={
+                **signed_headers(session, "PUT", source_path, source),
+                "Content-Type": "application/pdf",
+                "X-ZKD-Filename": "legal.pdf",
+            },
+        )
+        assert source_response.status_code == 200, source_response.text
+
+        prepare_path = f"/v1/documents/{document_id}/prepare"
+        prepare_response = client.post(
+            prepare_path,
+            content=b"",
+            headers=signed_headers(session, "POST", prepare_path, b""),
+        )
+        assert prepare_response.status_code == 200, prepare_response.text
+
+        index_path = f"/v1/documents/{document_id}/index"
+        index_response = client.post(
+            index_path,
+            content=b"",
+            headers=signed_headers(session, "POST", index_path, b""),
+        )
+        assert index_response.status_code == 200, index_response.text
+
+        query_path = "/v1/queries"
+        query_body = json.dumps({"query_text": "doanh nghiệp áp dụng", "document_ids": [document_id]}).encode()
+        query_response = client.post(
+            query_path,
+            content=query_body,
+            headers={**signed_headers(session, "POST", query_path, query_body), "Content-Type": "application/json"},
+        )
+        assert query_response.status_code == 200, query_response.text
+        assert query_response.json()["results"]
+
+        state_path = f"/v1/documents/{document_id}"
+        state_response = client.get(state_path, headers=signed_headers(session, "GET", state_path, b""))
+        assert state_response.status_code == 200
+
+        transport.available = False
+        offline_response = client.post(
+            query_path,
+            content=query_body,
+            headers={**signed_headers(session, "POST", query_path, query_body), "Content-Type": "application/json"},
+        )
+        assert offline_response.status_code == 200, offline_response.text
+
+        transport.available = True
+        platform.revoke(user.id, device.id)
+        runtime.control_channel.next_attempt_at = 0
+        runtime.control_channel.tick()
+        revoked_response = client.post(
+            query_path,
+            content=query_body,
+            headers={**signed_headers(session, "POST", query_path, query_body), "Content-Type": "application/json"},
+        )
+        assert revoked_response.status_code == 503
+        assert revoked_response.json()["error"]["code"] == "NOT_PAIRED"
+    finally:
+        runtime.shutdown()
