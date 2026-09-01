@@ -1,0 +1,10 @@
+# Copy to an untracked terraform.tfvars only after explicit human approval.
+# DIGITALOCEAN_TOKEN is supplied through the process environment, never here.
+vpc_ip_range     = "10.42.0.0/20"
+spaces_bucket_name = "zkd-rag-staging-example-replace"
+
+# Create/import this public key in DigitalOcean first; do not store private keys here.
+ssh_key_ids = ["replace-with-existing-digitalocean-ssh-key-id-or-fingerprint"]
+
+# Restrict to the current administrator's CIDR. An empty value preserves no SSH ingress.
+admin_ssh_source_addresses = ["203.0.113.10/32"]

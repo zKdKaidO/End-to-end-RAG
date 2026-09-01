@@ -1,0 +1,65 @@
+# Staging role overlay for deployment/docker-compose.cloud-control-plane.yml.
+# Run this file with the base file on the appropriate host and exactly one role:
+#   --profile app    on zkd-rag-staging-app
+#   --profile worker on zkd-rag-staging-worker
+#   --profile operations run db-migrate/deployment-tool on the App Node only
+# It intentionally adds no PostgreSQL, MinIO, Ollama/Qwen, or public application port.
+
+x-staging-logging: &staging-logging
+  driver: json-file
+  options:
+    max-size: ${LOG_MAX_SIZE:-10m}
+    max-file: ${LOG_MAX_FILES:-7}
+
+services:
+  api:
+    profiles: [app]
+
+  frontend:
+    profiles: [app]
+
+  worker:
+    profiles: [worker]
+
+  processing-worker:
+    profiles: [worker]
+
+  indexing-worker:
+    profiles: [worker]
+
+  db-migrate:
+    profiles: [operations]
+
+  deployment-tool:
+    profiles: [operations]
+
+  redis:
+    image: redis:7.4.10-alpine
+    command: >-
+      sh -c 'exec redis-server --appendonly yes --requirepass "$${REDIS_PASSWORD}"'
+    env_file: ${CLOUD_CONTROL_PLANE_ENV_FILE:-../.env.staging}
+    volumes:
+      - ${REDIS_DATA_HOST_PATH:?REDIS_DATA_HOST_PATH must be durable}:/data
+    ports:
+      - "${REDIS_PRIVATE_BIND_ADDRESS:?REDIS_PRIVATE_BIND_ADDRESS must be the App Node VPC IPv4}:6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$${REDIS_PASSWORD}\" ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [control_plane]
+    restart: unless-stopped
+    logging: *staging-logging
+    profiles: [app]
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.2
+    command: tunnel --no-autoupdate run
+    env_file: ${CLOUDFLARE_TUNNEL_ENV_FILE:?CLOUDFLARE_TUNNEL_ENV_FILE must point to the untracked staging tunnel token file}
+    depends_on:
+      frontend:
+        condition: service_started
+    networks: [edge]
+    restart: unless-stopped
+    logging: *staging-logging
+    profiles: [app]

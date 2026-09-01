@@ -5,6 +5,8 @@
 !.env.cloudflare.example
 !.env.cloud-control-plane.example
 !.env.benchmark.example
+!.env.staging.example
+!.env.cloudflare.staging.example
 *.pyc
 __pycache__/
 .pytest_cache/
@@ -13,3 +15,9 @@ frontend/dist/
 frontend/tsconfig.tsbuildinfo
 tmp/
 .recovery-model-loss-test/
+
+# Terraform state and provider downloads are local operational artifacts.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
