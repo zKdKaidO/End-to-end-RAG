@@ -12,6 +12,7 @@ This index changes no frozen document. It identifies which architecture material
 |---|---|---|
 | `LOCAL_FIRST_COMPUTE_ARCHITECTURE_V1.md` | **ACTIVE V1 ARCHITECTURE CORRECTION** | The active product boundary: a lightweight online shell and user-owned compute/data by default. |
 | `LOCAL_DATA_RUNTIME_CONTRACT_V1.md` | **ACTIVE V1 LOCAL DATA/RUNTIME CONTRACT** | Freezes LocalStoreV1, local artifact ownership/lifecycle, metadata-only manifest boundary, and the handoff to the browser/compute protocol phase. |
+| `BROWSER_COMPUTE_PROTOCOL_V1.md` | **ACTIVE V1 BROWSER/COMPUTE PROTOCOL** | Freezes the three-channel trust model, paired loopback transport, local sessions, direct local PDF path, and P2C.4 implementation handoff. |
 
 ## Frozen historical/reference material
 
