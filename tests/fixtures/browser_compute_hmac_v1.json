@@ -1,0 +1,55 @@
+{
+  "protocol_version": "zkd-compute-v1",
+  "algorithm": "HMAC-SHA256",
+  "delimiter": "|",
+  "vectors": [
+    {
+      "name": "empty_get",
+      "session_secret": "browser-reference-test-secret-0001",
+      "method": "GET",
+      "path": "/v1/runtime",
+      "timestamp": "1735689600",
+      "nonce": "request-nonce-empty-00000001",
+      "raw_body_base64": "",
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonical_transcript": "GET|/v1/runtime|1735689600|request-nonce-empty-00000001|e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_hmac_sha256": "491ec91ca3044ffce4a6e7bdb2109c70f4bce3d21ce95768b7f15e4c45f4a558"
+    },
+    {
+      "name": "json_query",
+      "session_secret": "browser-reference-test-secret-0001",
+      "method": "POST",
+      "path": "/v1/queries",
+      "timestamp": "1735689601",
+      "nonce": "request-nonce-query-00000002",
+      "raw_body_base64": "eyJxdWVyeV90ZXh0IjoiZG9hbmggbmdoaeG7h3AiLCJkb2N1bWVudF9pZHMiOlsiMTExMTExMTEtMTExMS0xMTExLTExMTEtMTExMTExMTExMTExIl19",
+      "body_sha256": "07c9ef2fe95b5db00ce0cc980753ed3ea78b32e54750af1001b489e73a51bf6f",
+      "canonical_transcript": "POST|/v1/queries|1735689601|request-nonce-query-00000002|07c9ef2fe95b5db00ce0cc980753ed3ea78b32e54750af1001b489e73a51bf6f",
+      "expected_hmac_sha256": "e095415823af4c18f2421c13f311072f1c2a00d0706f6122c3e4593a4b8575f9"
+    },
+    {
+      "name": "json_answer",
+      "session_secret": "browser-reference-test-secret-0001",
+      "method": "POST",
+      "path": "/v1/answers",
+      "timestamp": "1735689602",
+      "nonce": "request-nonce-answer-00000003",
+      "raw_body_base64": "eyJxdWVyeV90ZXh0IjoiTmdoxKlhIHbhu6UgbMOgIGfDrD8iLCJkb2N1bWVudF9pZHMiOltdfQ==",
+      "body_sha256": "e0286aadd26157e03e5b1c39451c985fbb01a3538a2ed98cb85b94c0bc4a999a",
+      "canonical_transcript": "POST|/v1/answers|1735689602|request-nonce-answer-00000003|e0286aadd26157e03e5b1c39451c985fbb01a3538a2ed98cb85b94c0bc4a999a",
+      "expected_hmac_sha256": "67bdb63474351ca6e45af9ece4a68ff856a1c5e8835ed1a2524f3eaeb69176aa"
+    },
+    {
+      "name": "binary_pdf",
+      "session_secret": "browser-reference-test-secret-0001",
+      "method": "PUT",
+      "path": "/v1/documents/22222222-2222-2222-2222-222222222222/source",
+      "timestamp": "1735689603",
+      "nonce": "request-nonce-binary-00000004",
+      "raw_body_base64": "JVBERi0xLjcKJYCBgoMKMSAwIG9iago8PD4+CmVuZG9iago=",
+      "body_sha256": "f34fc5df15710ea23478a33a7a9ebc4e2ed8dd5efa3f944336674b0d30323c6e",
+      "canonical_transcript": "PUT|/v1/documents/22222222-2222-2222-2222-222222222222/source|1735689603|request-nonce-binary-00000004|f34fc5df15710ea23478a33a7a9ebc4e2ed8dd5efa3f944336674b0d30323c6e",
+      "expected_hmac_sha256": "4cd2c6faf088350457ced75ae3a64f63c990030c1add9548688c8b7cc491e69a"
+    }
+  ]
+}

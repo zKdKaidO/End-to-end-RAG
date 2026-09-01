@@ -117,7 +117,7 @@ def test_real_platform_grant_is_consumed_once_and_creates_memory_only_session(tm
         assert client.post("/v1/sessions",headers=bad).status_code==401
         platform.revoke(user.id,device.id); runtime.control_channel.next_attempt_at=0; runtime.control_channel.tick()
         assert runtime.state==RuntimeState.REVOKED and not runtime.sessions._sessions
-        assert client.post("/v1/sessions",headers=headers).status_code==403
+        assert client.post("/v1/sessions",headers=headers).status_code==503
     finally: runtime.shutdown()
 
 

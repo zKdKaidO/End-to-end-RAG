@@ -121,6 +121,10 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         origin = request.headers.get("origin")
         if not origin:
             raise LocalComputeError(LocalComputeErrorCode.ORIGIN_NOT_ALLOWED)
+        if runtime.state == RuntimeState.UPDATE_REQUIRED:
+            raise LocalComputeError(LocalComputeErrorCode.UPDATE_REQUIRED)
+        if runtime.state == RuntimeState.REVOKED:
+            raise LocalComputeError(LocalComputeErrorCode.NOT_PAIRED)
         grant = request.headers.get("X-ZKD-Local-Grant", "")
         browser_nonce=request.headers.get("X-ZKD-Browser-Nonce", "")
         if not isinstance(runtime.grant_verifier, PlatformGrantVerifier):
