@@ -41,6 +41,7 @@ class LocalComputeSettings:
     control_heartbeat_seconds: int = 30
     control_backoff_min_seconds: float = 1.0
     control_backoff_max_seconds: float = 60.0
+    control_auto_start: bool = True
 
     def __post_init__(self) -> None:
         if self.bind_host != "127.0.0.1":

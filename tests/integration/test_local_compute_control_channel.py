@@ -51,7 +51,7 @@ def paired_runtime(tmp_path, db, user):
     challenge,token,code=platform.create_pairing(user.id); signature=base64.b64encode(key.sign(f"pairing|{challenge.id}|{token}".encode())).decode()
     device=platform.complete_pairing(challenge.id,token,public_key_b64(key),signature,"zkd-compute-v1","0.1.0","isolated"); platform.confirm_pairing(user.id,challenge.id,code)
     transport=ServiceTransport(platform)
-    runtime=LocalComputeRuntime(LocalComputeSettings(data_root=tmp_path/"Compute",development_mode=True,development_origins=("http://localhost:5173",)),credential_store=store,control_transport=transport); runtime.start(); runtime.control_channel.complete_pairing_state(str(device.id),str(user.id),device.credential_epoch)
+    runtime=LocalComputeRuntime(LocalComputeSettings(data_root=tmp_path/"Compute",development_mode=True,development_origins=("http://localhost:5173",),control_auto_start=False),credential_store=store,control_transport=transport); runtime.start(); runtime.control_channel.complete_pairing_state(str(device.id),str(user.id),device.credential_epoch)
     return runtime,transport,platform,device,store
 
 

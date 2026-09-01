@@ -6,6 +6,7 @@ import json
 import random
 import secrets
 import time
+import threading
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Protocol
@@ -68,6 +69,22 @@ class ControlChannel:
     def __init__(self, runtime, credential_store: DeviceCredentialStore, transport: ControlTransport | None = None, now: Callable[[], float] = time.time, jitter: Callable[[], float] = random.random):
         self.runtime, self.credential_store, self.transport, self.now, self.jitter = runtime, credential_store, transport, now, jitter
         self.state = ControlChannelState.DISCONNECTED; self.next_attempt_at = 0.0; self.backoff = runtime.settings.control_backoff_min_seconds
+        self._stop_event = threading.Event(); self._thread: threading.Thread | None = None
+
+    def start(self) -> None:
+        if self._thread is not None or self.paired_state() is None:
+            return
+        self._stop_event.clear(); self._thread = threading.Thread(target=self._run, name="zkd-control-channel", daemon=True); self._thread.start()
+
+    def stop(self) -> None:
+        self._stop_event.set()
+        if self._thread is not None: self._thread.join(timeout=2)
+        self._thread = None
+
+    def _run(self) -> None:
+        while not self._stop_event.is_set() and self.state not in {ControlChannelState.REVOKED, ControlChannelState.UPDATE_REQUIRED}:
+            self.tick()
+            self._stop_event.wait(min(max(self.next_attempt_at-self.now(), 0.1), self.runtime.settings.control_heartbeat_seconds))
 
     def paired_state(self) -> PairedDeviceState | None:
         row = self.runtime.catalog.get_paired_device_state()
@@ -77,6 +94,7 @@ class ControlChannel:
         key = self.credential_store.load_private_key()
         if key is None: raise LocalComputeError(LocalComputeErrorCode.CREDENTIAL_STORE_UNAVAILABLE)
         self.runtime.catalog.set_paired_device_state(PairedDeviceState(device_id, owner_user_id, credential_epoch, self.runtime.settings.platform_base_url, self.runtime.settings.protocol_version).__dict__)
+        if self.runtime.settings.control_auto_start: self.start()
 
     def _client(self) -> PlatformControlClient:
         paired=self.paired_state()

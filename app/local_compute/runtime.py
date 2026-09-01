@@ -59,8 +59,12 @@ class LocalComputeRuntime:
         self.state = RuntimeState.READY
         from .control_channel import ControlChannel
         self.control_channel = ControlChannel(self, self.credential_store, self._control_transport)
+        if self.settings.control_auto_start:
+            self.control_channel.start()
 
     def shutdown(self) -> None:
+        if self.control_channel is not None:
+            self.control_channel.stop()
         self.state = RuntimeState.OFFLINE
 
     def bind_ephemeral_socket(self) -> socket.socket:
