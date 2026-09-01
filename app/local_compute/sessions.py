@@ -19,6 +19,12 @@ class LocalSession:
     origin: str
     expires_at: int
     used_nonces: dict[str, int]
+    user_id: str | None = None
+    device_id: str | None = None
+    credential_epoch: int | None = None
+    endpoint_generation: str | None = None
+    browser_nonce: str | None = None
+    allowed_operations: frozenset[str] = frozenset()
 
 
 class GrantVerifier:
@@ -46,7 +52,7 @@ class LocalSessionManager:
         self._sessions: dict[str, LocalSession] = {}
         self._revoked = False
 
-    def create_session(self, origin: str) -> LocalSession:
+    def create_session(self, origin: str, *, user_id: str | None = None, device_id: str | None = None, credential_epoch: int | None = None, endpoint_generation: str | None = None, browser_nonce: str | None = None, allowed_operations: frozenset[str] = frozenset()) -> LocalSession:
         now = int(time.time())
         session = LocalSession(
             session_id=str(uuid.uuid4()),
@@ -54,12 +60,18 @@ class LocalSessionManager:
             origin=origin,
             expires_at=now + self._session_lifetime_seconds,
             used_nonces={},
+            user_id=user_id, device_id=device_id, credential_epoch=credential_epoch,
+            endpoint_generation=endpoint_generation, browser_nonce=browser_nonce,
+            allowed_operations=allowed_operations,
         )
         self._sessions[session.session_id] = session
         return session
 
     def revoke(self) -> None:
         self._revoked = True
+        self._sessions.clear()
+
+    def invalidate_all(self) -> None:
         self._sessions.clear()
 
     def validate(self, method: str, path: str, body: bytes, origin: str, headers) -> LocalSession:

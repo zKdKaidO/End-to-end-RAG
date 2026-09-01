@@ -17,6 +17,8 @@ from app.local_compute.credentials import TemporaryFileDeviceCredentialStore, Un
 from app.local_compute.errors import LocalComputeError, LocalComputeErrorCode
 from app.local_compute.runtime import LocalComputeRuntime, RuntimeState
 from app.local_compute.settings import LocalComputeSettings
+from app.local_compute.grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
+from app.local_compute.api import create_local_compute_app
 from app.models.auth import User, UserRole, UserStatus
 from app.models.compute_control import ComputeDevice, ComputeLocalSessionGrant, ComputePairingChallenge, ComputePresence, ComputeReplayNonce, LocalDocumentManifest
 
@@ -85,4 +87,20 @@ def test_production_credential_store_fails_closed(tmp_path):
     try:
         with pytest.raises(LocalComputeError) as unavailable: runtime.credential_store.load_private_key()
         assert unavailable.value.code==LocalComputeErrorCode.CREDENTIAL_STORE_UNAVAILABLE
+    finally: runtime.shutdown()
+
+
+def test_real_platform_grant_is_consumed_once_and_creates_memory_only_session(tmp_path,platform_db):
+    from fastapi.testclient import TestClient
+    db,user=platform_db; runtime,_,platform,device,_=paired_runtime(tmp_path,db,user)
+    signing=Ed25519PrivateKey.generate(); private=base64.b64encode(signing.private_bytes_raw()).decode(); public=base64.b64encode(signing.public_key().public_bytes_raw()).decode(); platform.grant_key=private
+    runtime.control_channel.tick(); runtime.grant_verifier=PlatformGrantVerifier(runtime,PlatformGrantVerificationKeyProvider(public))
+    nonce="browser-test-nonce"; grant,claims=platform.issue_grant(user.id,device.id,nonce,"https://rag.zkd.id.vn")
+    client=TestClient(create_local_compute_app(runtime)); headers={"Origin":"https://rag.zkd.id.vn","X-ZKD-Local-Grant":grant,"X-ZKD-Browser-Nonce":nonce}
+    try:
+        accepted=client.post("/v1/sessions",headers=headers); assert accepted.status_code==200 and accepted.json()["allowed_operations"]==sorted(claims["operations"])
+        assert client.post("/v1/sessions",headers=headers).status_code==409
+        assert grant.encode() not in runtime.settings.catalog_path.read_bytes() and accepted.json()["session_key"].encode() not in runtime.settings.catalog_path.read_bytes()
+        bad=dict(headers); bad["X-ZKD-Browser-Nonce"]="wrong"; fresh,_=platform.issue_grant(user.id,device.id,"other","https://rag.zkd.id.vn"); bad["X-ZKD-Local-Grant"]=fresh
+        assert client.post("/v1/sessions",headers=bad).status_code==401
     finally: runtime.shutdown()

@@ -9,6 +9,7 @@ from enum import Enum
 from .audit_log import LocalAuditLog
 from .catalog import LocalCatalog
 from .sessions import DevelopmentGrantVerifier, LocalSessionManager, UnavailableGrantVerifier
+from .grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
 from .settings import LocalComputeSettings
 from .credentials import DeviceCredentialStore, UnavailableDeviceCredentialStore
 
@@ -33,7 +34,7 @@ class LocalComputeRuntime:
         self.settings = settings
         self.catalog = LocalCatalog(settings.catalog_path)
         self.sessions = LocalSessionManager(settings.session_lifetime_seconds, settings.nonce_lifetime_seconds)
-        self.grant_verifier = DevelopmentGrantVerifier() if settings.development_mode else UnavailableGrantVerifier()
+        self.grant_verifier = DevelopmentGrantVerifier() if settings.development_mode and not settings.platform_grant_verification_public_key else PlatformGrantVerifier(self, PlatformGrantVerificationKeyProvider(settings.platform_grant_verification_public_key)) if settings.platform_grant_verification_public_key else UnavailableGrantVerifier()
         self.state = RuntimeState.OFFLINE
         self.endpoint_generation = settings.endpoint_generation or str(uuid.uuid4())
         self.bound_port: int | None = None
@@ -77,11 +78,17 @@ class LocalComputeRuntime:
         return listener
 
     def set_update_required(self) -> None:
+        self.sessions.invalidate_all()
         self.state = RuntimeState.UPDATE_REQUIRED
 
     def revoke(self) -> None:
         self.sessions.revoke()
         self.state = RuntimeState.REVOKED
+
+    def recreate_endpoint_generation(self) -> None:
+        self.endpoint_generation = str(uuid.uuid4())
+        self.catalog.set_metadata("endpoint_generation", self.endpoint_generation)
+        self.sessions.invalidate_all()
 
     def runtime_info(self) -> dict:
         return {

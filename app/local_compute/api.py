@@ -17,6 +17,8 @@ from .jobs import LocalJobStore
 from .indexing import LocalIndexService
 from .retrieval import LocalRetrievalStore
 from .generation import GenerationRoutingRequest, LocalAnswerService
+from .sessions import DevelopmentGrantVerifier
+from .grants import PlatformGrantVerifier
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -106,8 +108,14 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         if not origin:
             raise LocalComputeError(LocalComputeErrorCode.ORIGIN_NOT_ALLOWED)
         grant = request.headers.get("X-ZKD-Local-Grant", "")
-        runtime.grant_verifier.verify(grant, origin)
-        session = runtime.sessions.create_session(origin)
+        browser_nonce=request.headers.get("X-ZKD-Browser-Nonce", "")
+        if not isinstance(runtime.grant_verifier, PlatformGrantVerifier):
+            runtime.grant_verifier.verify(grant, origin)
+            session = runtime.sessions.create_session(origin)
+        else:
+            verified=runtime.grant_verifier.validate(grant, origin, browser_nonce)
+            session = runtime.sessions.create_session(origin,user_id=verified.user_id,device_id=verified.device_id,credential_epoch=verified.credential_epoch,endpoint_generation=verified.endpoint_generation,browser_nonce=verified.browser_nonce,allowed_operations=verified.operations)
+            runtime.grant_verifier.consume(verified)
         return {
             "request_id": request.state.request_id,
             "local_session_id": session.session_id,
@@ -115,6 +123,7 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
             "expires_at": session.expires_at,
             "protocol_version": runtime.settings.protocol_version,
             "endpoint_generation": runtime.endpoint_generation,
+            "allowed_operations": sorted(session.allowed_operations),
         }
 
     async def authenticate(request: Request) -> None:

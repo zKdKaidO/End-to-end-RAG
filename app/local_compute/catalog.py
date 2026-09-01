@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 
-CATALOG_SCHEMA_VERSION = 3
+CATALOG_SCHEMA_VERSION = 4
 
 
 class LocalCatalog:
@@ -28,6 +28,9 @@ class LocalCatalog:
             if current == 2:
                 self._apply_v3(connection)
                 current = 3
+            if current == 3:
+                self._apply_v4(connection)
+                current = 4
             if current != CATALOG_SCHEMA_VERSION:
                 raise RuntimeError("LOCAL_CATALOG_SCHEMA_UNSUPPORTED")
 
@@ -128,6 +131,18 @@ class LocalCatalog:
         )
         connection.execute("INSERT INTO schema_migrations(version) VALUES (3)")
 
+    @staticmethod
+    def _apply_v4(connection: sqlite3.Connection) -> None:
+        connection.executescript("""
+            CREATE TABLE consumed_local_grants (
+                grant_id_hash TEXT PRIMARY KEY,
+                consumed_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL
+            );
+            CREATE INDEX ix_consumed_local_grants_expiry ON consumed_local_grants(expires_at);
+        """)
+        connection.execute("INSERT INTO schema_migrations(version) VALUES (4)")
+
     def set_metadata(self, key: str, value: str) -> None:
         with self._connect() as connection:
             connection.execute(
@@ -168,6 +183,15 @@ class LocalCatalog:
     def mark_control_manifest_delivered(self, document_id: str, now: int) -> None:
         with self._connect() as connection:
             connection.execute("UPDATE control_manifest_outbox SET delivered_at=?, attempts=attempts+1 WHERE document_id=?",(now,document_id))
+
+    def consume_local_grant(self, grant_id_hash: str, expires_at: int, now: int) -> bool:
+        with self._connect() as connection:
+            connection.execute("DELETE FROM consumed_local_grants WHERE expires_at < ?", (now,))
+            try:
+                connection.execute("INSERT INTO consumed_local_grants(grant_id_hash,consumed_at,expires_at) VALUES (?,?,?)", (grant_id_hash, now, expires_at))
+                return True
+            except sqlite3.IntegrityError:
+                return False
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path)
