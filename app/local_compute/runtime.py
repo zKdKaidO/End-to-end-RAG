@@ -37,6 +37,8 @@ class LocalComputeRuntime:
         self.endpoint_generation = settings.endpoint_generation or str(uuid.uuid4())
         self.bound_port: int | None = None
         self.audit_log: LocalAuditLog | None = None
+        self._generation_capability = "NOT_READY"
+        self._generation_router = None
 
     def start(self) -> None:
         self.settings.data_root.mkdir(parents=True, exist_ok=True)
@@ -81,4 +83,27 @@ class LocalComputeRuntime:
         }
 
     def capabilities(self) -> dict:
-        return {name: "NOT_READY" for name in CAPABILITY_NAMES}
+        return {
+            "pdf_processing": "READY",
+            "chunking": "READY",
+            "embedding": "READY",
+            "indexing": "READY",
+            "retrieval": "READY",
+            "generation": self._generation_capability,
+        }
+
+    def update_generation_capability(self, state: str) -> None:
+        self._generation_capability = state
+
+    def generation_router(self):
+        if self._generation_router is None:
+            from app.generation.profile import get_generation_profile
+            from .generation import GenerationRouter, LocalGenerationProvider
+
+            provider = LocalGenerationProvider(
+                get_generation_profile(),
+                self.settings.local_generation_base_url,
+                development_mode=self.settings.development_mode,
+            )
+            self._generation_router = GenerationRouter(provider)
+        return self._generation_router

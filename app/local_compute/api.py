@@ -16,6 +16,7 @@ from .preparation import LocalPreparationService
 from .jobs import LocalJobStore
 from .indexing import LocalIndexService
 from .retrieval import LocalRetrievalStore
+from .generation import LocalAnswerService
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -138,12 +139,16 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
     @app.get("/v1/capabilities")
     async def get_capabilities(request: Request):
         await authenticate(request)
+        availability = await runtime.generation_router().availability()
+        runtime.update_generation_capability(availability.state.value)
         return {
             "request_id": request.state.request_id,
             "protocol_version": runtime.settings.protocol_version,
             "endpoint_generation": runtime.endpoint_generation,
             "runtime_control_service": "READY" if runtime.state == RuntimeState.READY else runtime.state.value,
             "capabilities": runtime.capabilities(),
+            "generation_provider": availability.provider_type.value,
+            "generation_model_id": availability.model_id,
         }
 
     @app.post("/v1/probe/binary")
@@ -199,6 +204,40 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         payload=await request.json()
         results, hierarchy = LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set_with_diagnostics(payload.get("query_text"),payload.get("document_ids"))
         return {"request_id":request.state.request_id,"results":results,"hierarchy":hierarchy}
+
+    @app.post("/v1/answers")
+    async def answer_document_set(request: Request):
+        await authenticate(request)
+        try:
+            payload = await request.json()
+        except ValueError as exc:
+            raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST) from exc
+        if not isinstance(payload, dict):
+            raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST)
+        try:
+            response = await LocalAnswerService(
+                runtime.settings,
+                runtime.catalog,
+                runtime.generation_router(),
+            ).answer(
+                request_id=request.state.request_id,
+                query_text=payload.get("query_text"),
+                document_ids=payload.get("document_ids"),
+            )
+        except LocalComputeError as exc:
+            if exc.code in {
+                LocalComputeErrorCode.MODEL_UNAVAILABLE,
+                LocalComputeErrorCode.GENERATION_UNAVAILABLE,
+                LocalComputeErrorCode.GENERATION_TIMEOUT,
+            }:
+                runtime.update_generation_capability(
+                    "MODEL_UNAVAILABLE"
+                    if exc.code == LocalComputeErrorCode.MODEL_UNAVAILABLE
+                    else "DEGRADED"
+                )
+            raise
+        runtime.update_generation_capability("READY")
+        return {"request_id": request.state.request_id, **response.as_dict()}
 
 
     return app

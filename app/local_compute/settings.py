@@ -36,6 +36,7 @@ class LocalComputeSettings:
     nonce_lifetime_seconds: int = 600
     max_concurrent_jobs: int = 1
     endpoint_generation: str | None = None
+    local_generation_base_url: str = "http://127.0.0.1:11434"
 
     def __post_init__(self) -> None:
         if self.bind_host != "127.0.0.1":

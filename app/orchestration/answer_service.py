@@ -9,10 +9,12 @@ from app.context.exceptions import ContextBuilderError, TokenCounterDependencyEr
 from app.context.schemas import ContextPackage
 from app.context.service import ContextBuilderService
 from app.core.logging import get_logger
-from app.generation.citations import validate_and_map_citations
+from app.generation.finalization import (
+    INSUFFICIENT_EVIDENCE_MESSAGE,
+    finalize_generation_result,
+)
 from app.generation.answerability import (
     StreamingMarkerFilter,
-    parse_answerability,
     resolved_prefix,
     strip_internal_markers,
 )
@@ -44,9 +46,6 @@ from app.retrieval.service import RetrievalService, validate_request
 
 
 logger = get_logger(__name__)
-INSUFFICIENT_EVIDENCE_MESSAGE = "Bằng chứng được cung cấp không đủ để trả lời câu hỏi."
-
-
 @dataclass
 class PreparedAnswer:
     request_id: str
@@ -188,43 +187,13 @@ class AnswerService:
         return PreparedAnswer(request_id, package, messages, prompt_tokens, None, timings, started)
 
     def _finalize(self, prepared: PreparedAnswer, provider_text: str, finish_reason, usage) -> GenerationResult:
-        parsed = parse_answerability(provider_text)
-        if parsed.status == AnswerabilityStatus.INSUFFICIENT_EVIDENCE:
-            result = GenerationResult(
-                request_id=prepared.request_id,
-                status=GenerationStatus.INSUFFICIENT_EVIDENCE,
-                answer_text=INSUFFICIENT_EVIDENCE_MESSAGE,
-                citations=[],
-                invalid_citations=[],
-                citation_validation=CitationValidation.PASS,
-                model_id=self.profile.model_id,
-                prompt_version=self.profile.prompt_version,
-                finish_reason=finish_reason,
-                usage=usage,
-                answerability_status=parsed.status,
-                answerability_validation=parsed.validation,
-            )
-            self._log_result(prepared, result)
-            return result
-
-        citations, invalid, validation, status = validate_and_map_citations(
-            parsed.public_text, prepared.package.selected_evidence
-        )
-        if parsed.validation != AnswerabilityValidation.PASS:
-            status = GenerationStatus.COMPLETED_WITH_WARNINGS
-        result = GenerationResult(
+        result = finalize_generation_result(
             request_id=prepared.request_id,
-            status=status,
-            answer_text=parsed.public_text,
-            citations=citations,
-            invalid_citations=invalid,
-            citation_validation=validation,
-            model_id=self.profile.model_id,
-            prompt_version=self.profile.prompt_version,
+            package=prepared.package,
+            profile=self.profile,
+            provider_text=provider_text,
             finish_reason=finish_reason,
             usage=usage,
-            answerability_status=parsed.status,
-            answerability_validation=parsed.validation,
         )
         self._log_result(prepared, result)
         return result

@@ -117,7 +117,10 @@ def test_authenticated_runtime_and_capabilities(client):
     capabilities = client.get("/v1/capabilities", headers=_signed_headers(session, "GET", "/v1/capabilities"))
     assert capabilities.status_code == 200
     assert set(capabilities.json()["capabilities"]) == {"pdf_processing", "chunking", "embedding", "indexing", "retrieval", "generation"}
-    assert set(capabilities.json()["capabilities"].values()) == {"NOT_READY"}
+    assert {key: value for key, value in capabilities.json()["capabilities"].items() if key != "generation"} == {
+        "pdf_processing": "READY", "chunking": "READY", "embedding": "READY", "indexing": "READY", "retrieval": "READY",
+    }
+    assert capabilities.json()["capabilities"]["generation"] in {"READY", "MODEL_UNAVAILABLE", "DEGRADED"}
 
 
 def test_authentication_rejects_missing_invalid_replayed_and_body_hash_mismatch(client):
