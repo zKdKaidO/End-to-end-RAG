@@ -8,6 +8,7 @@ from app.local_compute.documents import LocalDocumentStore
 from app.local_compute.errors import LocalComputeError
 from app.local_compute.preparation import LocalPreparationService, ARTIFACT_PROFILE_ID
 from app.local_compute.runtime import LocalComputeRuntime
+from app.local_compute.indexing import LocalIndexService
 from app.local_compute.settings import LocalComputeSettings
 
 def pdf_bytes(text: str) -> bytes:
@@ -37,6 +38,12 @@ def test_accept_prepare_promote_and_restart(runtime):
     assert LocalDocumentStore(runtime.settings,runtime.catalog).get(doc_id)["active_artifact_id"] == reprocessed["artifact_id"]
     restarted=LocalComputeRuntime(runtime.settings); restarted.start()
     assert LocalDocumentStore(restarted.settings,restarted.catalog).get(doc_id)["active_artifact_id"]==reprocessed["artifact_id"]
+    indexed=LocalIndexService(runtime.settings,runtime.catalog).index_document(doc_id)
+    assert indexed["index_state"]=="INDEX_READY"
+    with sqlite3.connect(runtime.settings.artifacts_path/doc_id/indexed["artifact_id"]/'artifact.sqlite3') as db:
+        assert db.execute('SELECT COUNT(*) FROM chunk_embeddings').fetchone()[0]==indexed['embedding_count']
+        assert db.execute('SELECT COUNT(*) FROM chunk_fts').fetchone()[0]==indexed['embedding_count']
+        assert db.execute('SELECT length(vector) FROM chunk_embeddings LIMIT 1').fetchone()[0]==768*4
 
 def test_rejects_invalid_conflicting_and_textless_sources(runtime):
     store=LocalDocumentStore(runtime.settings,runtime.catalog); doc_id=str(uuid.uuid4())

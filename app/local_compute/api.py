@@ -14,6 +14,7 @@ from .runtime import LocalComputeRuntime, RuntimeState
 from .documents import LocalDocumentStore
 from .preparation import LocalPreparationService
 from .jobs import LocalJobStore
+from .indexing import LocalIndexService
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -185,5 +186,11 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         await authenticate(request)
         if not LocalJobStore(runtime.catalog).request_cancel(job_id): raise LocalComputeError(LocalComputeErrorCode.JOB_NOT_FOUND)
         return {"request_id": request.state.request_id, "job_id": job_id, "state": "CANCEL_REQUESTED"}
+
+    @app.post("/v1/documents/{document_id}/index")
+    async def index_document(document_id: str, request: Request):
+        await authenticate(request)
+        return {"request_id": request.state.request_id, **LocalIndexService(runtime.settings, runtime.catalog).index_document(document_id)}
+
 
     return app
