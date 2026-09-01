@@ -197,7 +197,8 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
     async def query_document_set(request: Request):
         await authenticate(request)
         payload=await request.json()
-        return {"request_id":request.state.request_id,"results":LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set(payload.get("query_text"),payload.get("document_ids"))}
+        results, hierarchy = LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set_with_diagnostics(payload.get("query_text"),payload.get("document_ids"))
+        return {"request_id":request.state.request_id,"results":results,"hierarchy":hierarchy}
 
 
     return app
