@@ -11,6 +11,7 @@ This index changes no frozen document. It identifies which architecture material
 | Document | Status | Meaning |
 |---|---|---|
 | `LOCAL_FIRST_COMPUTE_ARCHITECTURE_V1.md` | **ACTIVE V1 ARCHITECTURE CORRECTION** | The active product boundary: a lightweight online shell and user-owned compute/data by default. |
+| `LOCAL_DATA_RUNTIME_CONTRACT_V1.md` | **ACTIVE V1 LOCAL DATA/RUNTIME CONTRACT** | Freezes LocalStoreV1, local artifact ownership/lifecycle, metadata-only manifest boundary, and the handoff to the browser/compute protocol phase. |
 
 ## Frozen historical/reference material
 
