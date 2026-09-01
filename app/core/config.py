@@ -51,6 +51,14 @@ class Settings(BaseSettings):
     AUTH_LOGIN_NETWORK_RATE_PER_MINUTE: int = 30
     AUTH_LOGIN_NETWORK_BURST: int = 10
 
+    # P2C.5A platform control-plane metadata/signing only. An empty key is
+    # fail-closed for grants outside development/test injection.
+    COMPUTE_GRANT_SIGNING_KEY: str = ""
+    COMPUTE_PAIRING_TTL_SECONDS: int = 300
+    COMPUTE_LOCAL_SESSION_GRANT_TTL_SECONDS: int = 300
+    COMPUTE_DEVICE_AUTH_WINDOW_SECONDS: int = 300
+    COMPUTE_PRESENCE_FRESHNESS_SECONDS: int = 90
+
     # Security Hardening V1 boundary controls. Redis is authoritative so the
     # limits remain effective across API processes.
     CHAT_GENERATION_RATE_PER_MINUTE: int = 5

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from structlog.contextvars import clear_contextvars, bind_contextvars
 from app.core.logging import setup_logging, get_logger
-from app.api.routes import admin, answer, auth, chat, documents, indexing, retrieval, internal_debug, internal_evaluation
+from app.api.routes import admin, answer, auth, chat, documents, indexing, retrieval, internal_debug, internal_evaluation, compute_control
 from app.core.config import settings
 from app.generation.runtime import close_llm_client
 from app.security.middleware import RequestSizeLimitMiddleware, SecurityHeadersMiddleware
@@ -68,6 +68,7 @@ app.include_router(answer.router)
 app.include_router(chat.router)
 app.include_router(internal_debug.router)
 app.include_router(internal_evaluation.router)
+app.include_router(compute_control.router)
 
 @app.on_event("startup")
 async def startup_event():

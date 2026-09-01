@@ -14,6 +14,10 @@ from app.models.auth import (
     User, AuthSession, DocumentAccessGrant, GlobalDocumentAccess,
     AccountDeletionJob, AccountDeletionDocumentRef,
 )
+from app.models.compute_control import (
+    ComputeDevice, ComputePairingChallenge, ComputePresence,
+    LocalDocumentManifest, ComputeReplayNonce, ComputeLocalSessionGrant,
+)
 
 __all__ = [
     "Base", 
@@ -37,4 +41,10 @@ __all__ = [
     "GlobalDocumentAccess",
     "AccountDeletionJob",
     "AccountDeletionDocumentRef",
+    "ComputeDevice",
+    "ComputePairingChallenge",
+    "ComputePresence",
+    "LocalDocumentManifest",
+    "ComputeReplayNonce",
+    "ComputeLocalSessionGrant",
 ]
