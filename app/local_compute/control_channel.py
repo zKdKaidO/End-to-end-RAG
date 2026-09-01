@@ -7,6 +7,8 @@ import random
 import secrets
 import time
 import threading
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Protocol
@@ -42,6 +44,23 @@ class ControlTransport(Protocol):
     def send(self, method: str, path: str, body: bytes, headers: dict[str, str]) -> tuple[int, dict]: ...
 
 
+class HttpsPlatformTransport:
+    """Small production transport; settings enforce HTTPS outside development."""
+    def __init__(self, base_url: str, timeout_seconds: float = 10.0): self.base_url=base_url.rstrip("/"); self.timeout_seconds=timeout_seconds
+    def send(self, method: str, path: str, body: bytes, headers: dict[str, str]) -> tuple[int, dict]:
+        request=urllib.request.Request(self.base_url+path, data=body, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
+                raw=response.read(); return response.status, json.loads(raw or b"{}")
+        except urllib.error.HTTPError as exc:
+            raw=exc.read()
+            try: payload=json.loads(raw or b"{}")
+            except json.JSONDecodeError: payload={}
+            return exc.code,payload
+        except (urllib.error.URLError, TimeoutError, OSError):
+            return 503,{"error_code":"CONTROL_CHANNEL_UNAVAILABLE"}
+
+
 class PlatformControlClient:
     """Narrow client: it can only perform declared control-plane operations."""
     def __init__(self, transport: ControlTransport, identity: Ed25519PrivateKey, paired: PairedDeviceState, now: Callable[[], float] = time.time):
@@ -67,7 +86,7 @@ class PlatformControlClient:
 
 class ControlChannel:
     def __init__(self, runtime, credential_store: DeviceCredentialStore, transport: ControlTransport | None = None, now: Callable[[], float] = time.time, jitter: Callable[[], float] = random.random):
-        self.runtime, self.credential_store, self.transport, self.now, self.jitter = runtime, credential_store, transport, now, jitter
+        self.runtime, self.credential_store, self.transport, self.now, self.jitter = runtime, credential_store, transport or HttpsPlatformTransport(runtime.settings.platform_base_url), now, jitter
         self.state = ControlChannelState.DISCONNECTED; self.next_attempt_at = 0.0; self.backoff = runtime.settings.control_backoff_min_seconds
         self._stop_event = threading.Event(); self._thread: threading.Thread | None = None
 
@@ -100,7 +119,7 @@ class ControlChannel:
         paired=self.paired_state()
         if paired is None: raise LocalComputeError(LocalComputeErrorCode.NOT_PAIRED)
         key=self.credential_store.load_private_key()
-        if key is None or self.transport is None: raise LocalComputeError(LocalComputeErrorCode.CONTROL_CHANNEL_UNAVAILABLE)
+        if key is None: raise LocalComputeError(LocalComputeErrorCode.CONTROL_CHANNEL_UNAVAILABLE)
         return PlatformControlClient(self.transport,key,paired,self.now)
 
     def presence_payload(self) -> dict:
