@@ -168,7 +168,12 @@ def test_router_has_no_user_or_platform_cloud_fallback():
     for provider_type in (GenerationProviderType.USER_CLOUD, GenerationProviderType.PLATFORM_CLOUD):
         with pytest.raises(LocalComputeError) as exc_info:
             router.provider_for(provider_type)
-        assert exc_info.value.code == LocalComputeErrorCode.CAPABILITY_UNAVAILABLE
+        expected = (
+            LocalComputeErrorCode.PLATFORM_CLOUD_DISABLED
+            if provider_type == GenerationProviderType.PLATFORM_CLOUD
+            else LocalComputeErrorCode.CAPABILITY_UNAVAILABLE
+        )
+        assert exc_info.value.code == expected
 
 
 @pytest.mark.asyncio

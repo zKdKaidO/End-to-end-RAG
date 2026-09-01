@@ -27,10 +27,12 @@ def finalize_generation_result(
     provider_text: str,
     finish_reason: str | None,
     usage: Usage | None,
+    model_id: str | None = None,
 ) -> GenerationResult:
     """Apply the frozen answerability and citation contract without I/O."""
 
     parsed = parse_answerability(provider_text)
+    result_model_id = model_id or profile.model_id
     if parsed.status == AnswerabilityStatus.INSUFFICIENT_EVIDENCE:
         return GenerationResult(
             request_id=request_id,
@@ -39,7 +41,7 @@ def finalize_generation_result(
             citations=[],
             invalid_citations=[],
             citation_validation=CitationValidation.PASS,
-            model_id=profile.model_id,
+            model_id=result_model_id,
             prompt_version=profile.prompt_version,
             finish_reason=finish_reason,
             usage=usage,
@@ -59,7 +61,7 @@ def finalize_generation_result(
         citations=citations,
         invalid_citations=invalid,
         citation_validation=validation,
-        model_id=profile.model_id,
+        model_id=result_model_id,
         prompt_version=profile.prompt_version,
         finish_reason=finish_reason,
         usage=usage,

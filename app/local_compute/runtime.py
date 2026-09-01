@@ -98,12 +98,42 @@ class LocalComputeRuntime:
     def generation_router(self):
         if self._generation_router is None:
             from app.generation.profile import get_generation_profile
-            from .generation import GenerationRouter, LocalGenerationProvider
+            from .generation import (
+                GenerationRouter,
+                InMemoryUserCloudCredentialStore,
+                LocalGenerationProvider,
+                UnavailableUserCloudCredentialStore,
+                UserCloudProviderRegistry,
+            )
 
+            profile = get_generation_profile()
             provider = LocalGenerationProvider(
-                get_generation_profile(),
+                profile,
                 self.settings.local_generation_base_url,
                 development_mode=self.settings.development_mode,
             )
-            self._generation_router = GenerationRouter(provider)
+            credential_store = (
+                InMemoryUserCloudCredentialStore()
+                if self.settings.development_mode
+                else UnavailableUserCloudCredentialStore()
+            )
+            registry = UserCloudProviderRegistry(
+                credential_store,
+                development_mode=self.settings.development_mode,
+                profile=profile,
+            )
+            self._generation_router = GenerationRouter(provider, registry)
         return self._generation_router
+
+    def configure_user_cloud_provider(self, config, *, secret: str | None = None) -> None:
+        """Internal management boundary; no browser protocol route configures endpoints."""
+        router = self.generation_router()
+        store = router.user_cloud_registry.credential_store
+        if secret is not None:
+            setter = getattr(store, "set", None)
+            if setter is None:
+                from .errors import LocalComputeError, LocalComputeErrorCode
+
+                raise LocalComputeError(LocalComputeErrorCode.CREDENTIAL_STORE_UNAVAILABLE)
+            setter(config.credential_ref, secret)
+        router.user_cloud_registry.configure(config)

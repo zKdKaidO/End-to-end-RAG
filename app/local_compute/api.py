@@ -16,7 +16,7 @@ from .preparation import LocalPreparationService
 from .jobs import LocalJobStore
 from .indexing import LocalIndexService
 from .retrieval import LocalRetrievalStore
-from .generation import LocalAnswerService
+from .generation import GenerationRoutingRequest, LocalAnswerService
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -139,7 +139,8 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
     @app.get("/v1/capabilities")
     async def get_capabilities(request: Request):
         await authenticate(request)
-        availability = await runtime.generation_router().availability()
+        router = runtime.generation_router()
+        availability = await router.availability()
         runtime.update_generation_capability(availability.state.value)
         return {
             "request_id": request.state.request_id,
@@ -149,6 +150,7 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
             "capabilities": runtime.capabilities(),
             "generation_provider": availability.provider_type.value,
             "generation_model_id": availability.model_id,
+            "generation_routing": await router.capability_report(),
         }
 
     @app.post("/v1/probe/binary")
@@ -214,15 +216,28 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
             raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST) from exc
         if not isinstance(payload, dict):
             raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST)
+        if any(key in payload for key in ("endpoint", "credential", "api_key", "provider_secret")):
+            raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST, "Provider endpoints and credentials are not accepted by this operation.")
         try:
-            response = await LocalAnswerService(
+            answer_service = LocalAnswerService(
                 runtime.settings,
                 runtime.catalog,
                 runtime.generation_router(),
-            ).answer(
-                request_id=request.state.request_id,
-                query_text=payload.get("query_text"),
-                document_ids=payload.get("document_ids"),
+            )
+            answer_kwargs = {
+                "request_id": request.state.request_id,
+                "query_text": payload.get("query_text"),
+                "document_ids": payload.get("document_ids"),
+            }
+            if any(key in payload for key in ("routing_policy", "provider_config_id", "allow_user_cloud_fallback", "allow_local_fallback")):
+                answer_kwargs["routing"] = GenerationRoutingRequest.from_values(
+                    policy=payload.get("routing_policy"),
+                    provider_config_id=payload.get("provider_config_id"),
+                    allow_user_cloud_fallback=payload.get("allow_user_cloud_fallback", False),
+                    allow_local_fallback=payload.get("allow_local_fallback", False),
+                )
+            response = await answer_service.answer(
+                **answer_kwargs,
             )
         except LocalComputeError as exc:
             if exc.code in {
