@@ -10,6 +10,7 @@ from .audit_log import LocalAuditLog
 from .catalog import LocalCatalog
 from .sessions import DevelopmentGrantVerifier, LocalSessionManager, UnavailableGrantVerifier
 from .settings import LocalComputeSettings
+from .credentials import DeviceCredentialStore, UnavailableDeviceCredentialStore
 
 
 class RuntimeState(str, Enum):
@@ -28,7 +29,7 @@ CAPABILITY_NAMES = ("pdf_processing", "chunking", "embedding", "indexing", "retr
 
 
 class LocalComputeRuntime:
-    def __init__(self, settings: LocalComputeSettings):
+    def __init__(self, settings: LocalComputeSettings, credential_store: DeviceCredentialStore | None = None, control_transport=None):
         self.settings = settings
         self.catalog = LocalCatalog(settings.catalog_path)
         self.sessions = LocalSessionManager(settings.session_lifetime_seconds, settings.nonce_lifetime_seconds)
@@ -39,6 +40,9 @@ class LocalComputeRuntime:
         self.audit_log: LocalAuditLog | None = None
         self._generation_capability = "NOT_READY"
         self._generation_router = None
+        self.credential_store = credential_store or UnavailableDeviceCredentialStore()
+        self._control_transport = control_transport
+        self.control_channel = None
 
     def start(self) -> None:
         self.settings.data_root.mkdir(parents=True, exist_ok=True)
@@ -53,6 +57,8 @@ class LocalComputeRuntime:
         from .jobs import LocalJobStore
         LocalJobStore(self.catalog).reconcile_interrupted()
         self.state = RuntimeState.READY
+        from .control_channel import ControlChannel
+        self.control_channel = ControlChannel(self, self.credential_store, self._control_transport)
 
     def shutdown(self) -> None:
         self.state = RuntimeState.OFFLINE

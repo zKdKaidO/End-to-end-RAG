@@ -37,6 +37,10 @@ class LocalComputeSettings:
     max_concurrent_jobs: int = 1
     endpoint_generation: str | None = None
     local_generation_base_url: str = "http://127.0.0.1:11434"
+    platform_base_url: str = PRODUCT_ORIGIN
+    control_heartbeat_seconds: int = 30
+    control_backoff_min_seconds: float = 1.0
+    control_backoff_max_seconds: float = 60.0
 
     def __post_init__(self) -> None:
         if self.bind_host != "127.0.0.1":
@@ -49,6 +53,10 @@ class LocalComputeSettings:
             raise ValueError("LOCAL_COMPUTE_INVALID_LIMIT")
         if not self.production_origin.startswith("https://"):
             raise ValueError("LOCAL_COMPUTE_INVALID_PRODUCTION_ORIGIN")
+        if not self.development_mode and not self.platform_base_url.startswith("https://"):
+            raise ValueError("LOCAL_COMPUTE_PLATFORM_HTTPS_REQUIRED")
+        if self.control_heartbeat_seconds <= 0 or self.control_backoff_min_seconds <= 0 or self.control_backoff_max_seconds < self.control_backoff_min_seconds:
+            raise ValueError("LOCAL_COMPUTE_INVALID_CONTROL_CADENCE")
         if not self.development_mode and self.development_origins:
             raise ValueError("LOCAL_COMPUTE_DEVELOPMENT_ORIGINS_REQUIRE_DEVELOPMENT_MODE")
 
