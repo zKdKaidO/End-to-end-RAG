@@ -11,6 +11,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from .errors import LocalComputeError, LocalComputeErrorCode
 from .runtime import LocalComputeRuntime, RuntimeState
+from .documents import LocalDocumentStore
+from .preparation import LocalPreparationService
+from .jobs import LocalJobStore
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -148,5 +151,39 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         if len(body) > runtime.settings.request_body_max_bytes:
             raise LocalComputeError(LocalComputeErrorCode.PAYLOAD_TOO_LARGE)
         return {"request_id": request.state.request_id, "received_bytes": len(body), "received_at": int(time.time())}
+
+    @app.put("/v1/documents/{document_id}/source")
+    async def accept_document(document_id: str, request: Request):
+        await authenticate(request)
+        body = await request.body()
+        filename = request.headers.get("X-ZKD-Filename", "document.pdf")
+        result = LocalDocumentStore(runtime.settings, runtime.catalog).accept_document(document_id, (body,), filename, request.headers.get("content-type", ""))
+        return {"request_id": request.state.request_id, **result}
+
+    @app.post("/v1/documents/{document_id}/prepare")
+    async def prepare_document(document_id: str, request: Request):
+        await authenticate(request)
+        result = LocalPreparationService(runtime.settings, runtime.catalog).prepare(document_id)
+        return {"request_id": request.state.request_id, **result}
+
+    @app.get("/v1/documents/{document_id}")
+    async def get_document_state(document_id: str, request: Request):
+        await authenticate(request)
+        document = LocalDocumentStore(runtime.settings, runtime.catalog).get(document_id)
+        if not document: raise LocalComputeError(LocalComputeErrorCode.DOCUMENT_NOT_FOUND)
+        return {"request_id": request.state.request_id, **{key: value for key, value in document.items() if key not in {"source_relative_path"}}}
+
+    @app.get("/v1/jobs/{job_id}")
+    async def get_job_state(job_id: str, request: Request):
+        await authenticate(request)
+        job = LocalJobStore(runtime.catalog).get(job_id)
+        if not job: raise LocalComputeError(LocalComputeErrorCode.JOB_NOT_FOUND)
+        return {"request_id": request.state.request_id, **job}
+
+    @app.post("/v1/jobs/{job_id}:cancel")
+    async def cancel_job(job_id: str, request: Request):
+        await authenticate(request)
+        if not LocalJobStore(runtime.catalog).request_cancel(job_id): raise LocalComputeError(LocalComputeErrorCode.JOB_NOT_FOUND)
+        return {"request_id": request.state.request_id, "job_id": job_id, "state": "CANCEL_REQUESTED"}
 
     return app

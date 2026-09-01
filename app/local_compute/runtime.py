@@ -42,10 +42,14 @@ class LocalComputeRuntime:
         self.settings.data_root.mkdir(parents=True, exist_ok=True)
         self.settings.logs_path.mkdir(parents=True, exist_ok=True)
         self.settings.tmp_path.mkdir(parents=True, exist_ok=True)
+        self.settings.documents_path.mkdir(parents=True, exist_ok=True)
+        self.settings.artifacts_path.mkdir(parents=True, exist_ok=True)
         self.catalog.initialize()
         self.audit_log = LocalAuditLog(self.settings.logs_path)
         self.catalog.set_metadata("protocol_version", self.settings.protocol_version)
         self.catalog.set_metadata("endpoint_generation", self.endpoint_generation)
+        from .jobs import LocalJobStore
+        LocalJobStore(self.catalog).reconcile_interrupted()
         self.state = RuntimeState.READY
 
     def shutdown(self) -> None:

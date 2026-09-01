@@ -31,6 +31,7 @@ class LocalComputeSettings:
     protocol_version: str = PROTOCOL_VERSION
     runtime_version: str = RUNTIME_VERSION
     request_body_max_bytes: int = 1_048_576
+    source_pdf_max_bytes: int = 10 * 1024 * 1024
     session_lifetime_seconds: int = 300
     nonce_lifetime_seconds: int = 600
     max_concurrent_jobs: int = 1
@@ -41,7 +42,7 @@ class LocalComputeSettings:
             raise ValueError("LOCAL_COMPUTE_LOOPBACK_ONLY")
         if not 0 <= self.bind_port <= 65535:
             raise ValueError("LOCAL_COMPUTE_INVALID_PORT")
-        if self.request_body_max_bytes <= 0 or self.session_lifetime_seconds <= 0:
+        if self.request_body_max_bytes <= 0 or self.source_pdf_max_bytes <= 0 or self.session_lifetime_seconds <= 0:
             raise ValueError("LOCAL_COMPUTE_INVALID_LIMIT")
         if self.nonce_lifetime_seconds <= 0 or self.max_concurrent_jobs <= 0:
             raise ValueError("LOCAL_COMPUTE_INVALID_LIMIT")
@@ -67,3 +68,11 @@ class LocalComputeSettings:
     @property
     def tmp_path(self) -> Path:
         return self.data_root / "tmp"
+
+    @property
+    def documents_path(self) -> Path:
+        return self.data_root / "documents"
+
+    @property
+    def artifacts_path(self) -> Path:
+        return self.data_root / "artifacts"
