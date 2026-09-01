@@ -9,6 +9,7 @@ from app.local_compute.errors import LocalComputeError
 from app.local_compute.preparation import LocalPreparationService, ARTIFACT_PROFILE_ID
 from app.local_compute.runtime import LocalComputeRuntime
 from app.local_compute.indexing import LocalIndexService
+from app.local_compute.retrieval import LocalRetrievalStore
 from app.local_compute.settings import LocalComputeSettings
 
 def pdf_bytes(text: str) -> bytes:
@@ -44,6 +45,8 @@ def test_accept_prepare_promote_and_restart(runtime):
         assert db.execute('SELECT COUNT(*) FROM chunk_embeddings').fetchone()[0]==indexed['embedding_count']
         assert db.execute('SELECT COUNT(*) FROM chunk_fts').fetchone()[0]==indexed['embedding_count']
         assert db.execute('SELECT length(vector) FROM chunk_embeddings LIMIT 1').fetchone()[0]==768*4
+    results=LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set('doanh nghiệp áp dụng', [doc_id])
+    assert results and results[0]['document_id']==doc_id and results[0]['provenance_json']['document_id']==doc_id
 
 def test_rejects_invalid_conflicting_and_textless_sources(runtime):
     store=LocalDocumentStore(runtime.settings,runtime.catalog); doc_id=str(uuid.uuid4())

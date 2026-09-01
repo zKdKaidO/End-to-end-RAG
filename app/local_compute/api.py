@@ -15,6 +15,7 @@ from .documents import LocalDocumentStore
 from .preparation import LocalPreparationService
 from .jobs import LocalJobStore
 from .indexing import LocalIndexService
+from .retrieval import LocalRetrievalStore
 
 
 ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
@@ -191,6 +192,12 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
     async def index_document(document_id: str, request: Request):
         await authenticate(request)
         return {"request_id": request.state.request_id, **LocalIndexService(runtime.settings, runtime.catalog).index_document(document_id)}
+
+    @app.post("/v1/queries")
+    async def query_document_set(request: Request):
+        await authenticate(request)
+        payload=await request.json()
+        return {"request_id":request.state.request_id,"results":LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set(payload.get("query_text"),payload.get("document_ids"))}
 
 
     return app
