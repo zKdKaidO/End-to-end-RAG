@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import delete, exists, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.models.auth import DocumentAccessGrant, GlobalDocumentAccess
+from app.models.auth import DocumentAccessGrant, GlobalDocumentAccess, UserRole
 from app.models.document import Document
 
 
@@ -72,6 +72,32 @@ class DocumentAccessService:
         orphaned = not self._has_references(document_id)
         self.db.commit()
         return orphaned
+
+    def revoke_from_library(self, user_id: uuid.UUID, role: str, document_id: uuid.UUID) -> tuple[str, bool]:
+        """Remove the access represented by the caller's visible library entry.
+
+        A normal user can remove only their own private grant. An administrator may
+        remove a global grant through the same product delete route; this preserves
+        global content while any other access grant still exists.
+        """
+        document = self.db.scalar(select(Document).where(Document.id == document_id).with_for_update())
+        if document is None:
+            raise HTTPException(404, detail=RESOURCE_NOT_FOUND)
+        private = self.db.get(DocumentAccessGrant, (document_id, user_id))
+        global_access = self.db.get(GlobalDocumentAccess, document_id)
+        if private is not None:
+            self.db.delete(private)
+            removed = "PRIVATE"
+        elif global_access is not None and role == UserRole.ADMIN.value:
+            self.db.delete(global_access)
+            removed = "GLOBAL"
+        else:
+            self.db.rollback()
+            raise HTTPException(404, detail=RESOURCE_NOT_FOUND)
+        self.db.flush()
+        orphaned = not self._has_references(document_id)
+        self.db.commit()
+        return removed, orphaned
 
     def revoke_global(self, document_id: uuid.UUID) -> bool:
         document = self.db.scalar(select(Document).where(Document.id == document_id).with_for_update())

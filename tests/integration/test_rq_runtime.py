@@ -14,6 +14,8 @@ from app.repositories.processing_job_repo import ProcessingJobRepository
 from app.models.document import Document
 from sqlalchemy import text
 
+pytestmark = pytest.mark.isolated_document_corpus
+
 @pytest.fixture
 def redis_client():
     return Redis(host="redis", port=6379, decode_responses=True)

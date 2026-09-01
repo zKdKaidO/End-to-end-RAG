@@ -94,6 +94,12 @@ class MinioClient:
         try:
             self.client.remove_object(self.bucket, object_name)
             logger.info("deleted_pdf_from_storage", document_id=document_id, object_name=object_name)
+        except S3Error as e:
+            if e.code == "NoSuchKey":
+                logger.info("pdf_already_absent_from_storage", document_id=document_id, object_name=object_name)
+                return
+            logger.error("minio_delete_failed", document_id=document_id, error=str(e))
+            raise ObjectStorageError(f"Failed to delete document {document_id}") from e
         except Exception as e:
             logger.error("minio_delete_failed", document_id=document_id, error=str(e))
             raise ObjectStorageError(f"Failed to delete document {document_id}") from e

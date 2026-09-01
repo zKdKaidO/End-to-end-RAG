@@ -195,13 +195,15 @@ def remove_private_access(
     principal: Principal = Depends(require_authenticated_user),
     db: Session = Depends(get_db),
 ):
-    orphaned = DocumentAccessService(db).revoke_private(principal.user_id, document_id)
+    removed, orphaned = DocumentAccessService(db).revoke_from_library(
+        principal.user_id, principal.role, document_id
+    )
     if orphaned:
         try:
             rq_client.enqueue_document_gc(str(document_id), request.state.request_id)
         except Exception:
             pass
-    return {"access_removed": "PRIVATE", "gc_candidate": orphaned}
+    return {"access_removed": removed, "gc_candidate": orphaned}
 
 
 @router.post("/api/v1/admin/documents/{document_id}/global-access", status_code=201)

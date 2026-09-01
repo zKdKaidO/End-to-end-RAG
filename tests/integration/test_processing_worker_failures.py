@@ -6,6 +6,8 @@ from app.db.database import SessionLocal
 from app.repositories.processing_job_repo import ProcessingJobRepository
 from app.processing_worker_main import process_document
 
+pytestmark = pytest.mark.isolated_document_corpus
+
 def test_deterministic_failure_classification():
     # Setup job
     db = SessionLocal()

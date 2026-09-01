@@ -9,6 +9,8 @@ from app.db.database import SessionLocal
 from app.models.document import Document
 from app.models.ingestion_job import IngestionJob
 
+pytestmark = pytest.mark.isolated_document_corpus
+
 client = TestClient(app)
 
 def get_fixture_path():

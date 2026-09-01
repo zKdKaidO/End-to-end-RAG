@@ -2,11 +2,17 @@ import uuid
 
 import pytest
 from redis import Redis
+from sqlalchemy import delete, text
 
 from app.auth.dependencies import get_current_principal
 from app.auth.principal import Principal
 from app.main import app
 from app.core.config import settings
+from app.db.database import SessionLocal
+from app.models.auth import DocumentAccessGrant, GlobalDocumentAccess
+from app.models.compute_control import LocalDocumentManifest
+from app.models.document import Document
+from app.storage.minio_client import minio_client
 
 
 LEGACY_TEST_PRINCIPAL = Principal(
@@ -50,5 +56,39 @@ def clear_distributed_security_test_state():
             redis.delete(*keys)
 
 
+@pytest.fixture(autouse=True)
+def isolated_document_corpus(request):
+    """Clean only resources created by explicitly marked legacy integration tests.
+
+    Those tests still exercise the real service stack, so their unique IDs are
+    captured before execution and removed in teardown even if the test fails.
+    Unmarked tests and normal development documents are never touched.
+    """
+    if request.node.get_closest_marker("isolated_document_corpus") is None:
+        yield
+        return
+    db = SessionLocal()
+    before = set(db.scalars(text("SELECT id FROM documents")).all())
+    db.close()
+    yield
+    db = SessionLocal()
+    try:
+        created = set(db.scalars(text("SELECT id FROM documents")).all()) - before
+        for document_id in created:
+            params = {"document_id": document_id}
+            minio_client.delete(str(document_id))
+            db.execute(delete(DocumentAccessGrant).where(DocumentAccessGrant.document_id == document_id))
+            db.execute(delete(GlobalDocumentAccess).where(GlobalDocumentAccess.document_id == document_id))
+            db.execute(delete(LocalDocumentManifest).where(LocalDocumentManifest.document_id == document_id))
+            db.execute(text("DELETE FROM indexing_jobs WHERE document_id = :document_id"), params)
+            db.execute(text("DELETE FROM ingestion_jobs WHERE document_id = :document_id"), params)
+            db.execute(text("DELETE FROM document_pages WHERE document_id = :document_id"), params)
+            db.execute(delete(Document).where(Document.id == document_id))
+        db.commit()
+    finally:
+        db.close()
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "real_auth: use real opaque-cookie authentication dependencies")
+    config.addinivalue_line("markers", "isolated_document_corpus: tear down documents created by legacy integration tests")

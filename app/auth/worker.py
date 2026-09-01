@@ -16,6 +16,7 @@ from app.models.auth import (
     utcnow,
 )
 from app.models.chat import ChatSession
+from app.models.compute_control import LocalDocumentManifest
 from app.models.document import Document
 from app.storage.minio_client import minio_client
 from app.deployment.barrier import cross_store_barrier
@@ -49,6 +50,7 @@ def collect_canonical_document(db, document_id: uuid.UUID) -> bool:
     db.execute(text("DELETE FROM indexing_jobs WHERE document_id = :document_id"), params)
     db.execute(text("DELETE FROM ingestion_jobs WHERE document_id = :document_id"), params)
     db.execute(text("DELETE FROM document_pages WHERE document_id = :document_id"), params)
+    db.execute(delete(LocalDocumentManifest).where(LocalDocumentManifest.document_id == document_id))
     # Block 2 derived tables and chunk indexes already have canonical cascades.
     db.execute(delete(Document).where(Document.id == document_id))
     db.commit()

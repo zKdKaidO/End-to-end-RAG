@@ -10,6 +10,8 @@ from app.models.indexing_job import IndexingJob
 from app.db.database import SessionLocal
 from app.repositories.indexing_job_repo import IndexingJobRepository
 from app.models.document import Document
+
+pytestmark = pytest.mark.isolated_document_corpus
 from app.indexing_worker_main import process_indexing
 from app.indexing.constants import CANONICAL_INDEX_VERSION
 from sqlalchemy.exc import OperationalError
