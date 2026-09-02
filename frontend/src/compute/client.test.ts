@@ -40,6 +40,71 @@ describe("BrowserComputeClient", () => {
     expect(JSON.stringify(client.status())).not.toContain("secret-a");
   });
 
+  it("keeps query and answer content off the platform after one local bootstrap", async () => {
+    const { platform, localFetch } = fixture();
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+    await client.query({ query_text: "doanh nghiệp" });
+    await client.answer({ query_text: "doanh nghiệp" });
+    expect(platform.listDevices).toHaveBeenCalledTimes(1);
+    expect(platform.requestLocalSessionGrant).toHaveBeenCalledTimes(1);
+    expect(localFetch.mock.calls.map(([url]) => String(url))).toEqual([
+      "http://127.0.0.1:48123/v1/sessions",
+      "http://127.0.0.1:48123/v1/queries",
+      "http://127.0.0.1:48123/v1/answers",
+    ]);
+  });
+
+  it("continues local answer work during a platform outage after bootstrap", async () => {
+    const { platform, localFetch } = fixture();
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+    await client.query({ query_text: "doanh nghiệp" });
+    platform.listDevices.mockRejectedValue(new Error("outage"));
+    platform.requestLocalSessionGrant.mockRejectedValue(new Error("outage"));
+    await expect(client.answer({ query_text: "doanh nghiệp" })).resolves.toMatchObject({ request_id: "r1" });
+    expect(platform.listDevices).toHaveBeenCalledTimes(1);
+    expect(platform.requestLocalSessionGrant).toHaveBeenCalledTimes(1);
+  });
+
+  it("rebootstraps an expired session before a new query with fresh local authentication", async () => {
+    const { platform, localFetch } = fixture();
+    let now = 1700000000;
+    let sessions = 0;
+    localFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/sessions")) {
+        sessions += 1;
+        return response({ local_session_id: `session-${sessions}`, session_key: `secret-${sessions}`, expires_at: sessions === 1 ? 1700000001 : 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["retrieval", "answer"] });
+      }
+      return response({ request_id: "r1" });
+    });
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => now, nonceFactory: () => "expiry-test-nonce" });
+    await client.query({ query_text: "doanh nghiệp" });
+    now = 1700000002;
+    await client.query({ query_text: "doanh nghiệp" });
+    expect(platform.requestLocalSessionGrant).toHaveBeenCalledTimes(2);
+    expect(sessions).toBe(2);
+  });
+
+  it("preserves an explicit local document subset in the signed query bytes", async () => {
+    const { platform, localFetch } = fixture();
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+    await client.query({ query_text: "doanh nghiệp", document_ids: ["22222222-2222-2222-2222-222222222222"] });
+    const [, request] = localFetch.mock.calls[1] as [string, RequestInit];
+    expect(JSON.parse(new TextDecoder().decode(request.body as ArrayBuffer))).toEqual({
+      query_text: "doanh nghiệp",
+      document_ids: ["22222222-2222-2222-2222-222222222222"],
+    });
+  });
+
+  it("rejects a zero-document product scope before discovery or a local request", async () => {
+    const { platform, localFetch } = fixture();
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch });
+    await expect(client.query({ query_text: "doanh nghiệp", document_ids: [] })).rejects.toMatchObject({ code: "EMPTY_DOCUMENT_SCOPE" });
+    await expect(client.answer({ query_text: "doanh nghiệp", document_ids: [] })).rejects.toMatchObject({ code: "EMPTY_DOCUMENT_SCOPE" });
+    expect(platform.listDevices).not.toHaveBeenCalled();
+    expect(platform.requestLocalSessionGrant).not.toHaveBeenCalled();
+    expect(localFetch).not.toHaveBeenCalled();
+  });
+
   it("does not silently choose between multiple usable devices", async () => {
     const second = { ...device, device_id: "22222222-2222-2222-2222-222222222222", endpoint_port: 48124 };
     const { platform, localFetch } = fixture([device, second]);

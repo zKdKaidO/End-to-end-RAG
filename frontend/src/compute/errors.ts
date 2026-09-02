@@ -22,7 +22,9 @@ export type BrowserComputeErrorCode =
   | "PROTOCOL_MISMATCH"
   | "REQUEST_FAILED"
   | "INVALID_LOCAL_RESPONSE"
-  | "INVALID_REQUEST_PATH";
+  | "INVALID_REQUEST_PATH"
+  | "INVALID_REQUEST"
+  | "EMPTY_DOCUMENT_SCOPE";
 
 export class BrowserComputeError extends Error {
   constructor(

@@ -135,10 +135,16 @@ def test_indexed_document_is_not_retrievable_after_authorized_delete(runtime):
     _accept(runtime, document_id)
     LocalPreparationService(runtime.settings, runtime.catalog).prepare(document_id)
     LocalIndexService(runtime.settings, runtime.catalog).index_document(document_id)
-    assert LocalRetrievalStore(runtime.settings, runtime.catalog).query_document_set("doanh nghiệp", [document_id])
+    retrieval = LocalRetrievalStore(runtime.settings, runtime.catalog)
+    # The frozen local retrieval contract treats omitted/null and [] as all
+    # queryable local documents. The browser product layer must therefore
+    # reject an empty explicit selection before it reaches this route.
+    assert retrieval.query_document_set("doanh nghiệp")
+    assert retrieval.query_document_set("doanh nghiệp", [])
+    assert retrieval.query_document_set("doanh nghiệp", [document_id])
     LocalDocumentStore(runtime.settings, runtime.catalog).delete_document(document_id)
     with pytest.raises(LocalComputeError) as blocked:
-        LocalRetrievalStore(runtime.settings, runtime.catalog).query_document_set("doanh nghiệp", [document_id])
+        retrieval.query_document_set("doanh nghiệp", [document_id])
     assert blocked.value.code == LocalComputeErrorCode.DOCUMENT_NOT_FOUND
 
 

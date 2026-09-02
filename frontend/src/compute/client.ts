@@ -1,7 +1,7 @@
 import { binaryBodyBytes, canonicalTranscript, createBrowserNonce, exactArrayBuffer, hmacSha256Hex, serializeJsonOnce, sha256Hex } from "./crypto";
 import { BrowserComputeError, isDeviceInvalidatingCode, isSessionInvalidatingCode } from "./errors";
 import { PlatformComputeApi, type PlatformFetch } from "./platform";
-import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalBootstrapResponse, type LocalComputeDocument, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
+import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalAnswerRequest, type LocalAnswerResponse, type LocalBootstrapResponse, type LocalComputeDocument, type LocalQueryRequest, type LocalQueryResponse, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
 
 export interface BrowserComputeClientOptions {
   platform?: PlatformComputeApi;
@@ -48,6 +48,19 @@ function operationFromPath(path: string): ComputeOperation {
   if (path === "/v1/queries") return "retrieval";
   if (path === "/v1/answers") return "answer";
   return "documents";
+}
+
+function localAskBody(payload: LocalQueryRequest | LocalAnswerRequest): Uint8Array {
+  if (typeof payload.query_text !== "string" || !payload.query_text.trim()) {
+    throw new BrowserComputeError("INVALID_REQUEST", "A non-empty query is required.");
+  }
+  if (Array.isArray(payload.document_ids) && payload.document_ids.length === 0) {
+    throw new BrowserComputeError("EMPTY_DOCUMENT_SCOPE", "Select at least one local document or use all local documents.");
+  }
+  return serializeJsonOnce({
+    ...payload,
+    ...(Array.isArray(payload.document_ids) ? { document_ids: [...payload.document_ids] } : {}),
+  });
 }
 
 async function parseLocalResponse<T>(response: Response): Promise<T> {
@@ -221,6 +234,6 @@ export class BrowserComputeClient {
   async indexDocument(documentId: string) { return this.localRequest<JsonObject>("POST", `/v1/documents/${encodeURIComponent(documentId)}/index`, undefined); }
   async jobState(jobId: string) { return this.localRequest<JsonObject>("GET", `/v1/jobs/${encodeURIComponent(jobId)}`, undefined); }
   async cancelJob(jobId: string) { return this.localRequest<JsonObject>("POST", `/v1/jobs/${encodeURIComponent(jobId)}:cancel`, undefined); }
-  async query(payload: JsonObject) { return this.localRequest<JsonObject>("POST", "/v1/queries", serializeJsonOnce(payload), { "Content-Type": "application/json" }); }
-  async answer(payload: JsonObject) { return this.localRequest<JsonObject>("POST", "/v1/answers", serializeJsonOnce(payload), { "Content-Type": "application/json" }); }
+  async query(payload: LocalQueryRequest): Promise<LocalQueryResponse> { return this.localRequest<LocalQueryResponse>("POST", "/v1/queries", localAskBody(payload), { "Content-Type": "application/json" }); }
+  async answer(payload: LocalAnswerRequest): Promise<LocalAnswerResponse> { return this.localRequest<LocalAnswerResponse>("POST", "/v1/answers", localAskBody(payload), { "Content-Type": "application/json" }); }
 }
