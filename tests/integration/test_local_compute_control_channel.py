@@ -21,6 +21,7 @@ from app.local_compute.runtime import LocalComputeRuntime, RuntimeState
 from app.local_compute.settings import LocalComputeSettings
 from app.local_compute.grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
 from app.local_compute.api import create_local_compute_app
+from app.local_compute.documents import LocalDocumentStore
 from app.local_compute.sessions import request_mac
 from app.models.auth import User, UserRole, UserStatus
 from app.models.compute_control import ComputeDevice, ComputeLocalSessionGrant, ComputePairingChallenge, ComputePresence, ComputeReplayNonce, LocalDocumentManifest
@@ -92,6 +93,35 @@ def test_revocation_halts_control_but_preserves_local_state(tmp_path,platform_db
         runtime.control_channel.tick(); platform.revoke(user.id,device.id); runtime.control_channel.next_attempt_at=0; runtime.control_channel.tick()
         assert runtime.control_channel.state==ControlChannelState.REVOKED and runtime.state==RuntimeState.REVOKED and runtime.settings.catalog_path.exists()
     finally: runtime.shutdown()
+
+
+def test_local_delete_queues_metadata_tombstone_through_outage_recovery(tmp_path, platform_db):
+    db, user = platform_db
+    runtime, transport, platform, device, _ = paired_runtime(tmp_path, db, user)
+    try:
+        runtime.control_channel.tick()
+        document_id = str(uuid.uuid4())
+        LocalDocumentStore(runtime.settings, runtime.catalog).accept_document(
+            document_id,
+            [_pdf_bytes("Điều 1. Văn bản cục bộ cần được xóa.")],
+            "delete-local.pdf",
+            "application/pdf",
+        )
+        LocalDocumentStore(runtime.settings, runtime.catalog).delete_document(document_id)
+        transport.available = False
+        runtime.control_channel.next_attempt_at = 0
+        runtime.control_channel.tick()
+        assert runtime.catalog.pending_control_manifests()
+        transport.available = True
+        runtime.control_channel.next_attempt_at = 0
+        runtime.control_channel.tick()
+        manifest = db.query(LocalDocumentManifest).filter_by(document_id=uuid.UUID(document_id)).one()
+        assert manifest.preparation_state == "DELETED"
+        assert manifest.index_state == "DELETED"
+        assert manifest.local_availability == "DELETED"
+        assert manifest.chunk_count == 0 and manifest.artifact_id is None
+    finally:
+        runtime.shutdown()
 
 
 def test_production_credential_store_fails_closed(tmp_path):

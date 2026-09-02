@@ -60,6 +60,15 @@ class LocalJobStore:
             row = connection.execute("SELECT cancellation_requested FROM local_jobs WHERE job_id=?", (job_id,)).fetchone()
         return bool(row and row[0])
 
+    def cancel_for_document(self, document_id: str) -> int:
+        with self.catalog._connect() as connection:
+            result = connection.execute(
+                "UPDATE local_jobs SET state='CANCEL_REQUESTED',cancellation_requested=1,updated_at=? "
+                "WHERE document_id=? AND state IN ('QUEUED','RUNNING')",
+                (int(time.time()), document_id),
+            )
+        return result.rowcount
+
     def reconcile_interrupted(self) -> int:
         with self.catalog._connect() as connection:
             result = connection.execute("UPDATE local_jobs SET state='FAILED',stage='FAILED_INTERRUPTED',error_code='PREPARATION_INTERRUPTED',updated_at=? WHERE state IN ('RUNNING','CANCEL_REQUESTED')", (int(time.time()),))

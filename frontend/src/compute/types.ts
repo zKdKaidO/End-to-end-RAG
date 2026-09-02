@@ -67,6 +67,20 @@ export interface LocalBootstrapResponse {
   allowed_operations: string[];
 }
 
+/** Authoritative metadata from the selected local Compute catalog, never a cloud manifest. */
+export interface LocalComputeDocument {
+  document_id: string;
+  original_filename: string;
+  byte_size: number;
+  preparation_state: "ACCEPTED" | "PROCESSING" | "CHUNKING" | "VALIDATING" | "PREPARED_NOT_INDEXED" | "INDEXING" | "INDEX_READY" | "FAILED" | string;
+  index_state: "NOT_READY" | "NOT_INDEXED" | "INDEXING" | "INDEX_READY" | string;
+  last_error_code: string | null;
+  created_at: number;
+  updated_at: number;
+  page_count: number;
+  chunk_count: number;
+}
+
 export interface ComputeClientStatus {
   selectedDeviceId: string | null;
   session: LocalSessionSnapshot | null;

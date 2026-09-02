@@ -24,6 +24,9 @@ class LocalPreparationService:
     def __init__(self, settings: LocalComputeSettings, catalog):
         self.settings,self.catalog=settings,catalog; self.documents=LocalDocumentStore(settings,catalog); self.jobs=LocalJobStore(catalog)
     def prepare(self, document_id: str) -> dict:
+        with self.catalog.document_lock(document_id):
+            return self._prepare_locked(document_id)
+    def _prepare_locked(self, document_id: str) -> dict:
         document=self.documents.get(document_id)
         if not document: raise LocalComputeError(LocalComputeErrorCode.DOCUMENT_NOT_FOUND)
         artifact_id=str(uuid.uuid4()); job_id=self.jobs.enqueue_preparation(document_id,artifact_id)

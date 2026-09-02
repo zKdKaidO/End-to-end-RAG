@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import sqlite3
 import json
+import threading
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -13,6 +15,16 @@ CATALOG_SCHEMA_VERSION = 4
 class LocalCatalog:
     def __init__(self, path: Path):
         self.path = path
+        self._document_locks: dict[str, threading.RLock] = {}
+        self._document_locks_guard = threading.Lock()
+
+    @contextmanager
+    def document_lock(self, document_id: str):
+        """Serialize lifecycle mutation per local document within this runtime."""
+        with self._document_locks_guard:
+            lock = self._document_locks.setdefault(document_id, threading.RLock())
+        with lock:
+            yield
 
     def initialize(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)

@@ -16,6 +16,12 @@ not bundled frontend code.
    `HMAC-SHA256(secret, METHOD|PATH|TIMESTAMP|NONCE|SHA256(rawBytes))`, then send
    those same bytes with the frozen headers. Use a new nonce for every attempt.
 
+6. Current production client methods also cover authenticated local `GET
+   /v1/documents` and `DELETE /v1/documents/{document_id}`. Delete has an empty
+   raw body, is signed through the same request envelope, and is never retried
+   automatically after an ambiguous loopback failure. The list is local catalog
+   metadata, not a substitute for the platform manifest read model.
+
 Reference vectors: `tests/fixtures/browser_compute_hmac_v1.json`.
 Reference algorithms: `tools/browser_protocol/browser_compute_reference.mjs` and
 `tools/browser_protocol/reference_client.py`.

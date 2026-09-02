@@ -1,7 +1,7 @@
 import { binaryBodyBytes, canonicalTranscript, createBrowserNonce, exactArrayBuffer, hmacSha256Hex, serializeJsonOnce, sha256Hex } from "./crypto";
 import { BrowserComputeError, isDeviceInvalidatingCode, isSessionInvalidatingCode } from "./errors";
 import { PlatformComputeApi, type PlatformFetch } from "./platform";
-import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalBootstrapResponse, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
+import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalBootstrapResponse, type LocalComputeDocument, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
 
 export interface BrowserComputeClientOptions {
   platform?: PlatformComputeApi;
@@ -214,8 +214,10 @@ export class BrowserComputeClient {
   async runtime() { return this.localRequest<JsonObject>("GET", "/v1/runtime", undefined); }
   async capabilities() { return this.localRequest<JsonObject>("GET", "/v1/capabilities", undefined); }
   async uploadSource(documentId: string, file: Blob | ArrayBuffer | Uint8Array, filename: string) { return this.localRequest<JsonObject>("PUT", `/v1/documents/${encodeURIComponent(documentId)}/source`, await binaryBodyBytes(file), { "Content-Type": "application/pdf", "X-ZKD-Filename": filename }); }
+  async listDocuments(): Promise<LocalComputeDocument[]> { return (await this.localRequest<{ documents: LocalComputeDocument[] }>("GET", "/v1/documents", undefined)).documents; }
   async prepareDocument(documentId: string) { return this.localRequest<JsonObject>("POST", `/v1/documents/${encodeURIComponent(documentId)}/prepare`, undefined); }
   async documentState(documentId: string) { return this.localRequest<JsonObject>("GET", `/v1/documents/${encodeURIComponent(documentId)}`, undefined); }
+  async deleteDocument(documentId: string) { return this.localRequest<JsonObject>("DELETE", `/v1/documents/${encodeURIComponent(documentId)}`, undefined); }
   async indexDocument(documentId: string) { return this.localRequest<JsonObject>("POST", `/v1/documents/${encodeURIComponent(documentId)}/index`, undefined); }
   async jobState(jobId: string) { return this.localRequest<JsonObject>("GET", `/v1/jobs/${encodeURIComponent(jobId)}`, undefined); }
   async cancelJob(jobId: string) { return this.localRequest<JsonObject>("POST", `/v1/jobs/${encodeURIComponent(jobId)}:cancel`, undefined); }

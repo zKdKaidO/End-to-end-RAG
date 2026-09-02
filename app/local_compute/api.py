@@ -29,7 +29,9 @@ ROUTE_OPERATIONS = {
     ("GET", "/v1/capabilities"): "jobs",
     ("POST", "/v1/probe/binary"): "documents",
     ("PUT", "/v1/documents/{document_id}/source"): "documents",
+    ("DELETE", "/v1/documents/{document_id}"): "documents",
     ("POST", "/v1/documents/{document_id}/prepare"): "documents",
+    ("GET", "/v1/documents"): "documents",
     ("GET", "/v1/documents/{document_id}"): "documents",
     ("GET", "/v1/jobs/{job_id}"): "jobs",
     ("POST", "/v1/jobs/{job_id}:cancel"): "jobs",
@@ -236,6 +238,17 @@ def create_local_compute_app(runtime: LocalComputeRuntime) -> FastAPI:
         document = LocalDocumentStore(runtime.settings, runtime.catalog).get(document_id)
         if not document: raise LocalComputeError(LocalComputeErrorCode.DOCUMENT_NOT_FOUND)
         return {"request_id": request.state.request_id, **{key: value for key, value in document.items() if key not in {"source_relative_path"}}}
+
+    @app.get("/v1/documents")
+    async def list_documents(request: Request):
+        await authenticate(request)
+        return {"request_id": request.state.request_id, "documents": LocalDocumentStore(runtime.settings, runtime.catalog).list_documents()}
+
+    @app.delete("/v1/documents/{document_id}")
+    async def delete_document(document_id: str, request: Request):
+        await authenticate(request)
+        result = LocalDocumentStore(runtime.settings, runtime.catalog).delete_document(document_id)
+        return {"request_id": request.state.request_id, **result}
 
     @app.get("/v1/jobs/{job_id}")
     async def get_job_state(job_id: str, request: Request):

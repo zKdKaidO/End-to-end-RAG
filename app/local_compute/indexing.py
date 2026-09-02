@@ -9,6 +9,9 @@ from .jobs import LocalJobStore
 class LocalIndexService:
     def __init__(self, settings, catalog): self.settings,self.catalog=settings,catalog; self.jobs=LocalJobStore(catalog)
     def index_document(self, document_id):
+        with self.catalog.document_lock(document_id):
+            return self._index_document_locked(document_id)
+    def _index_document_locked(self, document_id):
         doc=self._document(document_id)
         if doc['preparation_state'] not in ('PREPARED_NOT_INDEXED','INDEX_READY'): raise LocalComputeError(LocalComputeErrorCode.CAPABILITY_UNAVAILABLE)
         artifact_id=doc['active_artifact_id']; job=self.jobs.enqueue_skeleton('INDEX_DOCUMENT')

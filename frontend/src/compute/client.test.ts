@@ -109,4 +109,26 @@ describe("BrowserComputeClient", () => {
     expect((runtimeRequest.headers as Record<string, string>)["X-ZKD-Nonce"]).not.toBe((uploadRequest.headers as Record<string, string>)["X-ZKD-Nonce"]);
     expect(Array.from(new Uint8Array(uploadRequest.body as ArrayBuffer))).toEqual([0x25, 0x50, 0x44, 0x46]);
   });
+
+  it("sends delete through the shared authenticated request path without retry", async () => {
+    const { platform, localFetch } = fixture();
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000, nonceFactory: () => "delete-nonce" });
+    await client.deleteDocument("22222222-2222-2222-2222-222222222222");
+    expect(platform.requestLocalSessionGrant).toHaveBeenCalledTimes(1);
+    expect(localFetch).toHaveBeenCalledTimes(2);
+    const [url, request] = localFetch.mock.calls[1] as [string, RequestInit];
+    expect(url).toBe("http://127.0.0.1:48123/v1/documents/22222222-2222-2222-2222-222222222222");
+    expect(request).toMatchObject({ method: "DELETE", body: undefined });
+    expect(request.headers).toMatchObject({ "X-ZKD-Nonce": "delete-nonce", "X-ZKD-Local-Session": "session-a" });
+  });
+
+  it("reads the device-local document list through the documents operation", async () => {
+    const { platform, localFetch } = fixture();
+    localFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => String(input).endsWith("/v1/sessions")
+      ? response({ local_session_id: "session-a", session_key: "secret-a", expires_at: 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["documents"] })
+      : response({ documents: [{ document_id: "d", original_filename: "local.pdf", byte_size: 10, preparation_state: "INDEX_READY", index_state: "INDEX_READY", last_error_code: null, created_at: 1, updated_at: 1, page_count: 1, chunk_count: 2 }], method: init?.method }));
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+    await expect(client.listDocuments()).resolves.toMatchObject([{ document_id: "d", index_state: "INDEX_READY" }]);
+    expect((localFetch.mock.calls[1][1] as RequestInit).method).toBe("GET");
+  });
 });
