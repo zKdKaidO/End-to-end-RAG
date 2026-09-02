@@ -82,9 +82,22 @@ The marked modules are:
 - `tests/integration/test_indexing_rq_runtime.py`
 - `tests/integration/test_processing_worker_failures.py`
 - `tests/integration/test_rq_runtime.py`
+- `tests/integration/test_document_delete_orphans.py`
 
 Focused count checks proved the relevant test paths leave the normal document
 count unchanged: `56 -> 56` before synthetic cleanup and `4 -> 4` after it.
+
+During an externally interrupted broad pytest invocation, a partially cleaned
+`fake.pdf` from `test_api.py::test_queue_failure_on_index_upload` was observed.
+That test commits its fixture document before simulating an RQ failure. The
+module-level fixture is effective when pytest reaches teardown (the exact path
+subsequently verified with an unchanged `8 -> 8` count), but a forcibly
+terminated host process cannot execute Python teardown. The orphan was
+positively identified and removed through canonical GC. The lifecycle test
+module is now also covered by the common isolation marker, so every module in
+this hotfix that creates a synthetic document has the same deterministic
+teardown protection. A dedicated disposable database/object-store namespace
+remains the future hard-kill isolation boundary.
 
 ## Verification
 

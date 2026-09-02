@@ -23,7 +23,7 @@ from app.models.indexing_job import IndexingJob
 from app.storage.minio_client import MinioClient
 
 
-pytestmark = pytest.mark.real_auth
+pytestmark = [pytest.mark.real_auth, pytest.mark.isolated_document_corpus]
 PASSWORD = "correct horse battery staple"
 ORIGIN = {"Origin": "http://localhost:5173"}
 
