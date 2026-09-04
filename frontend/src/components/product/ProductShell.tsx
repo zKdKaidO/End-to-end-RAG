@@ -1,55 +1,160 @@
-import { Menu } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import { ProductSidebar, type ProductSidebarProps } from "./ProductSidebar";
+import { type ReactNode, useEffect, useState } from "react";
+import { FileText, LogOut, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { ZkdWordmark } from "./ZkdWordmark";
+import type { AuthUser, ChatSession } from "../../types";
+import "./ProductShell.css";
 
-type SidebarData = Omit<ProductSidebarProps, "expanded" | "mobile" | "onCloseMobile" | "onInteractionChange">;
+type LegacySidebarConfig = {
+  user: AuthUser;
+  sessions?: ChatSession[];
+  activeSessionId?: string | null;
+  hasOlderSessions?: boolean;
+  onSelectSession?: (sessionId: string) => void;
+  onCreateSession?: () => void | Promise<void>;
+  onRenameSession?: (session: ChatSession) => void | Promise<void>;
+  onDeleteSession?: (session: ChatSession) => void | Promise<void>;
+  onLoadOlderSessions?: () => void;
+  onLogout: () => void | Promise<void>;
+};
 
-export function ProductShell({ sidebar, children, rightPanel, rightOpen = false, onCloseRight }: { sidebar: SidebarData; children: ReactNode; rightPanel?: ReactNode; rightOpen?: boolean; onCloseRight?: () => void }) {
-  const [expanded, setExpanded] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const interaction = useRef(false);
-  const focusInside = useRef(false);
-  const collapseTimer = useRef<number | null>(null);
-  const mobileRef = useRef<HTMLDivElement>(null);
-  const mobileTrigger = useRef<HTMLButtonElement>(null);
-  const previousFocus = useRef<HTMLElement | null>(null);
-  const clearCollapse = () => { if (collapseTimer.current != null) window.clearTimeout(collapseTimer.current); collapseTimer.current = null; };
-  const scheduleCollapse = useCallback(() => {
-    clearCollapse();
-    collapseTimer.current = window.setTimeout(() => { if (!focusInside.current && !interaction.current) setExpanded(false); }, 260);
-  }, []);
+type ProductShellProps = {
+  user?: AuthUser;
+  onLogout?: () => void | Promise<void>;
+  sidebar?: LegacySidebarConfig;
+  rightOpen?: boolean;
+  onCloseRight?: () => void;
+  rightPanel?: ReactNode;
+  children: ReactNode;
+};
 
-  useEffect(() => () => clearCollapse(), []);
+export function ProductShell({
+  user,
+  onLogout,
+  sidebar,
+  rightOpen = false,
+  rightPanel = null,
+  children,
+}: ProductShellProps) {
+  const navigate = useNavigate();
+
+  const resolvedUser = user ?? sidebar?.user;
+  const resolvedLogout = onLogout ?? sidebar?.onLogout;
+
+  const [collapsed, setCollapsed] = useState(() => {
+    return window.localStorage.getItem("zkd-product-sidebar-collapsed") === "1";
+  });
+
   useEffect(() => {
-    if (!mobileOpen) return;
-    previousFocus.current = document.activeElement as HTMLElement | null;
-    const panel = mobileRef.current;
-    panel?.querySelector<HTMLElement>("a,button")?.focus();
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setMobileOpen(false); return; }
-      if (event.key !== "Tab" || !panel) return;
-      const items = Array.from(panel.querySelectorAll<HTMLElement>("a[href],button:not([disabled]),input:not([disabled])"));
-      if (!items.length) return;
-      const first = items[0], last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    };
-    document.addEventListener("keydown", keydown);
-    return () => { document.removeEventListener("keydown", keydown); previousFocus.current?.focus(); };
-  }, [mobileOpen]);
+    window.localStorage.setItem(
+      "zkd-product-sidebar-collapsed",
+      collapsed ? "1" : "0",
+    );
+  }, [collapsed]);
 
-  const sidebarProps = { ...sidebar, onInteractionChange: (active: boolean) => { interaction.current = active; if (active) { clearCollapse(); setExpanded(true); } else scheduleCollapse(); } };
-  return <div className="lexicon-product"><div className="h-[100dvh] overflow-hidden bg-slate-50 text-slate-900">
-    {(mobileOpen || rightOpen) ? <button className="fixed inset-0 z-30 hidden bg-slate-950/30 max-[1279px]:block" aria-label="Close overlay" onClick={() => { setMobileOpen(false); onCloseRight?.(); }} /> : null}
-    <button ref={mobileTrigger} className="fixed left-3 top-3 z-20 hidden h-9 w-9 border-slate-200 bg-white p-0 text-slate-600 shadow-sm max-[899px]:inline-flex" aria-label="Open navigation" title="Open navigation" onClick={() => setMobileOpen(true)}><Menu size={18} /></button>
-    <div className="flex h-full min-w-0">
-      <div className={`hidden h-full flex-none transition-[width] duration-200 ease-out min-[900px]:block ${expanded ? "w-[216px]" : "w-14"}`} onMouseEnter={() => { clearCollapse(); setExpanded(true); }} onMouseLeave={scheduleCollapse} onFocusCapture={() => { focusInside.current = true; clearCollapse(); setExpanded(true); }} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) { focusInside.current = false; scheduleCollapse(); } }}>
-        <ProductSidebar {...sidebarProps} expanded={expanded} mobile={false} onCloseMobile={() => undefined} />
-      </div>
-      {mobileOpen ? <div ref={mobileRef} className="fixed inset-y-0 left-0 z-40 w-[min(280px,88vw)] min-[900px]:hidden"><ProductSidebar {...sidebarProps} expanded mobile onCloseMobile={() => setMobileOpen(false)} /></div> : null}
-      <main className="min-h-0 min-w-0 flex-1">{children}</main>
-      {rightPanel && rightOpen ? <div className="h-full w-[350px] flex-none max-[1279px]:fixed max-[1279px]:inset-y-0 max-[1279px]:right-0 max-[1279px]:z-40 max-[1279px]:w-[min(380px,94vw)]">{rightPanel}</div> : null}
+  if (!resolvedUser) {
+    throw new Error("ProductShell requires a user.");
+  }
+
+  const logout = () => {
+    if (resolvedLogout) {
+      void resolvedLogout();
+    }
+  };
+
+  return (
+    <div className={`zkd-product-shell ${collapsed ? "is-collapsed" : ""} ${rightOpen ? "has-right-panel" : ""}`}>
+      <aside className="zkd-product-sidebar">
+        <div className={`zkd-product-sidebar-top ${collapsed ? "is-collapsed" : ""}`}>
+          {!collapsed ? (
+            <button
+              type="button"
+              className="zkd-product-brand"
+              aria-label="Go to zKd AI"
+              onClick={() => navigate("/ask")}
+            >
+              <ZkdWordmark />
+            </button>
+          ) : null}
+
+          <button
+            type="button"
+            className="zkd-product-collapse"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className="zkd-product-new"
+          title="New inquiry"
+          onClick={() => navigate("/ask")}
+        >
+          <Plus size={17} strokeWidth={1.8} />
+          {!collapsed ? <span>New</span> : null}
+        </button>
+
+        <nav className="zkd-product-nav" aria-label="Workspace navigation">
+          <NavLink
+            to="/ask"
+            title="Ask"
+            className={({ isActive }) => `zkd-product-nav-item ${isActive ? "is-active" : ""}`}
+          >
+            <MessageSquare size={17} strokeWidth={1.8} />
+            {!collapsed ? <span>Ask</span> : null}
+          </NavLink>
+
+          <NavLink
+            to="/documents"
+            title="Documents"
+            className={({ isActive }) => `zkd-product-nav-item ${isActive ? "is-active" : ""}`}
+          >
+            <FileText size={17} strokeWidth={1.8} />
+            {!collapsed ? <span>Documents</span> : null}
+          </NavLink>
+        </nav>
+
+        <div className="zkd-product-sidebar-spacer" />
+
+        <div className={`zkd-product-user ${collapsed ? "is-collapsed" : ""}`}>
+          <div className="zkd-product-avatar">
+            {resolvedUser.email.slice(0, 1).toUpperCase()}
+          </div>
+
+          {!collapsed ? (
+            <div className="zkd-product-user-copy">
+              <strong title={resolvedUser.email}>
+                {resolvedUser.email}
+              </strong>
+              <span>{resolvedUser.role}</span>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            className="zkd-product-logout"
+            aria-label="Sign out"
+            title="Sign out"
+            onClick={logout}
+          >
+            <LogOut size={15} />
+          </button>
+        </div>
+      </aside>
+
+      <main className="zkd-product-content">
+        {children}
+      </main>
+
+      {rightOpen && rightPanel ? (
+        <aside className="zkd-product-right-panel">
+          {rightPanel}
+        </aside>
+      ) : null}
     </div>
-  </div></div>;
+  );
 }

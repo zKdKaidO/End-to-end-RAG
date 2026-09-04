@@ -21,3 +21,8 @@ tmp/
 *.tfstate
 *.tfstate.*
 *.tfplan
+# Local browser-compute acceptance artifacts
+.browser-acceptance/
+.venv-browser-acceptance/
+.venv-browser-acceptance311/
+git-checkpoint-report.txt

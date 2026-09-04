@@ -1,0 +1,131 @@
+.zkd-delete-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 20, 18, 0.28);
+  backdrop-filter: blur(2px);
+}
+
+.zkd-delete-dialog {
+  position: relative;
+  width: min(410px, calc(100vw - 36px));
+  box-sizing: border-box;
+  padding: 28px 28px 24px;
+  border: 1px solid #e2e2dd;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.16),
+    0 3px 12px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.zkd-delete-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #999994;
+  cursor: pointer;
+}
+
+.zkd-delete-close:hover:not(:disabled) {
+  background: #f2f2ef;
+  color: #242421;
+}
+
+.zkd-delete-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  margin: 2px auto 18px;
+  border-radius: 50%;
+  background: #fff0f0;
+  color: #cf4c4c;
+}
+
+.zkd-delete-dialog h2 {
+  margin: 0;
+  color: #1b1b19;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.zkd-delete-dialog p {
+  max-width: 330px;
+  margin: 10px auto 24px;
+  color: #777772;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.zkd-delete-dialog p strong {
+  color: #333330;
+  font-weight: 600;
+}
+
+.zkd-delete-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.zkd-delete-actions button {
+  height: 42px;
+  border-radius: 11px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.zkd-delete-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* White button / black text */
+.zkd-delete-cancel {
+  border: 1px solid #d9d9d4;
+  background: #ffffff;
+  color: #1c1c1a;
+}
+
+.zkd-delete-cancel:hover:not(:disabled) {
+  background: #f5f5f2;
+}
+
+/* Black button / white text */
+.zkd-delete-confirm {
+  border: 1px solid #171717;
+  background: #171717;
+  color: #ffffff;
+}
+
+.zkd-delete-confirm:hover:not(:disabled) {
+  background: #2a2a27;
+  border-color: #2a2a27;
+}
+
+@media (max-width: 520px) {
+  .zkd-delete-dialog {
+    padding: 25px 20px 20px;
+    border-radius: 17px;
+  }
+
+  .zkd-delete-actions {
+    grid-template-columns: 1fr;
+  }
+}

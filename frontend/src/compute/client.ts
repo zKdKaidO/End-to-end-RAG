@@ -1,4 +1,4 @@
-import { binaryBodyBytes, canonicalTranscript, createBrowserNonce, exactArrayBuffer, hmacSha256Hex, serializeJsonOnce, sha256Hex } from "./crypto";
+﻿import { binaryBodyBytes, canonicalTranscript, createBrowserNonce, exactArrayBuffer, hmacSha256Hex, serializeJsonOnce, sha256Hex } from "./crypto";
 import { BrowserComputeError, isDeviceInvalidatingCode, isSessionInvalidatingCode } from "./errors";
 import { PlatformComputeApi, type PlatformFetch } from "./platform";
 import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalAnswerRequest, type LocalAnswerResponse, type LocalBootstrapResponse, type LocalComputeDocument, type LocalQueryRequest, type LocalQueryResponse, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
@@ -13,8 +13,20 @@ export interface BrowserComputeClientOptions {
 
 type RequestBody = Uint8Array | undefined;
 
+const RECONNECT_WINDOW_MS = 15000;
+const RECONNECT_INITIAL_DELAY_MS = 250;
+const RECONNECT_MAX_DELAY_MS = 2000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
 function isAdmitted(device: ComputeDevice, operation: ComputeOperation): boolean {
-  return device.capabilities?.[operation] === "READY" || device.capabilities?.[operation] === "ADMITTED";
+  if (operation === "retrieval") {
+    return device.capabilities?.retrieval === "READY" || device.capabilities?.retrieval === "ADMITTED";
+  }
+
+  return true;
 }
 
 function localBaseUrl(device: ComputeDevice, operation: ComputeOperation): string {
@@ -22,12 +34,28 @@ function localBaseUrl(device: ComputeDevice, operation: ComputeOperation): strin
   if (device.state === "UPDATE_REQUIRED") throw new BrowserComputeError("UPDATE_REQUIRED");
   if (device.state === "BUSY") throw new BrowserComputeError("DEVICE_BUSY");
   if (device.state !== "READY") throw new BrowserComputeError("DEVICE_OFFLINE");
-  if (device.protocol_version !== COMPUTE_PROTOCOL_VERSION || !device.runtime_version) throw new BrowserComputeError("PROTOCOL_VERSION_UNSUPPORTED");
-  if (!device.endpoint_generation) throw new BrowserComputeError("ENDPOINT_GENERATION_UNAVAILABLE");
-  if (!Number.isInteger(device.endpoint_port) || !device.endpoint_port || device.endpoint_port < 1 || device.endpoint_port > 65535) {
+
+  if (device.protocol_version !== COMPUTE_PROTOCOL_VERSION || !device.runtime_version) {
+    throw new BrowserComputeError("PROTOCOL_VERSION_UNSUPPORTED");
+  }
+
+  if (!device.endpoint_generation) {
+    throw new BrowserComputeError("ENDPOINT_GENERATION_UNAVAILABLE");
+  }
+
+  if (
+    !Number.isInteger(device.endpoint_port) ||
+    !device.endpoint_port ||
+    device.endpoint_port < 1 ||
+    device.endpoint_port > 65535
+  ) {
     throw new BrowserComputeError("LOOPBACK_ENDPOINT_UNAVAILABLE");
   }
-  if (!isAdmitted(device, operation)) throw new BrowserComputeError("CAPABILITY_UNAVAILABLE");
+
+  if (!isAdmitted(device, operation)) {
+    throw new BrowserComputeError("CAPABILITY_UNAVAILABLE");
+  }
+
   return `http://127.0.0.1:${device.endpoint_port}`;
 }
 
@@ -54,186 +82,762 @@ function localAskBody(payload: LocalQueryRequest | LocalAnswerRequest): Uint8Arr
   if (typeof payload.query_text !== "string" || !payload.query_text.trim()) {
     throw new BrowserComputeError("INVALID_REQUEST", "A non-empty query is required.");
   }
+
   if (Array.isArray(payload.document_ids) && payload.document_ids.length === 0) {
-    throw new BrowserComputeError("EMPTY_DOCUMENT_SCOPE", "Select at least one local document or use all local documents.");
+    throw new BrowserComputeError(
+      "EMPTY_DOCUMENT_SCOPE",
+      "Select at least one local document or use all local documents.",
+    );
   }
+
   return serializeJsonOnce({
     ...payload,
     ...(Array.isArray(payload.document_ids) ? { document_ids: [...payload.document_ids] } : {}),
   });
 }
 
+function encodeFilenameHeader(filename: string): string {
+  const normalized = filename.normalize("NFC");
+
+  if (!normalized || /[\u0000\r\n]/.test(normalized)) {
+    throw new BrowserComputeError("INVALID_REQUEST", "Invalid document filename.");
+  }
+
+  try {
+    return encodeURIComponent(normalized);
+  } catch {
+    throw new BrowserComputeError("INVALID_REQUEST", "Document filename could not be encoded.");
+  }
+}
+
+function mapLocalFetchFailure(error: unknown): BrowserComputeError {
+  if (
+    error instanceof TypeError &&
+    /headers|iso-8859-1|code point/i.test(error.message)
+  ) {
+    return new BrowserComputeError(
+      "INVALID_REQUEST",
+      "Browser rejected a local request header before the request could be sent.",
+    );
+  }
+
+  return new BrowserComputeError("LOCAL_COMPUTE_UNAVAILABLE");
+}
+
 async function parseLocalResponse<T>(response: Response): Promise<T> {
   let payload: unknown;
-  try { payload = await response.json(); } catch { payload = undefined; }
-  if (!response.ok) {
-    const source = payload as { error?: { code?: string; message?: string }; request_id?: string } | undefined;
-    const remoteCode = source?.error?.code;
-    if (remoteCode === "CLOCK_SKEW") throw new BrowserComputeError("CLOCK_SKEW", source?.error?.message, response.status, source?.request_id);
-    if (isSessionInvalidatingCode(remoteCode)) throw new BrowserComputeError(remoteCode === "SESSION_EXPIRED" ? "SESSION_EXPIRED" : "SESSION_INVALID", source?.error?.message, response.status, source?.request_id);
-    if (remoteCode === "UPDATE_REQUIRED") throw new BrowserComputeError("UPDATE_REQUIRED", source?.error?.message, response.status, source?.request_id);
-    if (remoteCode === "NOT_PAIRED" || remoteCode === "DEVICE_REVOKED") throw new BrowserComputeError("NOT_PAIRED", source?.error?.message, response.status, source?.request_id);
-    if (remoteCode === "OPERATION_NOT_ALLOWED") throw new BrowserComputeError("OPERATION_NOT_ALLOWED", source?.error?.message, response.status, source?.request_id);
-    throw new BrowserComputeError("REQUEST_FAILED", source?.error?.message ?? `Local request failed (${response.status})`, response.status, source?.request_id);
+
+  try {
+    payload = await response.json();
+  } catch {
+    payload = undefined;
   }
-  if (payload === undefined) throw new BrowserComputeError("INVALID_LOCAL_RESPONSE", "Expected a JSON local response.", response.status);
+
+  if (!response.ok) {
+    const source = payload as {
+      error?: {
+        code?: string;
+        message?: string;
+      };
+      request_id?: string;
+    } | undefined;
+
+    const remoteCode = source?.error?.code;
+
+    if (remoteCode === "CLOCK_SKEW") {
+      throw new BrowserComputeError(
+        "CLOCK_SKEW",
+        source?.error?.message,
+        response.status,
+        source?.request_id,
+      );
+    }
+
+    if (isSessionInvalidatingCode(remoteCode)) {
+      throw new BrowserComputeError(
+        remoteCode === "SESSION_EXPIRED" ? "SESSION_EXPIRED" : "SESSION_INVALID",
+        source?.error?.message,
+        response.status,
+        source?.request_id,
+      );
+    }
+
+    if (remoteCode === "UPDATE_REQUIRED") {
+      throw new BrowserComputeError(
+        "UPDATE_REQUIRED",
+        source?.error?.message,
+        response.status,
+        source?.request_id,
+      );
+    }
+
+    if (remoteCode === "NOT_PAIRED" || remoteCode === "DEVICE_REVOKED") {
+      throw new BrowserComputeError(
+        "NOT_PAIRED",
+        source?.error?.message,
+        response.status,
+        source?.request_id,
+      );
+    }
+
+    if (remoteCode === "OPERATION_NOT_ALLOWED") {
+      throw new BrowserComputeError(
+        "OPERATION_NOT_ALLOWED",
+        source?.error?.message,
+        response.status,
+        source?.request_id,
+      );
+    }
+
+    throw new BrowserComputeError(
+      "REQUEST_FAILED",
+      source?.error?.message ?? `Local request failed (${response.status})`,
+      response.status,
+      source?.request_id,
+    );
+  }
+
+  if (payload === undefined) {
+    throw new BrowserComputeError(
+      "INVALID_LOCAL_RESPONSE",
+      "Expected a JSON local response.",
+      response.status,
+    );
+  }
+
   return payload as T;
 }
 
-/**
- * Non-visual production browser integration. All session material remains in this
- * object only; consumers receive a redacted snapshot and cannot read its key.
- */
 export class BrowserComputeClient {
   private readonly platform: PlatformComputeApi;
   private readonly localFetch: typeof fetch;
   private readonly origin: string;
   private readonly clock: () => number;
   private readonly nonceFactory: () => string;
+
   private devices = new Map<string, ComputeDevice>();
   private selectedDeviceId: string | null = null;
   private session: LocalSession | null = null;
   private bootstrapInFlight: Promise<LocalSession> | null = null;
+  private reconnectInFlight: Promise<boolean> | null = null;
 
   constructor(options: BrowserComputeClientOptions = {}) {
-    if (options.origin && options.origin !== window.location.origin) throw new BrowserComputeError("AUTH_FAILED", "Compute requests must use the browser application origin.");
+    if (options.origin && options.origin !== window.location.origin) {
+      throw new BrowserComputeError(
+        "AUTH_FAILED",
+        "Compute requests must use the browser application origin.",
+      );
+    }
+
     this.origin = window.location.origin;
-    this.platform = options.platform ?? new PlatformComputeApi(fetch as PlatformFetch);
-    this.localFetch = options.localFetch ?? fetch;
+
+    const browserFetch: typeof fetch = (input, init) => window.fetch(input, init);
+
+    this.platform = options.platform ?? new PlatformComputeApi(browserFetch as PlatformFetch);
+    this.localFetch = options.localFetch ?? browserFetch;
     this.clock = options.clock ?? (() => Date.now() / 1000);
     this.nonceFactory = options.nonceFactory ?? createBrowserNonce;
   }
 
   status(): ComputeClientStatus {
-    return { selectedDeviceId: this.selectedDeviceId, session: this.session ? toSnapshot(this.session) : null };
+    return {
+      selectedDeviceId: this.selectedDeviceId,
+      session: this.session ? toSnapshot(this.session) : null,
+    };
   }
 
-  clearSession(): void { this.session = null; }
-  /** For future application logout. Nothing is persisted, so this is complete cleanup. */
-  logout(): void { this.session = null; this.selectedDeviceId = null; this.devices.clear(); }
-  disconnect(): void { this.clearSession(); }
-  async connect(operation: ComputeOperation = "jobs", deviceId?: string): Promise<LocalSessionSnapshot> {
+  clearSession(): void {
+    this.session = null;
+  }
+
+  logout(): void {
+    this.session = null;
+    this.selectedDeviceId = null;
+    this.devices.clear();
+  }
+
+  disconnect(): void {
+    this.clearSession();
+  }
+
+  async connect(
+    operation: ComputeOperation = "jobs",
+    deviceId?: string,
+  ): Promise<LocalSessionSnapshot> {
     await this.selectDevice(operation, deviceId);
     return toSnapshot(await this.ensureSession(operation, deviceId));
   }
 
   async discover(): Promise<ComputeDevice[]> {
     const discovered = await this.platform.listDevices();
-    this.devices = new Map(discovered.map((device) => [device.device_id, device]));
+
+    this.devices = new Map(
+      discovered.map((device) => [device.device_id, device]),
+    );
+
     if (this.session) {
       const current = this.devices.get(this.session.deviceId);
-      if (!current || current.state === "REVOKED" || current.state === "UPDATE_REQUIRED" || current.endpoint_generation !== this.session.endpointGeneration) this.clearSession();
+
+      const endpointChanged =
+        !current ||
+        current.endpoint_generation !== this.session.endpointGeneration ||
+        current.endpoint_port !== this.session.endpointPort;
+
+      const deviceUnavailable =
+        !current ||
+        current.state !== "READY";
+
+      const protocolChanged =
+        Boolean(
+          current &&
+          current.protocol_version !== this.session.protocolVersion,
+        );
+
+      if (
+        endpointChanged ||
+        deviceUnavailable ||
+        protocolChanged
+      ) {
+        this.clearSession();
+      }
     }
+
+    if (
+      this.selectedDeviceId &&
+      !this.devices.has(this.selectedDeviceId)
+    ) {
+      this.selectedDeviceId = null;
+    }
+
     return discovered;
   }
 
-  async localManifests() { return this.platform.listLocalManifests(); }
+  async localManifests() {
+    return this.platform.listLocalManifests();
+  }
 
-  async selectDevice(operation: ComputeOperation, deviceId?: string): Promise<ComputeDevice> {
-    if (!this.devices.size) await this.discover();
+  async selectDevice(
+    operation: ComputeOperation,
+    deviceId?: string,
+  ): Promise<ComputeDevice> {
+    if (!this.devices.size) {
+      await this.discover();
+    }
+
     if (deviceId) {
       const requested = this.devices.get(deviceId);
-      if (!requested) throw new BrowserComputeError("NO_DEVICE", "Selected compute device was not found.");
+
+      if (!requested) {
+        throw new BrowserComputeError(
+          "NO_DEVICE",
+          "Selected compute device was not found.",
+        );
+      }
+
       localBaseUrl(requested, operation);
-      if (this.selectedDeviceId && this.selectedDeviceId !== requested.device_id) this.clearSession();
+
+      if (
+        this.selectedDeviceId &&
+        this.selectedDeviceId !== requested.device_id
+      ) {
+        this.clearSession();
+      }
+
       this.selectedDeviceId = requested.device_id;
       return requested;
     }
+
     if (this.selectedDeviceId) {
       const selected = this.devices.get(this.selectedDeviceId);
+
       if (selected) {
         localBaseUrl(selected, operation);
         return selected;
       }
     }
+
     const available = Array.from(this.devices.values()).filter((candidate) => {
-      try { localBaseUrl(candidate, operation); return true; } catch { return false; }
+      try {
+        localBaseUrl(candidate, operation);
+        return true;
+      } catch {
+        return false;
+      }
     });
+
     if (!available.length) {
-      if (Array.from(this.devices.values()).some((device) => device.state === "REVOKED")) throw new BrowserComputeError("DEVICE_REVOKED");
-      throw new BrowserComputeError(this.devices.size ? "DEVICE_OFFLINE" : "NO_DEVICE");
+      if (
+        Array.from(this.devices.values()).some(
+          (device) => device.state === "REVOKED",
+        )
+      ) {
+        throw new BrowserComputeError("DEVICE_REVOKED");
+      }
+
+      throw new BrowserComputeError(
+        this.devices.size ? "DEVICE_OFFLINE" : "NO_DEVICE",
+      );
     }
-    if (available.length > 1) throw new BrowserComputeError("DEVICE_SELECTION_REQUIRED");
+
+    if (available.length > 1) {
+      throw new BrowserComputeError("DEVICE_SELECTION_REQUIRED");
+    }
+
     this.selectedDeviceId = available[0].device_id;
     return available[0];
   }
 
   private sessionIsUsable(operation: ComputeOperation): boolean {
-    return Boolean(this.session && this.session.expiresAt > Math.floor(this.clock()) && this.session.allowedOperations.includes(operation));
+    return Boolean(
+      this.session &&
+      this.session.expiresAt > Math.floor(this.clock()) &&
+      this.session.allowedOperations.includes(operation),
+    );
   }
 
-  async ensureSession(operation: ComputeOperation, deviceId?: string): Promise<LocalSession> {
-    if (this.sessionIsUsable(operation) && (!deviceId || this.session?.deviceId === deviceId)) return this.session as LocalSession;
-    if (this.session && this.session.expiresAt <= Math.floor(this.clock())) this.clearSession();
-    if (this.session && (!deviceId || this.session.deviceId === deviceId) && !this.session.allowedOperations.includes(operation)) {
+  async ensureSession(
+    operation: ComputeOperation,
+    deviceId?: string,
+  ): Promise<LocalSession> {
+    if (
+      this.sessionIsUsable(operation) &&
+      (!deviceId || this.session?.deviceId === deviceId)
+    ) {
+      return this.session as LocalSession;
+    }
+
+    if (
+      this.session &&
+      this.session.expiresAt <= Math.floor(this.clock())
+    ) {
+      this.clearSession();
+    }
+
+    if (
+      this.session &&
+      (!deviceId || this.session.deviceId === deviceId) &&
+      !this.session.allowedOperations.includes(operation)
+    ) {
       throw new BrowserComputeError("OPERATION_NOT_ALLOWED");
     }
-    if (this.bootstrapInFlight) return this.bootstrapInFlight;
-    this.bootstrapInFlight = this.bootstrap(operation, deviceId).finally(() => { this.bootstrapInFlight = null; });
+
+    if (this.bootstrapInFlight) {
+      return this.bootstrapInFlight;
+    }
+
+    this.bootstrapInFlight = this.bootstrap(
+      operation,
+      deviceId,
+    ).finally(() => {
+      this.bootstrapInFlight = null;
+    });
+
     return this.bootstrapInFlight;
   }
 
-  private async bootstrap(operation: ComputeOperation, deviceId?: string): Promise<LocalSession> {
+  private async bootstrap(
+    operation: ComputeOperation,
+    deviceId?: string,
+  ): Promise<LocalSession> {
     const device = await this.selectDevice(operation, deviceId);
     const baseUrl = localBaseUrl(device, operation);
     const browserNonce = this.nonceFactory();
+
     let grant: PlatformGrant;
-    try { grant = await this.platform.requestLocalSessionGrant(device.device_id, browserNonce); }
-    catch (error) { throw error instanceof BrowserComputeError ? error : new BrowserComputeError("PLATFORM_UNAVAILABLE"); }
-    if (grant.device_id !== device.device_id || grant.endpoint_generation !== device.endpoint_generation) {
-      this.clearSession();
-      throw new BrowserComputeError("SESSION_INVALID", "Platform grant does not match the selected device endpoint.");
-    }
-    let response: Response;
+
     try {
-      response = await this.localFetch(`${baseUrl}/v1/sessions`, {
-        method: "POST",
-        headers: { Origin: this.origin, "X-ZKD-Local-Grant": grant.local_access_grant, "X-ZKD-Browser-Nonce": browserNonce },
-      });
-    } catch { throw new BrowserComputeError("LOCAL_COMPUTE_UNAVAILABLE"); }
-    const bootstrapped = await parseLocalResponse<LocalBootstrapResponse>(response);
-    if (bootstrapped.protocol_version !== COMPUTE_PROTOCOL_VERSION || bootstrapped.endpoint_generation !== device.endpoint_generation) {
-      this.clearSession();
-      throw new BrowserComputeError("SESSION_INVALID", "Local session response does not match the selected endpoint.");
+      grant = await this.platform.requestLocalSessionGrant(
+        device.device_id,
+        browserNonce,
+      );
+    } catch (error) {
+      throw error instanceof BrowserComputeError
+        ? error
+        : new BrowserComputeError("PLATFORM_UNAVAILABLE");
     }
-    const allowed = bootstrapped.allowed_operations.filter((value): value is ComputeOperation => ["documents", "jobs", "retrieval", "answer"].includes(value));
-    if (!allowed.includes(operation)) throw new BrowserComputeError("OPERATION_NOT_ALLOWED");
-    const session: LocalSession = { deviceId: device.device_id, endpointGeneration: device.endpoint_generation!, endpointPort: device.endpoint_port!, baseUrl, sessionId: bootstrapped.local_session_id, sessionKey: bootstrapped.session_key, expiresAt: bootstrapped.expires_at, allowedOperations: allowed, protocolVersion: bootstrapped.protocol_version };
+
+    if (
+      grant.device_id !== device.device_id ||
+      grant.endpoint_generation !== device.endpoint_generation
+    ) {
+      this.clearSession();
+
+      throw new BrowserComputeError(
+        "SESSION_INVALID",
+        "Platform grant does not match the selected device endpoint.",
+      );
+    }
+
+    let response: Response;
+
+    try {
+      response = await this.localFetch(
+        `${baseUrl}/v1/sessions`,
+        {
+          method: "POST",
+          headers: {
+            Origin: this.origin,
+            "X-ZKD-Local-Grant": grant.local_access_grant,
+            "X-ZKD-Browser-Nonce": browserNonce,
+          },
+        },
+      );
+    } catch (error) {
+      throw mapLocalFetchFailure(error);
+    }
+
+    const bootstrapped =
+      await parseLocalResponse<LocalBootstrapResponse>(response);
+
+    if (
+      bootstrapped.protocol_version !== COMPUTE_PROTOCOL_VERSION ||
+      bootstrapped.endpoint_generation !== device.endpoint_generation
+    ) {
+      this.clearSession();
+
+      throw new BrowserComputeError(
+        "SESSION_INVALID",
+        "Local session response does not match the selected endpoint.",
+      );
+    }
+
+    const allowed = bootstrapped.allowed_operations.filter(
+      (value): value is ComputeOperation =>
+        ["documents", "jobs", "retrieval", "answer"].includes(value),
+    );
+
+    if (!allowed.includes(operation)) {
+      throw new BrowserComputeError("OPERATION_NOT_ALLOWED");
+    }
+
+    const session: LocalSession = {
+      deviceId: device.device_id,
+      endpointGeneration: device.endpoint_generation!,
+      endpointPort: device.endpoint_port!,
+      baseUrl,
+      sessionId: bootstrapped.local_session_id,
+      sessionKey: bootstrapped.session_key,
+      expiresAt: bootstrapped.expires_at,
+      allowedOperations: allowed,
+      protocolVersion: bootstrapped.protocol_version,
+    };
+
     this.session = session;
     return session;
   }
 
-  private async localRequest<T>(method: string, path: string, body: RequestBody, headers: Record<string, string> = {}): Promise<T> {
-    const operation = operationFromPath(path);
-    const session = await this.ensureSession(operation);
-    if (!this.sessionIsUsable(operation)) { this.clearSession(); throw new BrowserComputeError("SESSION_EXPIRED"); }
-    const rawBody = body ?? new Uint8Array();
-    const timestamp = String(Math.floor(this.clock()));
-    const nonce = this.nonceFactory();
-    let mac: string;
-    try { mac = await hmacSha256Hex(session.sessionKey, canonicalTranscript(method, path, timestamp, nonce, await sha256Hex(rawBody))); }
-    catch (error) { if ((error as Error).message === "INVALID_REQUEST_PATH") throw new BrowserComputeError("INVALID_REQUEST_PATH"); throw error; }
-    let response: Response;
-    try {
-      response = await this.localFetch(`${session.baseUrl}${path}`, { method, headers: { Origin: this.origin, "X-ZKD-Local-Session": session.sessionId, "X-ZKD-Timestamp": timestamp, "X-ZKD-Nonce": nonce, "X-ZKD-MAC": mac, "X-ZKD-Protocol-Version": session.protocolVersion, ...headers }, body: rawBody.length ? exactArrayBuffer(rawBody) : undefined });
-    } catch { throw new BrowserComputeError("LOCAL_COMPUTE_UNAVAILABLE"); }
-    try { return await parseLocalResponse<T>(response); }
-    catch (error) {
-      if (error instanceof BrowserComputeError && (isSessionInvalidatingCode(error.code) || isDeviceInvalidatingCode(error.code))) this.clearSession();
-      throw error;
+  private async reconnectAfterTransportFailure(
+    operation: ComputeOperation,
+    failedSession: LocalSession,
+  ): Promise<boolean> {
+    if (this.reconnectInFlight) {
+      return this.reconnectInFlight;
     }
+
+    this.reconnectInFlight = this.performReconnect(
+      operation,
+      failedSession,
+    ).finally(() => {
+      this.reconnectInFlight = null;
+    });
+
+    return this.reconnectInFlight;
   }
 
-  async runtime() { return this.localRequest<JsonObject>("GET", "/v1/runtime", undefined); }
-  async capabilities() { return this.localRequest<JsonObject>("GET", "/v1/capabilities", undefined); }
-  async uploadSource(documentId: string, file: Blob | ArrayBuffer | Uint8Array, filename: string) { return this.localRequest<JsonObject>("PUT", `/v1/documents/${encodeURIComponent(documentId)}/source`, await binaryBodyBytes(file), { "Content-Type": "application/pdf", "X-ZKD-Filename": filename }); }
-  async listDocuments(): Promise<LocalComputeDocument[]> { return (await this.localRequest<{ documents: LocalComputeDocument[] }>("GET", "/v1/documents", undefined)).documents; }
-  async prepareDocument(documentId: string) { return this.localRequest<JsonObject>("POST", `/v1/documents/${encodeURIComponent(documentId)}/prepare`, undefined); }
-  async documentState(documentId: string) { return this.localRequest<JsonObject>("GET", `/v1/documents/${encodeURIComponent(documentId)}`, undefined); }
-  async deleteDocument(documentId: string) { return this.localRequest<JsonObject>("DELETE", `/v1/documents/${encodeURIComponent(documentId)}`, undefined); }
-  async indexDocument(documentId: string) { return this.localRequest<JsonObject>("POST", `/v1/documents/${encodeURIComponent(documentId)}/index`, undefined); }
-  async jobState(jobId: string) { return this.localRequest<JsonObject>("GET", `/v1/jobs/${encodeURIComponent(jobId)}`, undefined); }
-  async cancelJob(jobId: string) { return this.localRequest<JsonObject>("POST", `/v1/jobs/${encodeURIComponent(jobId)}:cancel`, undefined); }
-  async query(payload: LocalQueryRequest): Promise<LocalQueryResponse> { return this.localRequest<LocalQueryResponse>("POST", "/v1/queries", localAskBody(payload), { "Content-Type": "application/json" }); }
-  async answer(payload: LocalAnswerRequest): Promise<LocalAnswerResponse> { return this.localRequest<LocalAnswerResponse>("POST", "/v1/answers", localAskBody(payload), { "Content-Type": "application/json" }); }
+  private async performReconnect(
+    operation: ComputeOperation,
+    failedSession: LocalSession,
+  ): Promise<boolean> {
+    const deadline = Date.now() + RECONNECT_WINDOW_MS;
+    let delayMs = RECONNECT_INITIAL_DELAY_MS;
+
+    this.clearSession();
+
+    while (Date.now() < deadline) {
+      try {
+        await this.discover();
+
+        const current = this.devices.get(failedSession.deviceId);
+
+        if (current) {
+          try {
+            localBaseUrl(current, operation);
+
+            this.selectedDeviceId = current.device_id;
+            this.clearSession();
+
+            await this.ensureSession(
+              operation,
+              current.device_id,
+            );
+
+            return true;
+          } catch (error) {
+            if (
+              error instanceof BrowserComputeError &&
+              (
+                error.code === "DEVICE_REVOKED" ||
+                error.code === "UPDATE_REQUIRED" ||
+                error.code === "PROTOCOL_VERSION_UNSUPPORTED"
+              )
+            ) {
+              throw error;
+            }
+          }
+        }
+      } catch (error) {
+        if (
+          error instanceof BrowserComputeError &&
+          (
+            error.code === "DEVICE_REVOKED" ||
+            error.code === "UPDATE_REQUIRED" ||
+            error.code === "PROTOCOL_VERSION_UNSUPPORTED"
+          )
+        ) {
+          throw error;
+        }
+      }
+
+      const remaining = deadline - Date.now();
+
+      if (remaining <= 0) {
+        break;
+      }
+
+      await sleep(
+        Math.min(
+          delayMs,
+          remaining,
+        ),
+      );
+
+      delayMs = Math.min(
+        delayMs * 2,
+        RECONNECT_MAX_DELAY_MS,
+      );
+    }
+
+    return false;
+  }
+
+  private async localRequest<T>(
+    method: string,
+    path: string,
+    body: RequestBody,
+    headers: Record<string, string> = {},
+  ): Promise<T> {
+    const operation = operationFromPath(path);
+    const rawBody = body ?? new Uint8Array();
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const session = await this.ensureSession(operation);
+
+      if (!this.sessionIsUsable(operation)) {
+        this.clearSession();
+        throw new BrowserComputeError("SESSION_EXPIRED");
+      }
+
+      const timestamp = String(Math.floor(this.clock()));
+      const nonce = this.nonceFactory();
+
+      let mac: string;
+
+      try {
+        mac = await hmacSha256Hex(
+          session.sessionKey,
+          canonicalTranscript(
+            method,
+            path,
+            timestamp,
+            nonce,
+            await sha256Hex(rawBody),
+          ),
+        );
+      } catch (error) {
+        if ((error as Error).message === "INVALID_REQUEST_PATH") {
+          throw new BrowserComputeError("INVALID_REQUEST_PATH");
+        }
+
+        throw error;
+      }
+
+      let response: Response;
+
+      try {
+        response = await this.localFetch(
+          `${session.baseUrl}${path}`,
+          {
+            method,
+            headers: {
+              Origin: this.origin,
+              "X-ZKD-Local-Session": session.sessionId,
+              "X-ZKD-Timestamp": timestamp,
+              "X-ZKD-Nonce": nonce,
+              "X-ZKD-MAC": mac,
+              "X-ZKD-Protocol-Version": session.protocolVersion,
+              ...headers,
+            },
+            body: rawBody.length
+              ? exactArrayBuffer(rawBody)
+              : undefined,
+          },
+        );
+      } catch (error) {
+        const mapped = mapLocalFetchFailure(error);
+
+        if (
+          attempt === 0 &&
+          mapped.code === "LOCAL_COMPUTE_UNAVAILABLE"
+        ) {
+          const recovered =
+            await this.reconnectAfterTransportFailure(
+              operation,
+              session,
+            );
+
+          if (recovered) {
+            continue;
+          }
+        }
+
+        throw mapped;
+      }
+
+      try {
+        return await parseLocalResponse<T>(response);
+      } catch (error) {
+        if (
+          error instanceof BrowserComputeError &&
+          (
+            isSessionInvalidatingCode(error.code) ||
+            isDeviceInvalidatingCode(error.code)
+          )
+        ) {
+          this.clearSession();
+        }
+
+        throw error;
+      }
+    }
+
+    throw new BrowserComputeError("LOCAL_COMPUTE_UNAVAILABLE");
+  }
+
+  async runtime() {
+    return this.localRequest<JsonObject>(
+      "GET",
+      "/v1/runtime",
+      undefined,
+    );
+  }
+
+  async capabilities() {
+    return this.localRequest<JsonObject>(
+      "GET",
+      "/v1/capabilities",
+      undefined,
+    );
+  }
+
+  async uploadSource(
+    documentId: string,
+    file: Blob | ArrayBuffer | Uint8Array,
+    filename: string,
+  ) {
+    return this.localRequest<JsonObject>(
+      "PUT",
+      `/v1/documents/${encodeURIComponent(documentId)}/source`,
+      await binaryBodyBytes(file),
+      {
+        "Content-Type": "application/pdf",
+        "X-ZKD-Filename": encodeFilenameHeader(filename),
+      },
+    );
+  }
+
+  async listDocuments(): Promise<LocalComputeDocument[]> {
+    return (
+      await this.localRequest<{
+        documents: LocalComputeDocument[];
+      }>(
+        "GET",
+        "/v1/documents",
+        undefined,
+      )
+    ).documents;
+  }
+
+  async prepareDocument(documentId: string) {
+    return this.localRequest<JsonObject>(
+      "POST",
+      `/v1/documents/${encodeURIComponent(documentId)}/prepare`,
+      undefined,
+    );
+  }
+
+  async documentState(documentId: string) {
+    return this.localRequest<JsonObject>(
+      "GET",
+      `/v1/documents/${encodeURIComponent(documentId)}`,
+      undefined,
+    );
+  }
+
+  async deleteDocument(documentId: string) {
+    return this.localRequest<JsonObject>(
+      "DELETE",
+      `/v1/documents/${encodeURIComponent(documentId)}`,
+      undefined,
+    );
+  }
+
+  async indexDocument(documentId: string) {
+    return this.localRequest<JsonObject>(
+      "POST",
+      `/v1/documents/${encodeURIComponent(documentId)}/index`,
+      undefined,
+    );
+  }
+
+  async jobState(jobId: string) {
+    return this.localRequest<JsonObject>(
+      "GET",
+      `/v1/jobs/${encodeURIComponent(jobId)}`,
+      undefined,
+    );
+  }
+
+  async cancelJob(jobId: string) {
+    return this.localRequest<JsonObject>(
+      "POST",
+      `/v1/jobs/${encodeURIComponent(jobId)}:cancel`,
+      undefined,
+    );
+  }
+
+  async query(
+    payload: LocalQueryRequest,
+  ): Promise<LocalQueryResponse> {
+    return this.localRequest<LocalQueryResponse>(
+      "POST",
+      "/v1/queries",
+      localAskBody(payload),
+      {
+        "Content-Type": "application/json",
+      },
+    );
+  }
+
+  async answer(
+    payload: LocalAnswerRequest,
+  ): Promise<LocalAnswerResponse> {
+    return this.localRequest<LocalAnswerResponse>(
+      "POST",
+      "/v1/answers",
+      localAskBody(payload),
+      {
+        "Content-Type": "application/json",
+      },
+    );
+  }
 }

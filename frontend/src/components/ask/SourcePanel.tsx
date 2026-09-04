@@ -1,53 +1,66 @@
+import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { CitationSummary, EmptyState, SourceList } from "../Common";
-import type { Citation, DocumentPipeline } from "../../types";
-import { SourceDocumentCard } from "./SourceDocumentCard";
+import type { LocalCitation } from "../../compute";
 
 export type SourcePanelTab = "scope" | "evidence";
 
-export function SourcePanel({ tab, onTabChange, documents, selectedDocumentIds, activeCitation, evidenceCitations, onToggleDocument, onSelectAll, onSelectCitation, onOpenCitationDetail, onClose }: {
+export interface SourcePanelDocument {
+  document_id: string;
+  filename: string;
+  page_count: number;
+  chunk_count: number;
+}
+
+interface SourcePanelProps {
   tab: SourcePanelTab;
   onTabChange: (tab: SourcePanelTab) => void;
-  documents: DocumentPipeline[];
+  documents: SourcePanelDocument[];
   selectedDocumentIds: string[];
-  activeCitation: Citation | null;
-  evidenceCitations: Citation[];
+  activeCitation: LocalCitation | null;
+  evidenceCitations: LocalCitation[];
   onToggleDocument: (documentId: string) => void;
   onSelectAll: () => void;
-  onSelectCitation: (citation: Citation) => void;
-  onOpenCitationDetail: (citation: Citation) => void;
+  onSelectCitation: (citation: LocalCitation) => void;
+  onOpenCitationDetail: (citation: LocalCitation) => void;
   onClose: () => void;
-}) {
+}
+
+function safePage(value: unknown): string | null {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0 ? String(value) : null;
+}
+
+function documentMeta(item: SourcePanelDocument) {
+  return `${item.page_count} pages · ${item.chunk_count} chunks`;
+}
+
+export function SourcePanel({ tab, onTabChange, documents, selectedDocumentIds, activeCitation, evidenceCitations, onToggleDocument, onSelectAll, onSelectCitation, onOpenCitationDetail, onClose }: SourcePanelProps) {
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(50);
-  const indexed = useMemo(() => documents.filter((item) => item.index_count > 0), [documents]);
-  const filtered = useMemo(() => {
-    const term = search.trim().toLocaleLowerCase("vi");
-    return term ? indexed.filter((item) => item.filename.toLocaleLowerCase("vi").includes(term)) : indexed;
-  }, [indexed, search]);
-  const allSelected = indexed.length > 0 && selectedDocumentIds.length === indexed.length && indexed.every((item) => selectedDocumentIds.includes(item.document_id));
-  useEffect(() => {
-    if (tab !== "evidence" || !activeCitation) return;
-    window.document.getElementById(`source-${activeCitation.source_id}`)?.scrollIntoView?.({ block: "nearest" });
-  }, [activeCitation, tab]);
-  return <aside className="flex h-full flex-col border-l border-slate-200 bg-slate-50" aria-label="Source panel">
-    <header className="flex h-16 flex-none items-center justify-between border-b border-slate-200 px-4"><div><span className="block text-[10px] font-semibold uppercase tracking-wider text-blue-700">Source panel</span><small className="text-[10px] text-slate-500">Referenced materials</small></div><button className="border-0 bg-transparent p-1 text-slate-500" aria-label="Close source panel" onClick={onClose}><X size={17} /></button></header>
-    <div className="grid grid-cols-2 border-b border-slate-200 bg-white p-1" role="tablist" aria-label="Source panel mode">
-      {(["scope", "evidence"] as const).map((value) => <button key={value} role="tab" aria-selected={tab === value} className={`border-0 px-3 py-2 text-xs font-semibold capitalize ${tab === value ? "bg-blue-50 text-blue-700" : "bg-transparent text-slate-500"}`} onClick={() => onTabChange(value)}>{value}</button>)}
+  const filteredDocuments = useMemo(() => {
+    const keyword = search.trim().toLocaleLowerCase();
+    return keyword ? documents.filter((item) => item.filename.toLocaleLowerCase().includes(keyword)) : documents;
+  }, [documents, search]);
+  const allSelected = documents.length > 0 && documents.every((item) => selectedDocumentIds.includes(item.document_id));
+
+  return <section className="source-panel-root" aria-label="Source panel">
+    <div className="source-panel-top"><div><h2>Sources</h2><p>Referenced materials</p></div><button type="button" className="source-panel-close" aria-label="Close sources" onClick={onClose}><X size={16} /></button></div>
+    <div className="source-panel-tabs" role="tablist" aria-label="Source panel mode">
+      <button type="button" role="tab" aria-selected={tab === "scope"} className={`source-panel-tab ${tab === "scope" ? "is-active" : ""}`} onClick={() => onTabChange("scope")}>Scope</button>
+      <button type="button" role="tab" aria-selected={tab === "evidence"} className={`source-panel-tab ${tab === "evidence" ? "is-active" : ""}`} onClick={() => onTabChange("evidence")}>Evidence</button>
     </div>
-    <div className="min-h-0 flex-1 overflow-y-auto p-3">
-      {tab === "scope" ? <section aria-labelledby="research-scope-heading">
-        <div className="mb-2 flex items-center justify-between"><h2 id="research-scope-heading" className="m-0 text-xs font-semibold text-slate-800">Research Scope</h2><label className="flex cursor-pointer items-center gap-1.5 text-[10px] font-medium text-blue-600"><input type="checkbox" className="h-3.5 w-3.5 accent-blue-600" aria-label="Select All" checked={allSelected} onChange={onSelectAll} />Select All</label></div>
-        <label className="mb-3 flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2"><Search size={13} className="text-slate-400"/><span className="sr-only">Search scope documents</span><input className="h-8 border-0 bg-transparent p-0 text-xs shadow-none outline-none" aria-label="Search scope documents" placeholder="Search documents" value={search} onChange={(event) => { setSearch(event.target.value); setLimit(50); }} /></label>
-        <div className="space-y-2">{filtered.slice(0, limit).map((document) => <SourceDocumentCard key={document.document_id} document={document} selected={selectedDocumentIds.includes(document.document_id)} onToggle={onToggleDocument} />)}</div>
-        {!filtered.length ? <EmptyState>{indexed.length ? "No indexed documents match this search." : "No indexed documents are available."}</EmptyState> : null}
-        {filtered.length > limit ? <button className="mt-3 w-full border-slate-200 bg-white px-3 py-2 text-xs text-blue-700" onClick={() => setLimit((value) => value + 50)}>Load 50 more</button> : null}
-      </section> : <section aria-labelledby="cited-evidence-heading">
-        <h2 id="cited-evidence-heading" className="mb-2 text-xs font-semibold text-slate-800">Cited Evidence</h2>
-        {activeCitation ? <><CitationSummary citation={activeCitation} />{activeCitation.evidence_text ? <p className="rounded-lg border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-600">{activeCitation.evidence_text}</p> : null}<button className="mb-3 mt-2 w-full border-slate-200 bg-white px-3 py-2 text-xs text-blue-700" onClick={() => onOpenCitationDetail(activeCitation)}>Open evidence detail</button></> : <p className="text-xs leading-5 text-slate-500">Select a citation in an answer to inspect its immutable evidence snapshot.</p>}
-        {evidenceCitations.length ? <SourceList citations={evidenceCitations} activeSourceId={activeCitation?.source_id} onInspect={onSelectCitation} /> : null}
-      </section>}
-    </div>
-  </aside>;
+    {tab === "scope" ? <>
+      <div className="source-scope-header"><strong>Sources</strong><button type="button" className={`scope-select-all ${allSelected ? "is-selected" : ""}`} onClick={onSelectAll}><span className="source-choice-control" aria-hidden="true" /><span>Select all</span></button></div>
+      <label className="source-search"><Search size={15} /><input type="search" value={search} placeholder="Search sources" aria-label="Search scope documents" onChange={(event) => setSearch(event.target.value)} /></label>
+      <div className="source-card-list">{filteredDocuments.length === 0 ? <div className="source-empty-state">No sources match this search.</div> : filteredDocuments.map((item) => {
+        const selected = selectedDocumentIds.includes(item.document_id);
+        return <button key={item.document_id} type="button" className={`source-card ${selected ? "is-selected" : ""}`} onClick={() => onToggleDocument(item.document_id)}><span className="source-choice-control" aria-hidden="true" /><span className="source-card-copy"><strong title={item.filename}>{item.filename}</strong><small>{documentMeta(item)}</small></span></button>;
+      })}</div>
+    </> : <div className="evidence-card-list">
+      {evidenceCitations.length === 0 ? <div className="source-empty-state">No evidence selected yet.</div> : evidenceCitations.map((citation) => {
+        const active = activeCitation?.source_id === citation.source_id && activeCitation?.chunk_id === citation.chunk_id;
+        const page = safePage(citation.provenance_json.page_start) ?? safePage(citation.provenance_json.page_end);
+        const filename = documents.find((item) => item.document_id === citation.document_id)?.filename;
+        return <button key={`${citation.source_id}-${citation.chunk_id}`} type="button" className={`evidence-card ${active ? "is-active" : ""}`} onClick={() => onSelectCitation(citation)} onDoubleClick={() => onOpenCitationDetail(citation)}><div className="evidence-card-head"><strong>{citation.source_id}</strong><span>{page ? `Page ${page}` : filename ?? citation.document_id}</span></div><p>Evidence preview is unavailable locally.</p></button>;
+      })}
+    </div>}
+  </section>;
 }
