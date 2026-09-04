@@ -1,10 +1,9 @@
-from pathlib import Path
-
 from app.context.schemas import ContextPackage
 from app.generation.exceptions import GenerationConfigurationError
+from app.local_compute.product_paths import resource_path
 
 
-PROMPT_DIR = Path(__file__).resolve().parent.parent / "prompts"
+PROMPT_DIR = resource_path("app", "prompts")
 
 
 def load_system_prompt(prompt_version: str) -> str:

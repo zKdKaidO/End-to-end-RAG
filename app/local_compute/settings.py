@@ -144,3 +144,16 @@ class LocalComputeSettings:
     @property
     def artifacts_path(self) -> Path:
         return self.data_root / "artifacts"
+
+    @property
+    def state_path(self) -> Path:
+        return self.data_root / "state"
+
+    @property
+    def config_path(self) -> Path:
+        return self.data_root / "config"
+
+    @property
+    def models_path(self) -> Path:
+        """Product-owned model/cache root; never a developer home cache."""
+        return self.data_root / "models"

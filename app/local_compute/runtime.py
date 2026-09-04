@@ -48,6 +48,9 @@ class LocalComputeRuntime:
 
     def start(self) -> None:
         self.settings.data_root.mkdir(parents=True, exist_ok=True)
+        self.settings.state_path.mkdir(parents=True, exist_ok=True)
+        self.settings.config_path.mkdir(parents=True, exist_ok=True)
+        self.settings.models_path.mkdir(parents=True, exist_ok=True)
         self.settings.logs_path.mkdir(parents=True, exist_ok=True)
         self.settings.tmp_path.mkdir(parents=True, exist_ok=True)
         self.settings.documents_path.mkdir(parents=True, exist_ok=True)
