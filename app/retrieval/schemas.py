@@ -2,20 +2,44 @@ import math
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-
-from app.core.config import settings
 from app.retrieval.hierarchy_types import CandidateOrigin, HierarchyRelation
 
 
 class RetrievalRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    query_text: str = Field(max_length=settings.REQUEST_MAX_QUERY_CHARS)
-    top_k_dense: int = settings.RETRIEVAL_TOP_K_DENSE_DEFAULT
-    top_k_lexical: int = settings.RETRIEVAL_TOP_K_LEXICAL_DEFAULT
-    top_k_final: int = settings.RETRIEVAL_TOP_K_FINAL_DEFAULT
-    rrf_k: int = settings.RETRIEVAL_RRF_K_DEFAULT
+    query_text: str
+    top_k_dense: int | None = None
+    top_k_lexical: int | None = None
+    top_k_final: int | None = None
+    rrf_k: int | None = None
     document_ids: list[str] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def resolve_server_defaults(cls, value):
+        if not isinstance(value, dict):
+            return value
+        # This executes only while a request is being validated.  Normal API
+        # behavior remains configuration-driven; importing the result model is
+        # now safe for the local desktop runtime.
+        from app.core.config import settings
+
+        data = dict(value)
+        defaults = {
+            "top_k_dense": settings.RETRIEVAL_TOP_K_DENSE_DEFAULT,
+            "top_k_lexical": settings.RETRIEVAL_TOP_K_LEXICAL_DEFAULT,
+            "top_k_final": settings.RETRIEVAL_TOP_K_FINAL_DEFAULT,
+            "rrf_k": settings.RETRIEVAL_RRF_K_DEFAULT,
+        }
+        for field_name, default in defaults.items():
+            if data.get(field_name) is None:
+                data[field_name] = default
+        if len(str(data.get("query_text", ""))) > settings.REQUEST_MAX_QUERY_CHARS:
+            raise ValueError(
+                f"query_text exceeds the safety limit of {settings.REQUEST_MAX_QUERY_CHARS}"
+            )
+        return data
 
 
 class HierarchyAnchorReference(BaseModel):

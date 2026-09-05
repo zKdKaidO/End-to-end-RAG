@@ -3,7 +3,6 @@ import threading
 import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from app.core.config import settings
 from app.indexing.artifact import validate_canonical_e5_artifact
 from app.indexing.input_contract import E5InputContract, EMBEDDING_MODEL_NAME
 
@@ -18,16 +17,24 @@ class E5Embedder:
     _instance = None
     _model_name = EMBEDDING_MODEL_NAME
 
-    def __init__(self):
-        # Determine device
-        device = settings.EMBEDDING_DEVICE
+    def __init__(self, *, cache_dir: str | None = None, device: str | None = None):
+        if cache_dir is None or device is None:
+            # The production worker still obtains its configuration from the
+            # frozen server Settings object.  Keeping that import here rather
+            # than at module scope prevents a standalone local runtime import
+            # from requiring backend service credentials.
+            from app.core.config import settings
+
+            cache_dir = settings.EMBEDDING_MODEL_CACHE_DIR if cache_dir is None else cache_dir
+            device = settings.EMBEDDING_DEVICE if device is None else device
         # Validate the provisioned artifact before SentenceTransformer can
         # attempt a Hugging Face lookup. The value is the HF hub cache dir.
-        validate_canonical_e5_artifact(settings.EMBEDDING_MODEL_CACHE_DIR)
+        validate_canonical_e5_artifact(cache_dir)
         self.model = SentenceTransformer(
             self._model_name,
             device=device,
-            cache_folder=settings.EMBEDDING_MODEL_CACHE_DIR,
+            cache_folder=cache_dir,
+            local_files_only=True,
         )
         # Hugging Face fast tokenizers temporarily mutate padding/truncation
         # state while encoding. Query retrieval and passage indexing share this
@@ -37,9 +44,9 @@ class E5Embedder:
         self.input_contract = E5InputContract(self.model.tokenizer, self.max_tokens)
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, *, cache_dir: str | None = None, device: str | None = None):
         if cls._instance is None:
-            cls._instance = cls()
+            cls._instance = cls(cache_dir=cache_dir, device=device)
         return cls._instance
 
     def validate_token_length(self, chunk_id: str, passage: str):

@@ -30,6 +30,10 @@ def validate_canonical_e5_artifact(cache_dir: str) -> Path:
 
     root = Path(cache_dir)
     model_root = root / _MODEL_CACHE_DIRECTORY
+    if not model_root.exists() and (root / "hub" / _MODEL_CACHE_DIRECTORY).exists():
+        raise CanonicalEmbeddingArtifactError(
+            "CANONICAL_E5_ARTIFACT_UNAVAILABLE:wrong_cache_root"
+        )
     ref = model_root / "refs" / "main"
     if not ref.is_file():
         raise CanonicalEmbeddingArtifactError("CANONICAL_E5_ARTIFACT_UNAVAILABLE:missing_ref")
@@ -39,6 +43,10 @@ def validate_canonical_e5_artifact(cache_dir: str) -> Path:
         raise CanonicalEmbeddingArtifactError("CANONICAL_E5_ARTIFACT_UNAVAILABLE:invalid_ref")
 
     snapshot = model_root / "snapshots" / revision
+    if not snapshot.is_dir():
+        raise CanonicalEmbeddingArtifactError(
+            "CANONICAL_E5_ARTIFACT_UNAVAILABLE:missing_snapshot"
+        )
     for filename in _REQUIRED_SNAPSHOT_FILES:
         if not (snapshot / filename).is_file():
             raise CanonicalEmbeddingArtifactError(

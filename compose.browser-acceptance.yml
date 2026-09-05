@@ -1,0 +1,4 @@
+﻿services:
+  api:
+    environment:
+      COMPUTE_GRANT_SIGNING_KEY: ${COMPUTE_GRANT_SIGNING_KEY}

@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import sqlite3
 import uuid
+from pathlib import Path
 
 import pytest
+
+from app.core.config import settings as server_settings
 
 from app.context.schemas import StopReason
 from app.context.service import ContextBuilderService
@@ -91,6 +94,7 @@ def runtime(tmp_path):
             data_root=tmp_path / "Compute",
             development_mode=True,
             development_origins=("http://localhost:5173",),
+            embedding_model_cache_dir=Path(server_settings.EMBEDDING_MODEL_CACHE_DIR),
         )
     )
     instance.start()

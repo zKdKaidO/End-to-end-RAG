@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from app.core.config import settings
-
 
 @dataclass(frozen=True)
 class GenerationProfile:
@@ -42,6 +40,11 @@ class GenerationProfile:
 
 
 def get_generation_profile() -> GenerationProfile:
+    # Resolve server configuration at the point the production profile is
+    # requested, not while importing the shared profile value object.  The
+    # desktop runtime supplies an explicit local profile instead.
+    from app.core.config import settings
+
     profile = GenerationProfile(
         provider=settings.GENERATION_PROVIDER,
         model_id=settings.GENERATION_MODEL_ID,

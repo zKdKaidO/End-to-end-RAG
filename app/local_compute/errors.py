@@ -121,8 +121,18 @@ _STATUS = {
 
 
 class LocalComputeError(Exception):
-    def __init__(self, code: LocalComputeErrorCode, message: str | None = None):
+    def __init__(
+        self,
+        code: LocalComputeErrorCode,
+        message: str | None = None,
+        *,
+        diagnostic_code: str | None = None,
+    ):
         self.code = code
+        # Durable local diagnostics may use a controlled code, never an
+        # exception message or filesystem path.  API responses intentionally
+        # expose only ``code`` and the safe public message.
+        self.diagnostic_code = diagnostic_code
         self.message = message or code.value.replace("_", " ").title()
         super().__init__(self.message)
 

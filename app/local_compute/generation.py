@@ -31,6 +31,30 @@ from .retrieval import LocalRetrievalStore
 logger = get_logger(__name__)
 
 
+def local_generation_profile(settings) -> GenerationProfile:
+    """Construct the desktop generation contract from local settings only."""
+    profile = GenerationProfile(
+        provider="ollama",
+        model_id=settings.generation_model_id,
+        tokenizer_provider=settings.generation_tokenizer_provider,
+        tokenizer_id=settings.generation_tokenizer_id,
+        model_context_limit=settings.generation_model_context_limit,
+        context_budget_tokens=settings.generation_context_budget_tokens,
+        max_output_tokens=settings.generation_max_output_tokens,
+        prompt_token_safety_margin=(
+            settings.generation_prompt_token_safety_margin
+        ),
+        thinking=settings.generation_thinking,
+        temperature=settings.generation_temperature,
+        top_p=settings.generation_top_p,
+        top_k=settings.generation_top_k,
+        prompt_version=settings.generation_prompt_version,
+        request_timeout_seconds=settings.generation_request_timeout_seconds,
+    )
+    profile.validate()
+    return profile
+
+
 class GenerationProviderType(str, Enum):
     LOCAL = "LOCAL"
     USER_CLOUD = "USER_CLOUD"

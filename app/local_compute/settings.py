@@ -6,6 +6,8 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .model_cache import resolve_huggingface_hub_cache
+
 
 PRODUCT_ORIGIN = "https://rag.zkd.id.vn"
 PROTOCOL_VERSION = "zkd-compute-v1"
@@ -20,6 +22,17 @@ def default_data_root() -> Path:
         return Path(local_app_data) / "ZKD" / "Compute"
 
     return Path.home() / "AppData" / "Local" / "ZKD" / "Compute"
+
+
+def default_embedding_model_cache_dir() -> Path:
+    """Return the standard per-user Hugging Face hub cache.
+
+    A packaged desktop process must never inherit the server's Docker cache.
+    Release provisioning may pass an explicit managed cache through
+    ``LocalComputeSettings``; absent that explicit setting, use Hugging Face's
+    standard local cache convention.
+    """
+    return resolve_huggingface_hub_cache()
 
 
 @dataclass(frozen=True)
@@ -47,6 +60,13 @@ class LocalComputeSettings:
     # 250 MiB is large enough for real legal/reference PDFs while retaining a
     # safety boundary against accidental multi-gigabyte local uploads.
     source_pdf_max_bytes: int = 250 * 1024 * 1024
+    # Local parser limits are a standalone Compute policy, not aliases for
+    # the production server's Settings object.  There is intentionally no
+    # arbitrary local page-count limit.
+    source_pdf_max_page_extracted_chars: int = 2_000_000
+    source_pdf_max_extracted_chars: int = 20_000_000
+
+    embedding_model_cache_dir: Path = field(default_factory=default_embedding_model_cache_dir)
 
     session_lifetime_seconds: int = 300
     nonce_lifetime_seconds: int = 600
@@ -63,6 +83,22 @@ class LocalComputeSettings:
     endpoint_generation: str | None = None
 
     local_generation_base_url: str = "http://127.0.0.1:11434"
+    # Standalone local-generation profile. These values are an explicit
+    # desktop protocol contract and never depend on server Settings or a
+    # nearby .env file.
+    generation_model_id: str = "qwen3.5:9b"
+    generation_tokenizer_provider: str = "huggingface"
+    generation_tokenizer_id: str = "Qwen/Qwen3.5-9B"
+    generation_model_context_limit: int = 32_768
+    generation_context_budget_tokens: int = 4_096
+    generation_max_output_tokens: int = 512
+    generation_prompt_token_safety_margin: int = 32
+    generation_thinking: bool = False
+    generation_temperature: float = 0.0
+    generation_top_p: float = 0.9
+    generation_top_k: int = 20
+    generation_prompt_version: str = "legal-rag-v2"
+    generation_request_timeout_seconds: float = 180.0
     platform_base_url: str = PRODUCT_ORIGIN
 
     control_heartbeat_seconds: int = 30
@@ -82,7 +118,15 @@ class LocalComputeSettings:
         if (
             self.request_body_max_bytes <= 0
             or self.source_pdf_max_bytes <= 0
+            or self.source_pdf_max_page_extracted_chars <= 0
+            or self.source_pdf_max_extracted_chars <= 0
             or self.session_lifetime_seconds <= 0
+        ):
+            raise ValueError("LOCAL_COMPUTE_INVALID_LIMIT")
+
+        if (
+            self.source_pdf_max_page_extracted_chars
+            > self.source_pdf_max_extracted_chars
         ):
             raise ValueError("LOCAL_COMPUTE_INVALID_LIMIT")
 
@@ -109,6 +153,17 @@ class LocalComputeSettings:
             or self.control_backoff_max_seconds < self.control_backoff_min_seconds
         ):
             raise ValueError("LOCAL_COMPUTE_INVALID_CONTROL_CADENCE")
+
+        if (
+            self.generation_model_context_limit <= 0
+            or self.generation_context_budget_tokens <= 0
+            or self.generation_max_output_tokens <= 0
+            or self.generation_request_timeout_seconds <= 0
+            or self.generation_top_k <= 0
+            or not 0 < self.generation_top_p <= 1
+            or not 0 <= self.generation_temperature <= 2
+        ):
+            raise ValueError("LOCAL_COMPUTE_INVALID_GENERATION_PROFILE")
 
         if not self.development_mode and self.development_origins:
             raise ValueError(

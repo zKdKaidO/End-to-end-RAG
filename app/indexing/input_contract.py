@@ -102,11 +102,12 @@ class E5InputContract:
         ]
 
 
-@lru_cache(maxsize=1)
-def get_e5_input_contract() -> E5InputContract:
+@lru_cache(maxsize=8)
+def get_e5_input_contract(cache_dir: str | None = None) -> E5InputContract:
     """Load only the cached tokenizer; no SentenceTransformer weights."""
     tokenizer = AutoTokenizer.from_pretrained(
         EMBEDDING_MODEL_NAME,
+        cache_dir=cache_dir,
         local_files_only=True,
         use_fast=True,
     )

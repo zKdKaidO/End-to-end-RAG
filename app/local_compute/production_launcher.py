@@ -13,6 +13,8 @@ import json
 import signal
 import sys
 import threading
+import time
+import traceback
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -22,7 +24,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from app.local_compute.catalog import LocalCatalog
 from app.local_compute.credentials import WindowsDpapiDeviceCredentialStore, public_key_b64
 from app.local_compute.pairing_uri import PairingUriError, parse_pairing_uri
-from app.local_compute.product_paths import configure_managed_model_environment, product_data_root
+from app.local_compute.product_paths import local_model_cache_path, product_data_root
 from app.local_compute.provisioning import E5ModelProvisioner, GenerationRuntimeManager
 from app.local_compute.runtime import LocalComputeRuntime
 from app.local_compute.server import LoopbackControlServer
@@ -32,6 +34,42 @@ from app.local_compute.single_instance import AlreadyRunningError, WindowsSingle
 
 PLATFORM_API = "https://rag.zkd.id.vn"
 USER_AGENT = "ZKD-Compute/0.1.0"
+
+
+def bootstrap_log(
+    stage: str,
+    error: BaseException | None = None,
+    *,
+    port: int | None = None,
+) -> None:
+    """Write safe startup diagnostics before normal application logging exists."""
+    try:
+        path = data_root() / "logs" / "bootstrap.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),
+            "stage": stage,
+        }
+        if port is not None:
+            record["port"] = port
+        if error is not None:
+            record["exception_class"] = type(error).__name__
+            # Do not persist arbitrary exception text: it may include remote
+            # credentials, grants, headers, or untrusted document data.
+            record["message"] = "startup operation failed"
+            frames = traceback.extract_tb(error.__traceback__)
+            if frames:
+                frame = frames[-1]
+                # File/function/line is enough to diagnose bootstrap code
+                # without persisting an arbitrary exception payload.
+                record["failure_location"] = (
+                    f"{Path(frame.filename).name}:{frame.lineno}:{frame.name}"
+                )
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, separators=(",", ":")) + "\n")
+    except Exception:
+        # Bootstrap diagnostics must never block the local runtime.
+        pass
 
 
 def data_root() -> Path:
@@ -71,8 +109,14 @@ def ensure_device_key() -> Ed25519PrivateKey:
 
 def build_settings() -> LocalComputeSettings:
     root = data_root()
-    configure_managed_model_environment(root)
-    return LocalComputeSettings(data_root=root, bind_port=0, platform_base_url=PLATFORM_API, control_auto_start=False, platform_grant_verification_public_key=read_platform_public_key())
+    return LocalComputeSettings(
+        data_root=root,
+        bind_port=0,
+        embedding_model_cache_dir=local_model_cache_path(),
+        platform_base_url=PLATFORM_API,
+        control_auto_start=False,
+        platform_grant_verification_public_key=read_platform_public_key(),
+    )
 
 
 def post_json(path: str, payload: dict) -> dict:
@@ -100,7 +144,7 @@ def paired_state() -> dict | None:
 
 def show_status() -> int:
     paired = paired_state()
-    status = {"data_root": str(data_root()), "pairing_state": "PAIRED" if paired else "NOT_PAIRED", "embedding_model_ready": E5ModelProvisioner(data_root() / "models" / "huggingface").is_ready()}
+    status = {"data_root": str(data_root()), "pairing_state": "PAIRED" if paired else "NOT_PAIRED", "embedding_model_ready": E5ModelProvisioner(local_model_cache_path()).is_ready()}
     if paired:
         status.update({"device_id": paired["device_id"], "credential_epoch": paired["credential_epoch"]})
     print(json.dumps(status, separators=(",", ":")))
@@ -114,7 +158,7 @@ def pair(pairing_request_id: str, pairing_token: str) -> int:
         return 0
     key, settings = ensure_device_key(), build_settings()
     runtime = LocalComputeRuntime(settings, credential_store=credential_store())
-    server = LoopbackControlServer(runtime)
+    server = LoopbackControlServer(runtime, failure_reporter=bootstrap_log)
     runtime.start()
     try:
         server.start()
@@ -137,12 +181,16 @@ def interactive_pair() -> int:
 
 
 def run_background() -> int:
-    if paired_state() is None:
+    paired = paired_state()
+    bootstrap_log("local_state_loaded")
+    if paired is None:
+        bootstrap_log("pairing_required")
         return 2
     settings = build_settings()
-    model_ready = E5ModelProvisioner(settings.models_path / "huggingface").is_ready()
+    model_ready = E5ModelProvisioner(settings.embedding_model_cache_dir).is_ready()
     runtime = LocalComputeRuntime(settings, credential_store=credential_store())
-    server, stopping = LoopbackControlServer(runtime), threading.Event()
+    server = LoopbackControlServer(runtime, failure_reporter=bootstrap_log)
+    stopping = threading.Event()
     generation = GenerationRuntimeManager(settings.models_path / "generation-runtime")
 
     def request_stop(_signal=None, _frame=None) -> None:
@@ -152,15 +200,26 @@ def run_background() -> int:
         signal_value = getattr(signal, signal_name, None)
         if signal_value is not None:
             signal.signal(signal_value, request_stop)
+    bootstrap_log("runtime_start_begin")
     runtime.start()
+    bootstrap_log("runtime_start_complete")
     try:
+        bootstrap_log("server_start_begin")
         server.start()
+        bootstrap_log("server_bound", port=server.port)
+        bootstrap_log("server_ready")
+        server.ensure_running()
+        bootstrap_log("control_tick_begin")
         runtime.control_channel.tick()
+        bootstrap_log("control_tick_result")
+        server.ensure_running()
         runtime.control_channel.start()
+        bootstrap_log("control_thread_started")
         # A release-bundled, checksum-pinned sidecar may be supplied later.
         # Never launch/download an unverified binary merely because it exists.
         if model_ready:
             runtime.update_generation_capability("MODEL_UNAVAILABLE")
+        bootstrap_log("runtime_ready")
         while not stopping.wait(0.5):
             pass
         return 0
@@ -184,6 +243,7 @@ def main(argv: list[str] | None = None) -> int:
     if sum(bool(value) for value in (arguments.status, arguments.pair, arguments.pair_uri, arguments.background)) > 1:
         parser.error("Choose one launcher mode.")
     try:
+        bootstrap_log("launcher_enter")
         if arguments.status:
             return show_status()
         if arguments.pair_uri:
@@ -194,13 +254,16 @@ def main(argv: list[str] | None = None) -> int:
         with WindowsSingleInstance():
             return run_background()
     except AlreadyRunningError:
+        bootstrap_log("already_running")
         return 0
     except PairingUriError as exc:
+        bootstrap_log("pairing_uri_error", exc)
         print(f"ZKD_COMPUTE_ERROR:{exc}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
         return 0
     except Exception as exc:
+        bootstrap_log("launcher_failed", exc)
         # Never include URI, request body, grant, pairing token, or key data.
         print(f"ZKD_COMPUTE_ERROR:{type(exc).__name__}", file=sys.stderr)
         return 1

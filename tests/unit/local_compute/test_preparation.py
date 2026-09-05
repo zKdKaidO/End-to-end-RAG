@@ -2,9 +2,11 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 import uuid
+from pathlib import Path
 import pymupdf
 import pytest
 from app.local_compute.documents import LocalDocumentStore
+from app.core.config import settings as server_settings
 from app.local_compute.errors import LocalComputeError
 from app.local_compute.preparation import LocalPreparationService, ARTIFACT_PROFILE_ID
 from app.local_compute.runtime import LocalComputeRuntime
@@ -17,7 +19,7 @@ def pdf_bytes(text: str) -> bytes:
 
 @pytest.fixture
 def runtime(tmp_path):
-    instance=LocalComputeRuntime(LocalComputeSettings(data_root=tmp_path/"Compute",development_mode=True,development_origins=("http://localhost:5173",)))
+    instance=LocalComputeRuntime(LocalComputeSettings(data_root=tmp_path/"Compute",development_mode=True,development_origins=("http://localhost:5173",),embedding_model_cache_dir=Path(server_settings.EMBEDDING_MODEL_CACHE_DIR)))
     instance.start(); yield instance; instance.shutdown()
 
 def test_accept_prepare_promote_and_restart(runtime):

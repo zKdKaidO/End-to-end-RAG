@@ -127,16 +127,16 @@ class LocalComputeRuntime:
 
     def generation_router(self):
         if self._generation_router is None:
-            from app.generation.profile import get_generation_profile
             from .generation import (
                 GenerationRouter,
                 InMemoryUserCloudCredentialStore,
                 LocalGenerationProvider,
                 UnavailableUserCloudCredentialStore,
                 UserCloudProviderRegistry,
+                local_generation_profile,
             )
 
-            profile = get_generation_profile()
+            profile = local_generation_profile(self.settings)
             provider = LocalGenerationProvider(
                 profile,
                 self.settings.local_generation_base_url,

@@ -6,11 +6,13 @@ import json
 import threading
 import time
 import uuid
+from pathlib import Path
 
 import pymupdf
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.config import settings as server_settings
 from app.local_compute.api import create_local_compute_app
 from app.local_compute.documents import LocalDocumentStore
 from app.local_compute.errors import LocalComputeError, LocalComputeErrorCode
@@ -33,7 +35,15 @@ def _pdf_bytes(text: str) -> bytes:
 @pytest.fixture
 def runtime(tmp_path):
     instance = LocalComputeRuntime(
-        LocalComputeSettings(data_root=tmp_path / "Compute", development_mode=True, development_origins=("http://localhost:5173",), control_auto_start=False)
+        LocalComputeSettings(
+            data_root=tmp_path / "Compute",
+            development_mode=True,
+            development_origins=("http://localhost:5173",),
+            control_auto_start=False,
+            embedding_model_cache_dir=Path(
+                server_settings.EMBEDDING_MODEL_CACHE_DIR
+            ),
+        )
     )
     instance.start()
     yield instance

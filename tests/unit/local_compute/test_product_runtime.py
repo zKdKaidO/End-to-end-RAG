@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
+import sys
 
 import pytest
 
@@ -9,7 +11,7 @@ from app.local_compute.audit_log import LocalAuditLog
 from app.local_compute.autostart import background_command
 from app.local_compute.errors import LocalComputeError, LocalComputeErrorCode
 from app.local_compute.pairing_uri import PairingUriError, parse_pairing_uri
-from app.local_compute.product_paths import configure_managed_model_environment, packaged_resource_root, product_data_root
+from app.local_compute.product_paths import local_model_cache_path, packaged_resource_root, product_data_root
 from app.local_compute.provisioning import E5ModelProvisioner, GenerationRuntimeManager
 from app.local_compute.runtime import LocalComputeRuntime
 from app.local_compute.settings import LocalComputeSettings
@@ -27,16 +29,58 @@ def test_single_instance_refuses_second_owner_and_releases_after_shutdown():
     second.release()
 
 
-def test_product_data_and_managed_model_paths_do_not_require_developer_hf_cache(tmp_path, monkeypatch):
+def test_product_data_and_model_cache_paths_do_not_require_backend_configuration(tmp_path, monkeypatch):
     monkeypatch.setenv("ZKD_COMPUTE_DATA_ROOT", str(tmp_path / "data"))
+    for name in (
+        "DATABASE_URL",
+        "REDIS_URL",
+        "MINIO_ENDPOINT",
+        "MINIO_ACCESS_KEY",
+        "MINIO_SECRET_KEY",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    prior_embedding_cache = os.environ.get("EMBEDDING_MODEL_CACHE_DIR")
     root = product_data_root()
-    cache = configure_managed_model_environment(root)
+    cache = local_model_cache_path()
     assert root == tmp_path / "data"
-    assert cache == root / "models" / "huggingface"
+    assert cache.name == "hub"
     assert "huggingface" in str(cache)
-    assert "Users" not in str(cache)
-    assert cache.exists()
-    assert os.environ["OLLAMA_BASE_URL"] == "http://127.0.0.1:11434"
+    assert os.environ.get("EMBEDDING_MODEL_CACHE_DIR") == prior_embedding_cache
+    for name in ("DATABASE_URL", "REDIS_URL", "MINIO_ENDPOINT", "MINIO_ACCESS_KEY", "MINIO_SECRET_KEY"):
+        assert name not in os.environ
+
+
+def test_launcher_import_isolated_from_production_settings(tmp_path):
+    environment = os.environ.copy()
+    environment["ZKD_COMPUTE_DATA_ROOT"] = str(tmp_path / "Compute")
+    for name in (
+        "DATABASE_URL",
+        "REDIS_URL",
+        "MINIO_ENDPOINT",
+        "MINIO_ACCESS_KEY",
+        "MINIO_SECRET_KEY",
+    ):
+        environment.pop(name, None)
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import sys; "
+                "import app.local_compute.production_launcher; "
+                "import app.local_compute.server; "
+                "import app.local_compute.api; "
+                "assert 'app.core.config' not in sys.modules"
+            ),
+        ],
+        cwd=str(__import__("pathlib").Path(__file__).resolve().parents[3]),
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 def test_packaged_resource_resolution_uses_pyinstaller_root(tmp_path, monkeypatch):

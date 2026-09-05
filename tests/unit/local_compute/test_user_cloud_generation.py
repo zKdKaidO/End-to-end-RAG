@@ -270,7 +270,7 @@ def test_answer_protocol_accepts_only_routing_identity_and_rejects_arbitrary_end
     class Response:
         def as_dict(self): return {"provider": "USER_CLOUD", "model_id": "user-model-v1", "result": {"status": "COMPLETED"}, "hierarchy": {}, "timings": {}}
     class AnswerService:
-        def __init__(self, *_args): pass
+        def __init__(self, *_args, **_kwargs): pass
         async def answer(self, **kwargs):
             observed.update(kwargs); return Response()
     monkeypatch.setattr(local_api, "LocalAnswerService", AnswerService)

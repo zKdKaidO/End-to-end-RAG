@@ -1,9 +1,14 @@
 import logging
 import structlog
 import sys
-from app.core.config import settings
 
 def setup_logging():
+    # Settings are intentionally resolved only when the server logger is
+    # configured.  A few dependency-light desktop components import
+    # ``get_logger`` during their own bootstrap and must not initialize the
+    # production database/Redis/MinIO configuration as an import side effect.
+    from app.core.config import settings
+
     # Base logging level
     log_level = getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO)
     logging.basicConfig(

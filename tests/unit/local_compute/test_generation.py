@@ -272,7 +272,7 @@ def test_answer_protocol_operation_is_additive_and_authenticated(tmp_path, monke
             assert document_ids is None
             return FakeResponse()
 
-        def __init__(self, *_args):
+        def __init__(self, *_args, **_kwargs):
             pass
 
     monkeypatch.setattr(local_api, "LocalAnswerService", FakeAnswerService)

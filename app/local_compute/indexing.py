@@ -163,12 +163,18 @@ class LocalIndexService:
 
             try:
                 embedder = (
-                    E5Embedder.get_instance()
+                    E5Embedder.get_instance(
+                        cache_dir=str(
+                            self.settings.embedding_model_cache_dir
+                        ),
+                        device="cpu",
+                    )
                 )
             except Exception as exc:
                 raise LocalComputeError(
                     LocalComputeErrorCode.MODEL_ARTIFACT_UNAVAILABLE,
                     "Canonical E5 embedding model is unavailable.",
+                    diagnostic_code="model_load_failed",
                 ) from exc
 
             self._cancel_if_requested(
@@ -468,7 +474,7 @@ class LocalIndexService:
             self._restore_not_indexed(
                 artifact_id,
                 document_id,
-                exc.code.value,
+                exc.diagnostic_code or exc.code.value,
             )
 
             if (
@@ -480,7 +486,7 @@ class LocalIndexService:
                     "CANCELLED",
                     "CANCELLED",
                     100,
-                    exc.code.value,
+                    exc.diagnostic_code or exc.code.value,
                 )
             else:
                 self.jobs.update(
@@ -488,7 +494,7 @@ class LocalIndexService:
                     "FAILED",
                     "FAILED",
                     100,
-                    exc.code.value,
+                    exc.diagnostic_code or exc.code.value,
                 )
 
             raise

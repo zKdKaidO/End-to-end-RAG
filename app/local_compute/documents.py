@@ -2,7 +2,7 @@
 from __future__ import annotations
 import hashlib, os, shutil, time, unicodedata, uuid
 from collections.abc import Iterable
-from app.pdf.validator import validate_and_hash_pdf
+from app.pdf.admission import validate_pdf_admission
 from .catalog import LocalCatalog
 from .errors import LocalComputeError, LocalComputeErrorCode
 from .settings import LocalComputeSettings
@@ -22,7 +22,7 @@ class LocalDocumentStore:
                     digest.update(chunk); out.write(chunk)
                 out.flush(); os.fsync(out.fileno())
             sha = digest.hexdigest()
-            try: _, validated_sha = validate_and_hash_pdf(temporary.read_bytes(), filename, mime_type)
+            try: _, validated_sha = validate_pdf_admission(temporary.read_bytes(), filename, mime_type, max_bytes=self.settings.source_pdf_max_bytes, max_filename_length=255, max_pages=None)
             except Exception as exc: raise LocalComputeError(LocalComputeErrorCode.INVALID_PDF, "PDF admission failed.") from exc
             if sha != validated_sha: raise LocalComputeError(LocalComputeErrorCode.INTERNAL_COMPUTE_ERROR, "Source integrity failed.")
             existing = self.get(document_id)

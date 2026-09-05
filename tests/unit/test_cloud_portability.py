@@ -163,6 +163,7 @@ def test_embedder_passes_the_canonical_hub_cache_without_changing_profile(monkey
         "model_name": "intfloat/multilingual-e5-base",
         "device": "cpu",
         "cache_folder": str(cache),
+        "local_files_only": True,
     }
     assert embedder.embedding_dimension == 768
 

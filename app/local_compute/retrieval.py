@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json, math, re, sqlite3
 import numpy as np
+from app.indexing.embedder import E5Embedder
 from app.retrieval.query_embedder import QueryEmbedder
 from app.retrieval.hierarchy_expander import LegalHierarchyExpander
 from app.retrieval.schemas import RetrievedCandidate
@@ -16,7 +17,12 @@ class LocalRetrievalStore:
         return results
     def query_document_set_with_diagnostics(self,query_text,document_ids=None):
         if not isinstance(query_text,str) or not query_text.strip(): raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST)
-        try:q=QueryEmbedder.get_instance().encode(query_text)
+        try:
+            embedder = E5Embedder.get_instance(
+                cache_dir=str(self.settings.embedding_model_cache_dir),
+                device="cpu",
+            )
+            q = QueryEmbedder(embedder).encode(query_text)
         except Exception as exc: raise LocalComputeError(LocalComputeErrorCode.MODEL_ARTIFACT_UNAVAILABLE) from exc
         requested=document_ids or self._queryable_ids(); merged={}; document_artifacts={}
         for doc_id in requested:

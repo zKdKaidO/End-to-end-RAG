@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import socket
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -228,8 +229,14 @@ def test_real_loopback_http_transport_with_synthetic_binary(runtime):
     server = LoopbackControlServer(runtime)
     server.start()
     try:
+        assert server.server is not None
+        assert server.server.config.log_config is None
         base_url = f"http://127.0.0.1:{server.port}"
         with httpx.Client(base_url=base_url, timeout=3) as remote:
+            health = remote.get("/health")
+            assert health.status_code == 200
+            assert health.json()["status"] == "ok"
+            assert health.json()["service"] == "zkd-compute-control"
             preflight = remote.options(
                 "/v1/probe/binary",
                 headers={
@@ -250,3 +257,45 @@ def test_real_loopback_http_transport_with_synthetic_binary(runtime):
             assert denied.status_code == 403
     finally:
         server.stop()
+
+
+def test_loopback_server_propagates_background_startup_failure(runtime, monkeypatch):
+    def fail_startup(self, *args, **kwargs):
+        raise RuntimeError("synthetic uvicorn startup failure")
+
+    monkeypatch.setattr(
+        "app.local_compute.server.uvicorn.Server.run",
+        fail_startup,
+    )
+    server = LoopbackControlServer(runtime)
+    with pytest.raises(RuntimeError, match="THREAD_FAILED"):
+        server.start()
+    assert server.thread is None
+    assert runtime.bound_port is None
+
+
+def test_loopback_server_rejects_thread_that_exits_after_startup(runtime, monkeypatch):
+    original = LoopbackControlServer._health_is_ready
+    calls = 0
+
+    def health_then_stop(self):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            self.server.should_exit = True
+        return original(self)
+
+    monkeypatch.setattr(LoopbackControlServer, "_health_is_ready", health_then_stop)
+    server = LoopbackControlServer(runtime)
+    with pytest.raises(RuntimeError, match="THREAD_EXITED"):
+        server.start()
+
+
+def test_loopback_server_stop_releases_ephemeral_listener(runtime):
+    server = LoopbackControlServer(runtime)
+    server.start()
+    port = server.port
+    server.stop()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(0.2)
+        assert probe.connect_ex(("127.0.0.1", port)) != 0

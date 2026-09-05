@@ -1015,10 +1015,12 @@ def create_local_compute_app(
             )
 
         try:
+            router = runtime.generation_router()
             answer_service = LocalAnswerService(
                 runtime.settings,
                 runtime.catalog,
-                runtime.generation_router(),
+                router,
+                profile=router.local_provider.profile,
             )
 
             answer_kwargs = {

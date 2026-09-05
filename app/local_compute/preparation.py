@@ -17,6 +17,11 @@ from app.processing.reconstruction import DocumentReconstructor
 from app.processing.metadata_extractor import MetadataExtractor
 from app.processing.parser import LegalParser
 from app.processing.chunker import Chunker
+from app.indexing.artifact import (
+    CanonicalEmbeddingArtifactError,
+    validate_canonical_e5_artifact,
+)
+from app.indexing.input_contract import get_e5_input_contract
 
 from .documents import LocalDocumentStore
 from .errors import LocalComputeError, LocalComputeErrorCode
@@ -173,7 +178,14 @@ class LocalPreparationService:
             try:
                 pages = list(
                     PDFExtractor.extract_pages(
-                        source_bytes
+                        source_bytes,
+                        max_pages=None,
+                        max_page_extracted_chars=(
+                            self.settings.source_pdf_max_page_extracted_chars
+                        ),
+                        max_extracted_chars=(
+                            self.settings.source_pdf_max_extracted_chars
+                        ),
                     )
                 )
             finally:
@@ -263,18 +275,25 @@ class LocalPreparationService:
                 pipeline_job,
             )
 
-            chunker = Chunker()
-
             try:
+                validate_canonical_e5_artifact(
+                    str(self.settings.embedding_model_cache_dir)
+                )
+                chunker = Chunker(
+                    input_contract=get_e5_input_contract(
+                        str(self.settings.embedding_model_cache_dir)
+                    )
+                )
                 chunks = chunker.generate_chunks(
                     normalized,
                     units,
                     metadata,
                 )
-            except OSError as exc:
+            except (CanonicalEmbeddingArtifactError, OSError, ValueError) as exc:
                 raise LocalComputeError(
                     LocalComputeErrorCode.MODEL_ARTIFACT_UNAVAILABLE,
                     "Canonical E5 tokenizer artifact is unavailable.",
+                    diagnostic_code=self._tokenizer_diagnostic_code(exc),
                 ) from exc
 
             if not chunks:
@@ -449,7 +468,7 @@ class LocalPreparationService:
                     "CANCELLED",
                     "CANCELLED",
                     100,
-                    exc.code.value,
+                    exc.diagnostic_code or exc.code.value,
                 )
             else:
                 self.jobs.update(
@@ -457,7 +476,7 @@ class LocalPreparationService:
                     "FAILED",
                     "FAILED",
                     100,
-                    exc.code.value,
+                    exc.diagnostic_code or exc.code.value,
                 )
 
             if not document.get(
@@ -466,7 +485,7 @@ class LocalPreparationService:
                 self._update_doc(
                     document_id,
                     "FAILED",
-                    exc.code.value,
+                    exc.diagnostic_code or exc.code.value,
                 )
 
             raise
@@ -531,6 +550,14 @@ class LocalPreparationService:
             stage,
             progress,
         )
+
+    @staticmethod
+    def _tokenizer_diagnostic_code(error: BaseException) -> str:
+        if isinstance(error, CanonicalEmbeddingArtifactError):
+            # Artifact validation only emits a fixed allow-list of suffixes;
+            # do not persist arbitrary exception text or local paths.
+            return str(error).rsplit(":", 1)[-1]
+        return "tokenizer_load_failed"
 
     def _update_doc(
         self,

@@ -3,8 +3,6 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.core.config import settings
-
 
 class GenerationStatus(str, Enum):
     COMPLETED = "COMPLETED"
@@ -35,12 +33,28 @@ class CitationValidation(str, Enum):
 class AnswerRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    query_text: str = Field(max_length=settings.REQUEST_MAX_QUERY_CHARS)
+    query_text: str
     document_ids: list[str] | None = None
+
+    @field_validator("query_text")
+    @classmethod
+    def bound_query_length(cls, value: str) -> str:
+        # Keep the server-owned setting authoritative at validation time
+        # without creating Settings merely by importing result schemas in the
+        # standalone desktop process.
+        from app.core.config import settings
+
+        if len(value) > settings.REQUEST_MAX_QUERY_CHARS:
+            raise ValueError(
+                f"query_text exceeds the safety limit of {settings.REQUEST_MAX_QUERY_CHARS}"
+            )
+        return value
 
     @field_validator("document_ids")
     @classmethod
     def bound_document_scope(cls, value: list[str] | None) -> list[str] | None:
+        from app.core.config import settings
+
         if value is not None and len(value) > settings.AUTH_MAX_EXPLICIT_DOCUMENT_SCOPE:
             raise ValueError(f"document_ids exceeds the safety limit of {settings.AUTH_MAX_EXPLICIT_DOCUMENT_SCOPE}")
         return value
