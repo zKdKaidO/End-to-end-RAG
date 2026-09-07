@@ -1,0 +1,48 @@
+﻿{
+    "$schema":  "./node_modules/wrangler/config-schema.json",
+    "name":  "zkd-control-plane",
+    "main":  "worker/src/index.ts",
+    "compatibility_date":  "2026-09-05",
+    "assets":  {
+                   "directory":  "../frontend/dist",
+                   "binding":  "ASSETS",
+                   "not_found_handling":  "single-page-application",
+                   "run_worker_first":  [
+                                            "/api/*",
+                                            "/health"
+                                        ]
+               },
+    "d1_databases":  [
+                         {
+                             "binding":  "DB",
+                             "database_name":  "zkd-control-plane",
+                             "database_id":  "9a621295-0d30-4aa8-bffe-6ac4b1659f57",
+                             "migrations_dir":  "migrations"
+                         }
+                     ],
+    "vars":  {
+                 "PUBLIC_ORIGIN":  "https://rag.zkd.id.vn",
+                 "SESSION_TTL_SECONDS":  "2592000",
+                 "PRESENCE_TTL_SECONDS":  "90"
+             },
+    "env":  {
+                "staging":  {
+                                "name":  "zkd-control-plane-staging",
+                                "d1_databases":  [
+                                                     {
+                                                         "binding":  "DB",
+                                                         "database_name":  "zkd-control-plane-staging",
+                                                         "database_id":  "b9ff9420-82ca-4b76-a698-d9003398b71c",
+                                                         "migrations_dir":  "migrations"
+                                                     }
+                                                 ],
+                                "vars":  {
+                                             "PUBLIC_ORIGIN":  "https://staging.zkd.id.vn",
+                                             "SESSION_TTL_SECONDS":  "2592000",
+                                             "PRESENCE_TTL_SECONDS":  "90"
+                                         }
+                            }
+            }
+}
+
+

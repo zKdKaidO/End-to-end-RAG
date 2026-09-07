@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import io
 import os
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -133,3 +135,85 @@ def test_missing_product_models_and_sidecar_fail_closed_without_download_or_exec
     with pytest.raises(LocalComputeError) as generation:
         GenerationRuntimeManager(tmp_path / "runtime").start()
     assert generation.value.code == LocalComputeErrorCode.GENERATION_UNAVAILABLE
+
+
+def test_developer_answer_pipeline_uses_stdin_all_document_shape_and_never_prints_content(tmp_path, monkeypatch, capsys):
+    import app.local_compute.production_launcher as launcher
+
+    captured: dict[str, object] = {}
+    expected_settings = SimpleNamespace(
+        catalog_path="catalog-path", logs_path=tmp_path / "logs"
+    )
+
+    class FakeRuntime:
+        def __init__(self, settings):
+            assert settings is expected_settings
+
+        def generation_router(self):
+            return SimpleNamespace(local_provider=SimpleNamespace(profile="profile"))
+
+    class FakeService:
+        def __init__(self, settings, catalog, router, *, profile):
+            assert (settings, catalog, router.local_provider.profile, profile) == (
+                expected_settings,
+                "catalog",
+                "profile",
+                "profile",
+            )
+
+        async def answer(self, **kwargs):
+            captured.update(kwargs)
+            kwargs["stage_reporter"]("answers_context_done", "ANYIO_THREADPOOL")
+            return SimpleNamespace(
+                answer_mode="EXPLORE",
+                as_dict=lambda: {"private_answer_text": "must not print"},
+                result=SimpleNamespace(status=SimpleNamespace(value="COMPLETED")),
+            )
+
+    payload = {
+        "query_text": "Private diagnostic question",
+        "document_ids": None,
+        "answer_mode": "EXPLORE",
+    }
+    monkeypatch.setattr(launcher, "build_settings", lambda: expected_settings)
+    monkeypatch.setattr(launcher, "LocalComputeRuntime", FakeRuntime)
+    monkeypatch.setattr(launcher, "LocalCatalog", lambda _path: "catalog")
+    monkeypatch.setattr("app.local_compute.generation.LocalAnswerService", FakeService)
+    monkeypatch.setattr(launcher.sys, "stdin", SimpleNamespace(buffer=io.BytesIO(json.dumps(payload).encode("utf-8"))))
+
+    assert launcher.run_developer_answer_pipeline() == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output == {
+        "diagnostic": "developer_answer_pipeline",
+        "status": "PASS",
+        "answer_mode": "EXPLORE",
+        "stages": [
+            "answers_context_done",
+            "answers_serialization_begin",
+            "answers_serialization_done",
+            "answers_response_ready",
+        ],
+        "response_serializable": True,
+        "generation_status": "COMPLETED",
+    }
+    assert captured["document_ids"] is None
+    assert captured["query_text"] == payload["query_text"]
+
+
+def test_windowed_launcher_replaces_only_missing_standard_streams(monkeypatch):
+    import app.local_compute.production_launcher as launcher
+
+    original_count = len(launcher._NO_CONSOLE_STREAM_HANDLES)
+    with monkeypatch.context() as patch:
+        patch.setattr(launcher.sys, "frozen", True, raising=False)
+        patch.setattr(launcher.sys, "platform", "win32")
+        patch.setattr(launcher.sys, "stdout", None)
+        patch.setattr(launcher.sys, "stderr", None)
+        launcher._ensure_standard_streams_for_windowed_runtime()
+        assert launcher.sys.stdout is not None
+        assert launcher.sys.stderr is not None
+
+    added = launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]
+    for handle in added:
+        handle.close()
+    del launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]

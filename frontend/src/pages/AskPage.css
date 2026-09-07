@@ -1224,3 +1224,27 @@
   height: 36px;
   flex: 0 0 36px;
 }
+
+.zkd-compute-offline { width: min(440px, calc(100% - 48px)); margin: auto; display: flex; gap: 12px; padding: 20px; border: 1px solid var(--zkd-line); border-radius: 14px; background: #fff; box-shadow: 0 8px 28px rgb(0 0 0 / 5%); }
+.zkd-compute-offline strong { font-size: 15px; }.zkd-compute-offline p { margin: 6px 0 14px; color: var(--zkd-muted); font-size: 12px; line-height: 1.5; }
+.zkd-compute-offline button, .zkd-compute-offline a { display: inline-block; margin-right: 8px; padding: 7px 10px; border: 1px solid var(--zkd-line); border-radius: 8px; background: #fff; color: var(--zkd-text); font: inherit; font-size: 12px; text-decoration: none; cursor: pointer; }
+.zkd-compute-offline .primary { border-color: #171717; background: #171717; color: #fff; }.zkd-compute-dot { width: 9px; height: 9px; flex: 0 0 9px; margin-top: 5px; border-radius: 50%; background: #d97706; }.zkd-compute-dot.starting { background: #2563eb; animation: zkd-thinking-pulse 1.3s ease-in-out infinite; }
+
+.zkd-answer-mode { position: relative; }
+.zkd-answer-mode-trigger {
+  border: 1px solid #dbe3ef;
+  border-radius: 999px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+}
+.zkd-answer-mode-trigger:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.zkd-answer-mode-popover { bottom: calc(100% + 8px); position: absolute; right: 0; width: 280px; z-index: 20; border: 1px solid #dbe3ef; border-radius: 12px; background: #fff; box-shadow: 0 12px 32px rgb(15 23 42 / 18%); padding: 12px; }
+.zkd-answer-mode-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #334155; }
+.zkd-answer-mode-popover input { width: 100%; accent-color: #2563eb; }
+.zkd-answer-mode-stops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.zkd-answer-mode-stops button { border: 0; border-radius: 7px; background: transparent; color: #64748b; cursor: pointer; font-size: 10px; line-height: 1.2; padding: 5px 3px; }
+.zkd-answer-mode-stops button.selected { background: #eff6ff; color: #1d4ed8; }

@@ -3,7 +3,7 @@ import { AlertCircle, CheckCircle2, Database, Eye, FileSearch, FileText, Refresh
 import { Drawer, EmptyState, ErrorNotice, Metric, StatusBadge } from "../components/Common";
 import { DocumentDeleteDialog } from "../components/documents/DocumentDeleteDialog";
 import type { DocumentFilter } from "../components/documents/documentStatus";
-import { BrowserComputeClient, type LocalComputeDocument } from "../compute";
+import { browserComputeClient, type LocalComputeDocument } from "../compute";
 import { ProductShell } from "../components/product/ProductShell";
 import type { AuthUser, DocumentPipeline } from "../types";
 import "./DocumentsPage.css";
@@ -61,11 +61,9 @@ export function DocumentsPage({ user = DEFAULT_USER, onLogout = () => undefined 
   const [computeReady, setComputeReady] = useState(false);
 
   const loadInFlight = useRef(false);
-  const computeRef = useRef<BrowserComputeClient | null>(null);
+  const computeRef = useRef<ReturnType<typeof browserComputeClient> | null>(null);
 
-  if (!computeRef.current) {
-    computeRef.current = new BrowserComputeClient();
-  }
+  if (!computeRef.current) computeRef.current = browserComputeClient(user.id);
 
   const compute = computeRef.current;
 

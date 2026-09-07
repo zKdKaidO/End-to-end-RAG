@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Activity, FileText, FlaskConical, LogOut, Moon, Search, Sun } from "lucide-react";
 import { NavLink, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { api } from "./api/client";
+import { clearBrowserComputeClient } from "./compute";
 import { StatusBadge } from "./components/Common";
 import { AskPage } from "./pages/AskPage";
 import { DebugPage } from "./pages/DebugPage";
 import { DocumentsPage } from "./pages/DocumentsPage";
 import { EvaluationPage } from "./pages/EvaluationPage";
 import { LoginPage } from "./pages/LoginPage";
+import { PublicLegalPage } from "./pages/PublicLegalPage";
 import type { AuthUser } from "./types";
 
 type Theme = "light" | "dark";
@@ -150,6 +152,18 @@ export function App() {
     };
   }, [user]);
 
+  const normalizedPublicPath = location.pathname.replace(/\/+$/, "") || "/";
+  const isPublicLegalRoute = normalizedPublicPath === "/privacy" || normalizedPublicPath === "/terms";
+
+  if (isPublicLegalRoute) {
+    return (
+      <Routes>
+        <Route path="/privacy" element={<PublicLegalPage kind="privacy" />} />
+        <Route path="/terms" element={<PublicLegalPage kind="terms" />} />
+      </Routes>
+    );
+  }
+
   if (authLoading) {
     return (
       <main className="auth-loading" aria-live="polite">
@@ -170,6 +184,7 @@ export function App() {
     try {
       await api.logout();
     } finally {
+      clearBrowserComputeClient();
       setUser(null);
     }
   };

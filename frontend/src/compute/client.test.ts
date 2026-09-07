@@ -16,6 +16,9 @@ function fixture(devices: ComputeDevice[] = [device]) {
     listDevices: vi.fn().mockResolvedValue(devices),
     listLocalManifests: vi.fn().mockResolvedValue([]),
     requestLocalSessionGrant: vi.fn().mockResolvedValue({ local_access_grant: "grant", expires_at: 1800000000, device_id: device.device_id, endpoint_generation: "endpoint-a" } satisfies PlatformGrant),
+    reportLocalFetchDiagnostic: vi.fn().mockResolvedValue(undefined),
+    reportLocalTransportProbeDiagnostic: vi.fn().mockResolvedValue(undefined),
+    reportAnswerRequestPreparation: vi.fn().mockResolvedValue(undefined),
   };
   const localFetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
@@ -52,6 +55,88 @@ describe("BrowserComputeClient", () => {
       "http://127.0.0.1:48123/v1/queries",
       "http://127.0.0.1:48123/v1/answers",
     ]);
+    const answerRequest = localFetch.mock.calls[2][1] as RequestInit;
+    expect(answerRequest).toMatchObject({ method: "POST", body: expect.any(ArrayBuffer) });
+    expect(answerRequest.headers).toMatchObject({ "Content-Type": "application/json" });
+    expect(answerRequest.signal).toBeUndefined();
+    expect(answerRequest.keepalive).toBeUndefined();
+  });
+
+  it("reports a sanitized native fetch classification when the browser rejects the answer POST", async () => {
+    const { platform, localFetch } = fixture();
+    localFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/sessions")) {
+        return response({ local_session_id: "session-a", session_key: "secret-a", expires_at: 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["answer"] });
+      }
+      throw new TypeError("Failed to fetch: private implementation detail");
+    });
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+
+    await expect(client.answer({ query_text: "doanh nghiệp" })).rejects.toMatchObject({ code: "BROWSER_NETWORK_REJECTED" });
+    expect(platform.reportLocalFetchDiagnostic).toHaveBeenCalledWith({
+      operation: "answers", phase: "actual-fetch", exception_name: "TypeError",
+      exception_message: "LOCAL_FETCH_NETWORK_REJECTED", host_type: "loopback",
+      method: "POST", endpoint_path: "/v1/answers", local_session_present: true,
+      browser_nonce_present: false, abort_signal_fired: false,
+      request_timeout_configured: false, frontend_state: "AUTHENTICATED_REQUEST",
+      classification: "BROWSER_NETWORK_REJECTED",
+    });
+    expect(JSON.stringify(platform.reportLocalFetchDiagnostic.mock.calls)).not.toContain("private implementation detail");
+  });
+
+  it("classifies an answer POST abort without inferring a network failure", async () => {
+    const { platform, localFetch } = fixture();
+    localFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/sessions")) {
+        return response({ local_session_id: "session-a", session_key: "secret-a", expires_at: 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["answer"] });
+      }
+      throw new DOMException("cancelled by browser", "AbortError");
+    });
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+
+    await expect(client.answer({ query_text: "doanh nghiệp" })).rejects.toMatchObject({ code: "FETCH_ABORTED" });
+    expect(platform.reportLocalFetchDiagnostic).toHaveBeenCalledWith(expect.objectContaining({
+      phase: "abort", exception_name: "AbortError", exception_message: "LOCAL_FETCH_ABORTED", classification: "FETCH_ABORTED",
+    }));
+  });
+
+  it("runs progressive authenticated transport probes after a rejected answer fetch", async () => {
+    const { platform, localFetch } = fixture();
+    localFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith("/v1/sessions")) {
+        return response({ local_session_id: "11111111-1111-4111-8111-111111111111", session_key: "secret-a", expires_at: 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["answer"] });
+      }
+      if (url.endsWith("/v1/transport-probe")) return response({ status: "ok" });
+      throw new TypeError("Failed to fetch");
+    });
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000, nonceFactory: () => "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" });
+
+    await expect(client.answer({ query_text: "doanh nghiệp" })).rejects.toMatchObject({ code: "BROWSER_NETWORK_REJECTED" });
+    const calls = localFetch.mock.calls as Array<[string, RequestInit]>;
+    expect(calls.map(([url]) => url)).toEqual([
+      "http://127.0.0.1:48123/v1/sessions",
+      "http://127.0.0.1:48123/v1/answers",
+      "http://127.0.0.1:48123/v1/transport-probe",
+      "http://127.0.0.1:48123/v1/transport-probe",
+      "http://127.0.0.1:48123/v1/transport-probe",
+    ]);
+    expect(calls[2][1]).toMatchObject({ method: "POST", body: undefined });
+    expect(calls[3][1]).toMatchObject({ method: "POST", body: '{"probe":"p2"}' });
+    expect(calls[4][1]).toMatchObject({ method: "POST", body: expect.any(ArrayBuffer) });
+    expect(platform.reportAnswerRequestPreparation).toHaveBeenCalledWith(expect.objectContaining({
+      body_type: "ArrayBuffer", body_detached: false, request_construction: "SUCCEEDED",
+      classification: "REQUEST_CONSTRUCTION_SUCCEEDED",
+      header_validity: {
+        origin: true, "content-type": true, "x-zkd-local-session": true,
+        "x-zkd-timestamp": true, "x-zkd-nonce": true, "x-zkd-mac": true,
+        "x-zkd-protocol-version": true,
+      },
+    }));
+    expect(platform.reportLocalTransportProbeDiagnostic).toHaveBeenCalledTimes(3);
+    expect(platform.reportLocalTransportProbeDiagnostic).toHaveBeenCalledWith(expect.objectContaining({ probe_id: "P1", success: true, classification: "PROBE_SUCCEEDED" }));
+    expect(platform.reportLocalTransportProbeDiagnostic).toHaveBeenCalledWith(expect.objectContaining({ probe_id: "P2", success: true, classification: "PROBE_SUCCEEDED" }));
+    expect(platform.reportLocalTransportProbeDiagnostic).toHaveBeenCalledWith(expect.objectContaining({ probe_id: "P3", success: true, classification: "PROBE_SUCCEEDED" }));
   });
 
   it("continues local answer work during a platform outage after bootstrap", async () => {
@@ -63,6 +148,22 @@ describe("BrowserComputeClient", () => {
     await expect(client.answer({ query_text: "doanh nghiệp" })).resolves.toMatchObject({ request_id: "r1" });
     expect(platform.listDevices).toHaveBeenCalledTimes(1);
     expect(platform.requestLocalSessionGrant).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a healthy local session after a structured answer processing error", async () => {
+    const { platform, localFetch } = fixture();
+    localFetch.mockImplementation(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("/v1/sessions")) {
+        return response({ local_session_id: "session-a", session_key: "secret-a", expires_at: 1800000000, protocol_version: "zkd-compute-v1", endpoint_generation: "endpoint-a", allowed_operations: ["answer"] });
+      }
+      return response({ request_id: "r1", error: { code: "INTERNAL_COMPUTE_ERROR", message: "Internal Compute Error" } }, 500);
+    });
+    const client = new BrowserComputeClient({ platform: platform as never, localFetch: localFetch as typeof fetch, clock: () => 1700000000 });
+
+    await expect(client.answer({ query_text: "doanh nghiệp" })).rejects.toMatchObject({ code: "REQUEST_FAILED", status: 500 });
+    expect(client.status().session).toEqual(expect.objectContaining({ deviceId: device.device_id }));
+    expect(platform.reportLocalFetchDiagnostic).not.toHaveBeenCalled();
+    expect(platform.reportLocalTransportProbeDiagnostic).not.toHaveBeenCalled();
   });
 
   it("rebootstraps an expired session before a new query with fresh local authentication", async () => {

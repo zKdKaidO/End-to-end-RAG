@@ -26,16 +26,23 @@ class WindowsSingleInstance:
         if self._handle is not None or self._fallback_owned:
             return
         if os.name == "nt":
-            kernel32 = ctypes.windll.kernel32
+            # ``ctypes.windll`` does not opt into thread-local last-error
+            # preservation.  A duplicate process could therefore observe 0
+            # instead of ERROR_ALREADY_EXISTS and proceed to expensive startup.
+            # Keep this mutex handle alive on ``self`` until ``release``.
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
             kernel32.CreateMutexW.argtypes = [ctypes.c_void_p, ctypes.c_bool, ctypes.c_wchar_p]
             kernel32.CreateMutexW.restype = ctypes.c_void_p
+            kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+            kernel32.CloseHandle.restype = ctypes.c_bool
+            ctypes.set_last_error(0)
             handle = kernel32.CreateMutexW(None, False, self.name)
             if not handle:
                 raise RuntimeError("ZKD_COMPUTE_MUTEX_CREATE_FAILED")
             if ctypes.get_last_error() == 183:  # ERROR_ALREADY_EXISTS
                 kernel32.CloseHandle(handle)
                 raise AlreadyRunningError("ZKD_COMPUTE_ALREADY_RUNNING")
-            self._handle = handle
+            self._handle = (kernel32, handle)
             return
         # Test/developer fallback only; production packaging targets Windows.
         with self._fallback_guard:
@@ -46,7 +53,8 @@ class WindowsSingleInstance:
 
     def release(self) -> None:
         if self._handle is not None:
-            ctypes.windll.kernel32.CloseHandle(self._handle)
+            kernel32, handle = self._handle
+            kernel32.CloseHandle(handle)
             self._handle = None
         if self._fallback_owned:
             with self._fallback_guard:

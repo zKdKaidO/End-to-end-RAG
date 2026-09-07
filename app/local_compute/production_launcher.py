@@ -7,6 +7,7 @@ emits metadata only; it never emits keys, grants, MACs, or pairing tokens.
 from __future__ import annotations
 
 import argparse
+import asyncio
 import base64
 import getpass
 import json
@@ -17,23 +18,64 @@ import time
 import traceback
 import urllib.error
 import urllib.request
+import os
 from pathlib import Path
+
+
+_NO_CONSOLE_STREAM_HANDLES: list[object] = []
+
+
+def _ensure_standard_streams_for_windowed_runtime() -> None:
+    """Supply inert streams only for a frozen Windows no-console process.
+
+    PyInstaller's ``console=False`` mode can set both standard streams to
+    ``None``. ZKD configures its own file-backed structured logger below, but
+    this early compatibility guard also protects third-party libraries that
+    unavoidably inspect the standard streams.
+    """
+
+    if not getattr(sys, "frozen", False) or sys.platform != "win32":
+        return
+    for attribute in ("stdout", "stderr"):
+        if getattr(sys, attribute, None) is None:
+            handle = open(os.devnull, "w", encoding="utf-8")
+            setattr(sys, attribute, handle)
+            _NO_CONSOLE_STREAM_HANDLES.append(handle)
+
+
+_ensure_standard_streams_for_windowed_runtime()
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from app.local_compute.catalog import LocalCatalog
 from app.local_compute.credentials import WindowsDpapiDeviceCredentialStore, public_key_b64
+from app.local_compute.deployment_profile import ComputeDeploymentProfile, DeploymentProfile, get_profile, provision_staging_public_key
 from app.local_compute.pairing_uri import PairingUriError, parse_pairing_uri
-from app.local_compute.product_paths import local_model_cache_path, product_data_root
+from app.local_compute.product_paths import local_model_cache_path
 from app.local_compute.provisioning import E5ModelProvisioner, GenerationRuntimeManager
 from app.local_compute.runtime import LocalComputeRuntime
 from app.local_compute.server import LoopbackControlServer
 from app.local_compute.settings import LocalComputeSettings
 from app.local_compute.single_instance import AlreadyRunningError, WindowsSingleInstance
+from app.local_compute.protocol import ProtocolCommand, parse_protocol_uri
+from app.local_compute.tray import WindowsTray
 
 
-PLATFORM_API = "https://rag.zkd.id.vn"
 USER_AGENT = "ZKD-Compute/0.1.0"
+_active_profile = get_profile()
+
+
+def active_profile() -> DeploymentProfile:
+    return _active_profile
+
+
+def select_profile(value: str) -> None:
+    global _active_profile
+    _active_profile = get_profile(value)
+
+
+def platform_api() -> str:
+    return active_profile().platform_origin
 
 
 def bootstrap_log(
@@ -73,7 +115,7 @@ def bootstrap_log(
 
 
 def data_root() -> Path:
-    return product_data_root()
+    return active_profile().data_root()
 
 
 def credential_path() -> Path:
@@ -81,7 +123,7 @@ def credential_path() -> Path:
 
 
 def platform_public_key_path() -> Path:
-    return data_root() / "config" / "platform-grant-public.b64"
+    return active_profile().public_key_path
 
 
 def read_platform_public_key() -> str:
@@ -113,7 +155,8 @@ def build_settings() -> LocalComputeSettings:
         data_root=root,
         bind_port=0,
         embedding_model_cache_dir=local_model_cache_path(),
-        platform_base_url=PLATFORM_API,
+        production_origin=platform_api(),
+        platform_base_url=platform_api(),
         control_auto_start=False,
         platform_grant_verification_public_key=read_platform_public_key(),
     )
@@ -121,7 +164,7 @@ def build_settings() -> LocalComputeSettings:
 
 def post_json(path: str, payload: dict) -> dict:
     body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
-    request = urllib.request.Request(PLATFORM_API + path, data=body, headers={"Content-Type": "application/json", "Accept": "application/json", "User-Agent": USER_AGENT}, method="POST")
+    request = urllib.request.Request(platform_api() + path, data=body, headers={"Content-Type": "application/json", "Accept": "application/json", "User-Agent": USER_AGENT}, method="POST")
     try:
         with urllib.request.urlopen(request, timeout=15) as response:
             raw = response.read()
@@ -144,11 +187,89 @@ def paired_state() -> dict | None:
 
 def show_status() -> int:
     paired = paired_state()
-    status = {"data_root": str(data_root()), "pairing_state": "PAIRED" if paired else "NOT_PAIRED", "embedding_model_ready": E5ModelProvisioner(local_model_cache_path()).is_ready()}
+    status = {"profile": active_profile().name.value, "platform_base_url": platform_api(), "data_root": str(data_root()), "pairing_state": "PAIRED" if paired else "NOT_PAIRED", "embedding_model_ready": E5ModelProvisioner(local_model_cache_path()).is_ready()}
     if paired:
         status.update({"device_id": paired["device_id"], "credential_epoch": paired["credential_epoch"]})
     print(json.dumps(status, separators=(",", ":")))
     return 0 if paired else 2
+
+
+def run_developer_answer_pipeline() -> int:
+    """Run one all-document answer request from stdin without opening HTTP.
+
+    This is a developer-only packaged-image diagnostic. It deliberately has
+    no listener, grant bypass, persisted request body, or answer-text output.
+    Restricting the payload to the all-document shape keeps it useful for
+    release verification without turning the launcher into a general command
+    execution surface.
+    """
+
+    raw_payload = sys.stdin.buffer.read(8 * 1024 + 1)
+    if not raw_payload or len(raw_payload) > 8 * 1024:
+        raise RuntimeError("DIAGNOSTIC_PAYLOAD_REQUIRED")
+    try:
+        payload = json.loads(raw_payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RuntimeError("DIAGNOSTIC_PAYLOAD_INVALID") from exc
+
+    if (
+        not isinstance(payload, dict)
+        or set(payload) != {"query_text", "document_ids", "answer_mode"}
+        or not isinstance(payload["query_text"], str)
+        or payload["document_ids"] is not None
+        or not isinstance(payload["answer_mode"], str)
+    ):
+        raise RuntimeError("DIAGNOSTIC_PAYLOAD_INVALID")
+
+    from app.local_compute.generation import GenerationRoutingRequest, LocalAnswerService
+    from app.local_compute.runtime_logging import configure_local_compute_logging
+
+    settings = build_settings()
+    configure_local_compute_logging(settings.logs_path)
+    runtime = LocalComputeRuntime(settings)
+    router = runtime.generation_router()
+    service = LocalAnswerService(
+        settings,
+        LocalCatalog(settings.catalog_path),
+        router,
+        profile=router.local_provider.profile,
+    )
+    stages: list[str] = []
+
+    async def run() -> object:
+        return await service.answer(
+            request_id="developer-answer-pipeline",
+            query_text=payload["query_text"],
+            document_ids=None,
+            answer_mode=payload["answer_mode"],
+            routing=GenerationRoutingRequest(),
+            stage_reporter=lambda stage, _boundary: stages.append(stage),
+        )
+
+    response = asyncio.run(run())
+    stages.append("answers_serialization_begin")
+    from fastapi.responses import JSONResponse
+
+    serialized = JSONResponse(
+        content={"request_id": "developer-answer-pipeline", **response.as_dict()}
+    ).body
+    stages.append("answers_serialization_done")
+    stages.append("answers_response_ready")
+    print(
+        json.dumps(
+            {
+                "diagnostic": "developer_answer_pipeline",
+                "status": "PASS",
+                "answer_mode": response.answer_mode,
+                "stages": stages,
+                "response_serializable": isinstance(response.as_dict(), dict)
+                and bool(serialized),
+                "generation_status": response.result.status.value,
+            },
+            separators=(",", ":"),
+        )
+    )
+    return 0
 
 
 def pair(pairing_request_id: str, pairing_token: str) -> int:
@@ -191,7 +312,9 @@ def run_background() -> int:
     runtime = LocalComputeRuntime(settings, credential_store=credential_store())
     server = LoopbackControlServer(runtime, failure_reporter=bootstrap_log)
     stopping = threading.Event()
+    restarting = threading.Event()
     generation = GenerationRuntimeManager(settings.models_path / "generation-runtime")
+    tray = WindowsTray(runtime, logs_path=settings.logs_path, open_url=platform_api(), quit_requested=stopping, restart_requested=restarting, profile_label=active_profile().tray_prefix)
 
     def request_stop(_signal=None, _frame=None) -> None:
         stopping.set()
@@ -214,6 +337,7 @@ def run_background() -> int:
         bootstrap_log("control_tick_result")
         server.ensure_running()
         runtime.control_channel.start()
+        tray.start()
         bootstrap_log("control_thread_started")
         # A release-bundled, checksum-pinned sidecar may be supplied later.
         # Never launch/download an unverified binary merely because it exists.
@@ -221,37 +345,89 @@ def run_background() -> int:
             runtime.update_generation_capability("MODEL_UNAVAILABLE")
         bootstrap_log("runtime_ready")
         while not stopping.wait(0.5):
-            pass
+            tray.refresh()
+            if (
+                runtime.control_channel.should_run()
+                and not runtime.control_channel.is_running()
+            ):
+                # The channel contains its own retry policy. This is only a
+                # final liveness guard for an unexpectedly exited daemon.
+                bootstrap_log("control_thread_restart")
+                runtime.control_channel.start()
+            if restarting.is_set():
+                restarting.clear()
+                runtime.control_channel.stop()
+                server.stop()
+                runtime.recreate_endpoint_generation()
+                server.start()
+                runtime.control_channel.start()
+                tray.refresh()
         return 0
     finally:
+        tray.stop()
         generation.stop()
         server.stop()
         runtime.shutdown()
 
 
+def run_protocol(command: ProtocolCommand) -> int:
+    """Protocol invocation intentionally has no arguments, files, or secrets."""
+    if command is ProtocolCommand.OPEN:
+        try:
+            os.startfile(platform_api())  # noqa: S606 - profile-owned fixed URL only
+        except OSError as exc:
+            bootstrap_log("protocol_open_failed", exc)
+        return 0
+    # A second start invocation meets the mutex and exits without changing the
+    # endpoint generation or binding a second loopback port.
+    with WindowsSingleInstance(active_profile().mutex_name):
+        return run_background()
+
+
 def main(argv: list[str] | None = None) -> int:
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    if len(raw_argv) == 1 and raw_argv[0].lower().startswith("zkd:"):
+        command = parse_protocol_uri(raw_argv[0])
+        if command is None:
+            bootstrap_log("protocol_uri_rejected")
+            return 0
+        try:
+            bootstrap_log("protocol_invoked")
+            return run_protocol(command)
+        except AlreadyRunningError:
+            bootstrap_log("already_running")
+            return 0
     parser = argparse.ArgumentParser(prog="zkd-compute", description="ZKD Compute Windows companion")
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--pair", action="store_true")
     parser.add_argument("--pair-uri")
     parser.add_argument("--background", action="store_true")
+    parser.add_argument("--profile", choices=[item.value for item in ComputeDeploymentProfile], default=ComputeDeploymentProfile.PRODUCTION.value)
+    parser.add_argument("--provision-staging-key", action="store_true")
+    parser.add_argument("--diagnostic-answer-pipeline", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--data-root", help=argparse.SUPPRESS)
-    arguments = parser.parse_args(argv)
+    arguments = parser.parse_args(raw_argv)
+    select_profile(arguments.profile)
     if arguments.data_root:
         import os
         os.environ["ZKD_COMPUTE_DATA_ROOT"] = str(Path(arguments.data_root).resolve())
-    if sum(bool(value) for value in (arguments.status, arguments.pair, arguments.pair_uri, arguments.background)) > 1:
+    if sum(bool(value) for value in (arguments.status, arguments.pair, arguments.pair_uri, arguments.background, arguments.provision_staging_key, arguments.diagnostic_answer_pipeline)) > 1:
         parser.error("Choose one launcher mode.")
     try:
         bootstrap_log("launcher_enter")
         if arguments.status:
             return show_status()
+        if arguments.provision_staging_key:
+            provision_staging_public_key(active_profile())
+            return 0
+        if arguments.diagnostic_answer_pipeline:
+            return run_developer_answer_pipeline()
         if arguments.pair_uri:
             request = parse_pairing_uri(arguments.pair_uri)
             return pair(request.request_id, request.token)
         if arguments.pair:
             return interactive_pair()
-        with WindowsSingleInstance():
+        with WindowsSingleInstance(active_profile().mutex_name):
             return run_background()
     except AlreadyRunningError:
         bootstrap_log("already_running")

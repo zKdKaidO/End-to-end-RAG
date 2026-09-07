@@ -5,7 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const compute = vi.hoisted(() => ({ discover: vi.fn(), connect: vi.fn(), listDocuments: vi.fn(), answer: vi.fn(), query: vi.fn() }));
 const platform = vi.hoisted(() => ({ documents: vi.fn(), chatSessions: vi.fn(), createChatSession: vi.fn(), chatMessages: vi.fn(), renameChatSession: vi.fn(), deleteChatSession: vi.fn(), chunk: vi.fn(), streamChatTurn: vi.fn() }));
 
-vi.mock("../compute", () => ({ BrowserComputeClient: class { constructor() { return compute; } } }));
+vi.mock("../compute", () => ({
+  browserComputeClient: () => compute,
+  BrowserComputeClient: class { constructor() { return compute; } },
+}));
 vi.mock("../api/client", () => ({ api: platform, streamChatTurn: platform.streamChatTurn }));
 
 import { AskPage } from "./AskPage";
@@ -22,6 +25,7 @@ const answer = {
 function renderAsk() { return render(<MemoryRouter initialEntries={["/ask"]}><AskPage user={user} onLogout={vi.fn()} /></MemoryRouter>); }
 
 beforeEach(() => {
+  window.localStorage.clear();
   Object.values(compute).forEach((mock) => mock.mockReset());
   Object.values(platform).forEach((mock) => mock.mockReset());
   compute.connect.mockResolvedValue(device);
@@ -44,13 +48,13 @@ describe("local-first Ask workspace", () => {
     fireEvent.change(screen.getByLabelText("Question"), { target: { value: "All sources" } });
     fireEvent.click(screen.getByRole("button", { name: "Send message" }));
     await waitFor(() => expect(compute.answer).toHaveBeenCalledTimes(1));
-    expect(compute.answer).toHaveBeenLastCalledWith({ query_text: "All sources", document_ids: null });
+    expect(compute.answer).toHaveBeenLastCalledWith({ query_text: "All sources", document_ids: null, answer_mode: "BALANCED" });
     expect(compute.query).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("checkbox", { name: "Include law-b.pdf" }));
     fireEvent.change(screen.getByLabelText("Question"), { target: { value: "Only A" } });
     fireEvent.click(screen.getByRole("button", { name: "Send message" }));
     await waitFor(() => expect(compute.answer).toHaveBeenCalledTimes(2));
-    expect(compute.answer).toHaveBeenLastCalledWith({ query_text: "Only A", document_ids: [localA.document_id] });
+    expect(compute.answer).toHaveBeenLastCalledWith({ query_text: "Only A", document_ids: [localA.document_id], answer_mode: "BALANCED" });
   });
 
   it("prevents a zero-source selection from reaching local Compute", async () => {
@@ -95,11 +99,26 @@ describe("local-first Ask workspace", () => {
     expect(await screen.findByRole("button", { name: "Retry" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
     await waitFor(() => expect(compute.answer).toHaveBeenCalledTimes(2));
-    expect(compute.answer.mock.calls[1][0]).toEqual({ query_text: "Retry local", document_ids: null });
+    expect(compute.answer.mock.calls[1][0]).toEqual({ query_text: "Retry local", document_ids: null, answer_mode: "BALANCED" });
     expect(platform.chatMessages).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTitle("New inquiry"));
     expect(screen.queryByText("Retry local")).not.toBeInTheDocument();
     expect(platform.createChatSession).not.toHaveBeenCalled();
+  });
+
+  it("uses the compact three-stop answer-mode control, persists it, and sends its fixed value", async () => {
+    renderAsk();
+    await screen.findByRole("checkbox", { name: "Include law-a.pdf" });
+    expect(screen.getByRole("button", { name: "Answer mode" })).toHaveTextContent("Balanced");
+    fireEvent.click(screen.getByRole("button", { name: "Answer mode" }));
+    const slider = screen.getByRole("slider", { name: "Answer mode slider" });
+    expect(slider).toHaveAttribute("min", "0");
+    expect(slider).toHaveAttribute("max", "2");
+    fireEvent.change(slider, { target: { value: "2" } });
+    expect(window.localStorage.getItem("zkd-answer-mode")).toBe("EXPLORE");
+    fireEvent.change(screen.getByLabelText("Question"), { target: { value: "Explore this" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send message" }));
+    await waitFor(() => expect(compute.answer).toHaveBeenCalledWith({ query_text: "Explore this", document_ids: null, answer_mode: "EXPLORE" }));
   });
 
   it("surfaces a selected-device error without source or answer fallback", async () => {

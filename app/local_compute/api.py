@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import time
+import traceback
 import uuid
 from contextlib import asynccontextmanager
+from pathlib import Path
+from re import fullmatch
 from urllib.parse import unquote
 
 from fastapi import FastAPI, Request
@@ -35,6 +38,10 @@ ALLOWED_HEADERS = (
     "X-ZKD-Filename"
 )
 
+ANSWER_PREFLIGHT_PATH = "/v1/answers"
+ANSWER_TRANSPORT_PROBE_PATH = "/v1/transport-probe"
+HTTP_HEADER_NAME = r"[!#$%&'*+\-.^_`|~0-9A-Za-z]+"
+
 ROUTE_OPERATIONS = {
     ("GET", "/v1/runtime"): "jobs",
     ("GET", "/v1/capabilities"): "jobs",
@@ -49,7 +56,51 @@ ROUTE_OPERATIONS = {
     ("POST", "/v1/documents/{document_id}/index"): "documents",
     ("POST", "/v1/queries"): "retrieval",
     ("POST", "/v1/answers"): "answer",
+    ("POST", ANSWER_TRANSPORT_PROBE_PATH): "answer",
 }
+
+
+def _safe_exception_location(error: BaseException) -> dict[str, object]:
+    """Return a bounded, content-free traceback summary for a failure record.
+
+    Exception messages and full tracebacks can contain request or document
+    content. A basename, line number, and function name are sufficient to
+    correlate an unexpected error with the frozen application image without
+    persisting that data.
+    """
+
+    frames = traceback.extract_tb(error.__traceback__)
+    if not frames:
+        return {}
+    safe_frames = [
+        {
+            "module": Path(frame.filename).name,
+            "line": frame.lineno,
+            "function": frame.name,
+        }
+        for frame in frames[-8:]
+    ]
+    frame = safe_frames[-1]
+    details: dict[str, object] = {
+        "failure_module": frame["module"],
+        "failure_line": frame["line"],
+        "failure_function": frame["function"],
+        "failure_frame_chain": safe_frames,
+    }
+    # TypeError text may include arbitrary application data. Retain only the
+    # fixed CPython weak-reference diagnostic, and only its type token.
+    if isinstance(error, TypeError):
+        match = fullmatch(
+            r"cannot create weak reference to '([A-Za-z_][A-Za-z0-9_.]*)' object",
+            str(error),
+        )
+        if match:
+            details["failure_key_type"] = match.group(1)
+            details["failure_safe_message"] = (
+                "cannot create weak reference to '"
+                f"{match.group(1)}' object"
+            )
+    return details
 
 
 def _error_response(
@@ -124,6 +175,12 @@ class LocalOriginPolicyMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
 
         origin = request.headers.get("origin")
+
+        if (
+            request.method == "POST"
+            and request.url.path == ANSWER_PREFLIGHT_PATH
+        ):
+            self._audit_answer_ingress(request, origin)
 
         if (
             origin
@@ -202,6 +259,13 @@ class LocalOriginPolicyMiddleware(BaseHTTPMiddleware):
                 headers=headers,
             )
 
+            self._audit_answer_preflight(
+                request,
+                origin,
+                headers,
+                response.status_code,
+            )
+
             self._audit(
                 request_id,
                 request,
@@ -233,6 +297,72 @@ class LocalOriginPolicyMiddleware(BaseHTTPMiddleware):
         )
 
         return response
+
+    def _audit_answer_preflight(
+        self,
+        request: Request,
+        origin: str,
+        response_headers: dict[str, str],
+        status_code: int,
+    ) -> None:
+        """Capture only actual-answer preflight header names for a production diagnosis."""
+        if (
+            request.url.path != ANSWER_PREFLIGHT_PATH
+            or self.runtime.audit_log is None
+        ):
+            return
+
+        requested_headers = _normalized_requested_header_names(
+            request.headers.get("access-control-request-headers")
+        )
+        self.runtime.audit_log.record_cors_preflight(
+            path=request.url.path,
+            origin=origin,
+            requested_method=request.headers.get(
+                "access-control-request-method"
+            )
+            or "",
+            requested_headers=requested_headers,
+            private_network_requested=request.headers.get(
+                "access-control-request-private-network"
+            )
+            == "true",
+            response_headers=response_headers,
+            status_code=status_code,
+        )
+
+    def _audit_answer_ingress(
+        self,
+        request: Request,
+        origin: str | None,
+    ) -> None:
+        """Emit before body reads, authentication, validation, and routing."""
+        if self.runtime.audit_log is None:
+            return
+
+        content_length = request.headers.get("content-length")
+        try:
+            parsed_length = int(content_length) if content_length else None
+        except ValueError:
+            parsed_length = None
+
+        self.runtime.audit_log.record_answer_transport_stage(
+            "answers_http_ingress",
+            method=request.method,
+            path=request.url.path,
+            origin=(
+                origin
+                if origin in self.runtime.settings.allowed_origins
+                else "UNTRUSTED_ORIGIN"
+            ),
+            content_type=_safe_content_type(
+                request.headers.get("content-type")
+            ),
+            content_length=parsed_length,
+            request_header_names=sorted(
+                {name.lower() for name in request.headers.keys()}
+            ),
+        )
 
     def _audit(
         self,
@@ -279,6 +409,33 @@ def _cors_headers(
         ] = "true"
 
     return headers
+
+
+def _normalized_requested_header_names(
+    value: str | None,
+) -> list[str]:
+    """Return an ordered, de-duplicated list of valid HTTP header names only."""
+    if not value:
+        return []
+
+    names: list[str] = []
+    for raw_name in value.split(","):
+        name = raw_name.strip().lower()
+        if name and fullmatch(HTTP_HEADER_NAME, name) and name not in names:
+            names.append(name)
+    return names
+
+
+def _safe_content_type(
+    value: str | None,
+) -> str:
+    """Keep diagnostics from retaining an arbitrary header value."""
+    media_type = (value or "").split(";", 1)[0].strip().lower()
+    if media_type == "application/json":
+        return media_type
+    if not media_type:
+        return "NONE"
+    return "OTHER"
 
 
 def create_local_compute_app(
@@ -503,62 +660,99 @@ def create_local_compute_app(
             LocalComputeErrorCode.OPERATION_NOT_ALLOWED
         )
 
+    def record_answer_stage(
+        request: Request,
+        event_name: str,
+        **fields: object,
+    ) -> None:
+        if (
+            request.url.path == ANSWER_PREFLIGHT_PATH
+            and request.method == "POST"
+            and runtime.audit_log is not None
+        ):
+            runtime.audit_log.record_answer_transport_stage(
+                event_name,
+                **fields,
+            )
+
     async def authenticate(
         request: Request,
         *,
         max_bytes: int | None = None,
     ) -> None:
-        origin = request.headers.get("origin")
-
-        if not origin:
-            raise LocalComputeError(
-                LocalComputeErrorCode.ORIGIN_NOT_ALLOWED
-            )
-
-        if not request.headers.get(
-            "X-ZKD-Local-Session"
-        ):
-            raise LocalComputeError(
-                LocalComputeErrorCode.AUTH_REQUIRED
-            )
-
-        if (
-            request.headers.get(
-                "X-ZKD-Protocol-Version"
-            )
-            != runtime.settings.protocol_version
-        ):
-            runtime.set_update_required()
-
-            raise LocalComputeError(
-                LocalComputeErrorCode.UPDATE_REQUIRED
-            )
-
-        body = await request.body()
-
-        limit = (
-            max_bytes
-            if max_bytes is not None
-            else runtime.settings.request_body_max_bytes
+        is_answer = (
+            request.method == "POST"
+            and request.url.path == ANSWER_PREFLIGHT_PATH
         )
 
-        if len(body) > limit:
-            raise LocalComputeError(
-                LocalComputeErrorCode.PAYLOAD_TOO_LARGE
+        if is_answer:
+            record_answer_stage(request, "answers_auth_begin")
+
+        try:
+            origin = request.headers.get("origin")
+
+            if not origin:
+                raise LocalComputeError(
+                    LocalComputeErrorCode.ORIGIN_NOT_ALLOWED
+                )
+
+            if not request.headers.get(
+                "X-ZKD-Local-Session"
+            ):
+                raise LocalComputeError(
+                    LocalComputeErrorCode.AUTH_REQUIRED
+                )
+
+            if (
+                request.headers.get(
+                    "X-ZKD-Protocol-Version"
+                )
+                != runtime.settings.protocol_version
+            ):
+                runtime.set_update_required()
+
+                raise LocalComputeError(
+                    LocalComputeErrorCode.UPDATE_REQUIRED
+                )
+
+            body = await request.body()
+
+            if is_answer:
+                record_answer_stage(request, "answers_body_received")
+
+            limit = (
+                max_bytes
+                if max_bytes is not None
+                else runtime.settings.request_body_max_bytes
             )
 
-        session = runtime.sessions.validate(
-            request.method,
-            request.url.path,
-            body,
-            origin,
-            request.headers,
-            operation_for(request),
-        )
+            if len(body) > limit:
+                raise LocalComputeError(
+                    LocalComputeErrorCode.PAYLOAD_TOO_LARGE
+                )
 
-        runtime.validate_session_binding(
-            session
-        )
+            session = runtime.sessions.validate(
+                request.method,
+                request.url.path,
+                body,
+                origin,
+                request.headers,
+                operation_for(request),
+            )
+
+            runtime.validate_session_binding(
+                session
+            )
+        except LocalComputeError as exc:
+            if is_answer:
+                record_answer_stage(
+                    request,
+                    f"answers_auth_rejected:{exc.code.value}",
+                )
+            raise
+
+        if is_answer:
+            record_answer_stage(request, "answers_auth_accepted")
 
     def require_document(
         document_id: str,
@@ -711,6 +905,40 @@ def create_local_compute_app(
             "request_id": request.state.request_id,
             "received_bytes": len(body),
             "received_at": int(time.time()),
+        }
+
+    @app.post(ANSWER_TRANSPORT_PROBE_PATH)
+    async def answer_transport_probe(
+        request: Request,
+    ):
+        """Authenticated, no-persistence diagnostic for browser POST transport.
+
+        It deliberately reuses the existing ``answer`` grant operation, so the
+        grant/security contract is unchanged. Only an empty body or one of two
+        fixed tiny JSON bodies is accepted.
+        """
+        await authenticate(request, max_bytes=32)
+        body = await request.body()
+
+        if body not in {
+            b"",
+            b'{"probe":"p2"}',
+            b'{"probe":"p3"}',
+        }:
+            raise LocalComputeError(
+                LocalComputeErrorCode.INVALID_REQUEST
+            )
+
+        if body and _safe_content_type(
+            request.headers.get("content-type")
+        ) != "application/json":
+            raise LocalComputeError(
+                LocalComputeErrorCode.INVALID_REQUEST
+            )
+
+        return {
+            "request_id": request.state.request_id,
+            "status": "ok",
         }
 
     @app.put(
@@ -959,19 +1187,11 @@ def create_local_compute_app(
                 LocalComputeErrorCode.INVALID_REQUEST
             )
 
-        results, hierarchy = (
-            LocalRetrievalStore(
-                runtime.settings,
-                runtime.catalog,
-            ).query_document_set_with_diagnostics(
-                payload.get(
-                    "query_text"
-                ),
-                payload.get(
-                    "document_ids"
-                ),
-            )
-        )
+        retrieval = LocalRetrievalStore(runtime.settings, runtime.catalog)
+        retrieval_args = (payload.get("query_text"), payload.get("document_ids"))
+        if "answer_mode" in payload:
+            retrieval_args += (payload.get("answer_mode"),)
+        results, hierarchy = retrieval.query_document_set_with_diagnostics(*retrieval_args)
 
         return {
             "request_id": request.state.request_id,
@@ -985,9 +1205,15 @@ def create_local_compute_app(
     ):
         await authenticate(request)
 
+        record_answer_stage(request, "answers_schema_begin")
+
         try:
             payload = await request.json()
         except ValueError as exc:
+            record_answer_stage(
+                request,
+                "answers_schema_rejected:INVALID_REQUEST",
+            )
             raise LocalComputeError(
                 LocalComputeErrorCode.INVALID_REQUEST
             ) from exc
@@ -996,6 +1222,10 @@ def create_local_compute_app(
             payload,
             dict,
         ):
+            record_answer_stage(
+                request,
+                "answers_schema_rejected:INVALID_REQUEST",
+            )
             raise LocalComputeError(
                 LocalComputeErrorCode.INVALID_REQUEST
             )
@@ -1009,9 +1239,39 @@ def create_local_compute_app(
                 "provider_secret",
             )
         ):
+            record_answer_stage(
+                request,
+                "answers_schema_rejected:INVALID_REQUEST",
+            )
             raise LocalComputeError(
                 LocalComputeErrorCode.INVALID_REQUEST,
                 "Provider endpoints and credentials are not accepted by this operation.",
+            )
+
+        record_answer_stage(request, "answers_schema_accepted")
+        record_answer_stage(request, "answers_handler_begin")
+
+        current_stage = "answers_handler_begin"
+
+        def failure_boundary(stage: str) -> str:
+            if stage in {
+                "answers_document_resolution_begin",
+                "answers_document_resolution_done",
+                "answers_retrieval_begin",
+                "answers_retrieval_done",
+                "answers_context_begin",
+                "answers_context_done",
+            }:
+                return "ANYIO_THREADPOOL"
+            return "MAIN_EVENT_LOOP"
+
+        def report_answer_stage(stage: str, boundary: str) -> None:
+            nonlocal current_stage
+            current_stage = stage
+            record_answer_stage(
+                request,
+                stage,
+                boundary=boundary,
             )
 
         try:
@@ -1032,6 +1292,8 @@ def create_local_compute_app(
                     "document_ids"
                 ),
             }
+            if "answer_mode" in payload:
+                answer_kwargs["answer_mode"] = payload.get("answer_mode")
 
             if any(
                 key in payload
@@ -1063,11 +1325,20 @@ def create_local_compute_app(
 
             response = (
                 await answer_service.answer(
-                    **answer_kwargs
+                    **answer_kwargs,
+                    stage_reporter=report_answer_stage,
                 )
             )
 
         except LocalComputeError as exc:
+            record_answer_stage(
+                request,
+                "answers_handler_failed",
+                exception_class=type(exc).__name__,
+                stage=current_stage,
+                error_code=exc.code.value,
+                boundary=failure_boundary(current_stage),
+            )
             if exc.code in {
                 LocalComputeErrorCode.MODEL_UNAVAILABLE,
                 LocalComputeErrorCode.GENERATION_UNAVAILABLE,
@@ -1084,13 +1355,50 @@ def create_local_compute_app(
 
             raise
 
+        except Exception as exc:
+            # Keep unexpected local execution failures inside the HTTP
+            # boundary. Exception text may contain local data, so the durable
+            # diagnostic is limited to a class name and a fixed stage label.
+            record_answer_stage(
+                request,
+                "answers_handler_failed",
+                exception_class=type(exc).__name__,
+                stage=current_stage,
+                error_code=LocalComputeErrorCode.INTERNAL_COMPUTE_ERROR.value,
+                boundary=failure_boundary(current_stage),
+                **_safe_exception_location(exc),
+            )
+            return _error_response(
+                LocalComputeError(
+                    LocalComputeErrorCode.INTERNAL_COMPUTE_ERROR
+                ),
+                request.state.request_id,
+            )
+
         runtime.update_generation_capability(
             "READY"
         )
 
-        return {
+        record_answer_stage(
+            request,
+            "answers_serialization_begin",
+            boundary="MAIN_EVENT_LOOP",
+        )
+        response_content = {
             "request_id": request.state.request_id,
             **response.as_dict(),
         }
+        local_response = JSONResponse(content=response_content)
+        record_answer_stage(
+            request,
+            "answers_serialization_done",
+            boundary="MAIN_EVENT_LOOP",
+        )
+        record_answer_stage(
+            request,
+            "answers_response_ready",
+            boundary="MAIN_EVENT_LOOP",
+        )
+        return local_response
 
     return app

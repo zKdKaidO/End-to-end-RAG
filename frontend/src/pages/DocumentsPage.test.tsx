@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const { compute, platformApi } = vi.hoisted(() => ({
   compute: {
     discover: vi.fn(),
+    status: vi.fn(),
     connect: vi.fn(),
     listDocuments: vi.fn(),
     uploadSource: vi.fn(),
@@ -21,7 +22,10 @@ const { compute, platformApi } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("../compute", () => ({ BrowserComputeClient: class { constructor() { return compute; } } }));
+vi.mock("../compute", () => ({
+  browserComputeClient: () => compute,
+  BrowserComputeClient: class { constructor() { return compute; } },
+}));
 vi.mock("../api/client", () => ({ api: platformApi }));
 
 import { DocumentsPage } from "./DocumentsPage";
@@ -75,6 +79,7 @@ describe("DocumentsPage local-first behavior", () => {
     Object.values(compute).forEach((method) => method.mockReset());
     Object.values(platformApi).forEach((method) => method.mockReset());
     compute.discover.mockResolvedValue([]);
+    compute.status.mockReturnValue({ session: null });
     compute.connect.mockResolvedValue({});
     compute.listDocuments.mockResolvedValue([ready, prepared]);
     compute.uploadSource.mockResolvedValue({});

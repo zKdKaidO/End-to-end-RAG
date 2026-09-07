@@ -36,8 +36,90 @@ class LocalAuditLog:
             "duration_ms": duration_ms,
             "status_code": status_code,
         }
-        # The schema intentionally contains no request body, headers, text,
-        # prompts, model output, or local filesystem paths.
+        self._write(event)
+
+    def record_control_event(
+        self,
+        event_name: str,
+        *,
+        state: str,
+        delay_seconds: float | None = None,
+        exception_class: str | None = None,
+    ) -> None:
+        """Record control-channel liveness without remote or secret data."""
+        event = {
+            "timestamp": int(time.time()),
+            "event": event_name,
+            "state": state,
+        }
+        if delay_seconds is not None:
+            event["delay_seconds"] = round(delay_seconds, 3)
+        if exception_class is not None:
+            event["exception_class"] = exception_class
+        self._write(event)
+
+    def record_cors_preflight(
+        self,
+        *,
+        path: str,
+        origin: str,
+        requested_method: str,
+        requested_headers: list[str],
+        private_network_requested: bool,
+        response_headers: dict[str, str],
+        status_code: int,
+    ) -> None:
+        """Record only the fixed CORS/PNA preflight metadata needed for transport diagnosis.
+
+        Request values, credentials, and content are intentionally impossible to pass here.
+        ``requested_headers`` contains normalized HTTP header *names* only.
+        """
+        self._write(
+            {
+                "timestamp": int(time.time()),
+                "event": "cors_preflight",
+                "path": path,
+                "origin": origin,
+                "requested_method": requested_method,
+                "requested_headers": requested_headers,
+                "private_network_requested": private_network_requested,
+                "response_allow_origin": response_headers.get(
+                    "Access-Control-Allow-Origin"
+                ),
+                "response_allow_methods": response_headers.get(
+                    "Access-Control-Allow-Methods"
+                ),
+                "response_allow_headers": response_headers.get(
+                    "Access-Control-Allow-Headers"
+                ),
+                "response_allow_private_network": response_headers.get(
+                    "Access-Control-Allow-Private-Network"
+                ),
+                "status_code": status_code,
+            }
+        )
+
+    def record_answer_transport_stage(
+        self,
+        event_name: str,
+        **fields: object,
+    ) -> None:
+        """Record fixed-schema, content-free diagnostics for ``POST /v1/answers``.
+
+        Callers may supply only fixed route metadata, HTTP header names, numeric
+        lengths, and LocalComputeError enum names. Never pass values from a
+        request header or request body.
+        """
+        event = {
+            "timestamp": int(time.time()),
+            "event": event_name,
+            **fields,
+        }
+        self._write(event)
+
+    def _write(self, event: dict) -> None:
+        # The schema intentionally contains no request body, request-header
+        # values, text, prompts, model output, or local filesystem paths.
         encoded = json.dumps(event, separators=(",", ":")) + "\n"
         with self._lock:
             self._rotate_if_needed()

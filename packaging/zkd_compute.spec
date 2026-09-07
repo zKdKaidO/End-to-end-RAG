@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_dynamic_libs, collect_submodules
 
 
 root_value = os.environ.get("ZKD_BUILD_ROOT")
@@ -39,7 +39,20 @@ if not prompts.is_dir():
     )
 
 
-hiddenimports = []
+hiddenimports = [
+    # WindowsTray imports these at runtime after the loopback listener and
+    # first presence tick. Keep the native Windows backend explicit so an
+    # environment missing an optional hook cannot produce a startup-crashing
+    # bundle.
+    "pystray",
+    "pystray._base",
+    "pystray._win32",
+    "pystray._util.win32",
+    "PIL",
+    "PIL.Image",
+    "PIL.ImageDraw",
+    "PIL._imaging",
+]
 
 for package in (
     "app.local_compute",
@@ -48,6 +61,8 @@ for package in (
     "app.context",
     "app.generation",
     "app.indexing",
+    "pystray",
+    "PIL",
 ):
     hiddenimports.extend(
         collect_submodules(package)
@@ -57,7 +72,7 @@ for package in (
 a = Analysis(
     [str(launcher)],
     pathex=[str(ROOT)],
-    binaries=[],
+    binaries=collect_dynamic_libs("PIL"),
     datas=[
         (
             str(prompts),

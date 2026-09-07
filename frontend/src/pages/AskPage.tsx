@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUp, FileText, LogOut, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Search } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { BrowserComputeClient, type LocalAnswerResponse, type LocalCitation, type LocalComputeDocument, type LocalGenerationResult } from "../compute";
+import { browserComputeClient, type AnswerMode, type LocalAnswerResponse, type LocalCitation, type LocalComputeDocument, type LocalGenerationResult } from "../compute";
 import { CitedAnswer, ErrorNotice } from "../components/Common";
 import { ZkdWordmark } from "../components/product/ZkdWordmark";
 import type { AuthUser, Citation } from "../types";
@@ -25,10 +25,10 @@ function toProductCitation(citation: LocalCitation, sources: AskSource[]): Citat
 export function AskPage({ user, onLogout }: AskPageProps) {
   const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId?: string }>();
-  const computeRef = useRef<BrowserComputeClient | null>(null);
+  const computeRef = useRef<ReturnType<typeof browserComputeClient> | null>(null);
   const sourceDeviceIdRef = useRef<string | null>(null);
   const sourceCatalogLoadedRef = useRef(false);
-  if (!computeRef.current) computeRef.current = new BrowserComputeClient();
+  if (!computeRef.current) computeRef.current = browserComputeClient(user.id);
 
   const [messages, setMessages] = useState<LocalAskMessage[]>([]);
   const [documents, setDocuments] = useState<AskSource[]>([]);
@@ -37,12 +37,18 @@ export function AskPage({ user, onLogout }: AskPageProps) {
   const [query, setQuery] = useState("");
   const [pendingMessageId, setPendingMessageId] = useState<string | null>(null);
   const [error, setError] = useState<unknown>(null);
+  const [computeState, setComputeState] = useState<"CONNECTING" | "OFFLINE" | "STARTING" | "READY" | "ERROR">("CONNECTING");
   const [activeCitation, setActiveCitation] = useState<Citation | null>(null);
   const [modelId, setModelId] = useState("Local model");
+  const [answerMode, setAnswerMode] = useState<AnswerMode>(() => {
+    const saved = window.localStorage.getItem("zkd-answer-mode");
+    return saved === "EXACT" || saved === "EXPLORE" ? saved : "BALANCED";
+  });
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.localStorage.getItem("zkd-sidebar-collapsed") === "1");
 
   const loadLocalSources = useCallback(async () => {
     const compute = computeRef.current!;
+    setComputeState("CONNECTING");
     const session = await compute.connect("answer");
     const localDocuments = (await compute.listDocuments()).filter(isQueryable).map(toAskSource);
     const deviceChanged = sourceDeviceIdRef.current !== null && sourceDeviceIdRef.current !== session.deviceId;
@@ -51,12 +57,14 @@ export function AskPage({ user, onLogout }: AskPageProps) {
     setDocuments(localDocuments);
     setSelectedDocumentIds((current) => initialCatalog || deviceChanged ? localDocuments.map((item) => item.document_id) : current.filter((documentId) => localDocuments.some((item) => item.document_id === documentId)));
     sourceCatalogLoadedRef.current = true;
+    setComputeState("READY");
     if (deviceChanged) { setMessages([]); setActiveCitation(null); setPendingMessageId(null); }
   }, []);
 
-  useEffect(() => { let active = true; void loadLocalSources().catch((value) => active && setError(value)); return () => { active = false; }; }, [loadLocalSources]);
+  useEffect(() => { let active = true; void loadLocalSources().catch((value) => { if (active) { setError(value); setComputeState("OFFLINE"); } }); return () => { active = false; }; }, [loadLocalSources]);
   useEffect(() => { if (sessionId) navigate("/ask", { replace: true }); }, [navigate, sessionId]);
   useEffect(() => { window.localStorage.setItem("zkd-sidebar-collapsed", sidebarCollapsed ? "1" : "0"); }, [sidebarCollapsed]);
+  useEffect(() => { window.localStorage.setItem("zkd-answer-mode", answerMode); }, [answerMode]);
 
   const filteredDocuments = useMemo(() => {
     const needle = sourceSearch.trim().toLocaleLowerCase();
@@ -67,6 +75,20 @@ export function AskPage({ user, onLogout }: AskPageProps) {
   const isNewInquiry = messages.length === 0;
 
   const startNewInquiry = () => { setMessages([]); setPendingMessageId(null); setQuery(""); setError(null); setActiveCitation(null); navigate("/ask"); };
+  const startCompute = () => {
+    setError(null); setComputeState("STARTING");
+    window.location.href = "zkd://start";
+    const delays = [750, 1250, 2000, 3000, 4000];
+    let attempt = 0;
+    const retry = () => {
+      void loadLocalSources().catch((value) => {
+        attempt += 1;
+        if (attempt >= delays.length) { setError(value); setComputeState("ERROR"); return; }
+        window.setTimeout(retry, delays[attempt]);
+      });
+    };
+    window.setTimeout(retry, delays[0]);
+  };
   const submit = async (explicitQuery = query, explicitDocumentIds = selectedDocumentIds) => {
     const clean = explicitQuery.trim();
     if (!clean || pendingMessageId || (documents.length > 0 && explicitDocumentIds.length === 0)) return;
@@ -78,7 +100,7 @@ export function AskPage({ user, onLogout }: AskPageProps) {
     setPendingMessageId(assistantId);
     setQuery("");
     try {
-      const response = await computeRef.current!.answer({ query_text: clean, document_ids: documentIds });
+      const response = await computeRef.current!.answer({ query_text: clean, document_ids: documentIds, answer_mode: answerMode });
       const citations = response.result.citations.map((citation) => toProductCitation(citation, documents));
       setModelId(response.model_id || modelId);
       setMessages((current) => current.map((message) => message.kind === "ASSISTANT" && message.id === assistantId ? { ...message, state: "COMPLETED", result: response.result, provider: response.provider, citations } : message));
@@ -109,12 +131,12 @@ export function AskPage({ user, onLogout }: AskPageProps) {
     </aside>
 
     <main className={`zkd-chat ${isNewInquiry ? "zkd-chat--new" : ""}`}>
-      {error ? <div className="zkd-error"><ErrorNotice error={error} /></div> : null}
-      {isNewInquiry ? <section className="zkd-home"><ZkdWordmark size="hero" /><Composer query={query} modelId={modelId} pending={Boolean(pendingMessageId)} selectionRequired={selectionRequired} variant="hero" onChange={setQuery} onSubmit={() => void submit()} /></section> : <>
+      {computeState === "CONNECTING" || computeState === "OFFLINE" || computeState === "STARTING" || computeState === "ERROR" ? <section className="zkd-compute-offline" aria-live="polite"><span className={`zkd-compute-dot ${computeState === "STARTING" || computeState === "CONNECTING" ? "starting" : ""}`} /> <div><strong>{computeState === "CONNECTING" ? "Connecting to ZKD Compute…" : computeState === "STARTING" ? "Starting ZKD Compute…" : computeState === "ERROR" ? "ZKD Compute didn't start." : "Local Compute is offline"}</strong><p>ZKD Compute runs documents and AI locally on your computer.</p>{error ? <ErrorNotice error={error} /> : null}{computeState === "ERROR" ? <button type="button" onClick={() => void loadLocalSources().catch((value) => { setError(value); setComputeState("ERROR"); })}>Try Again</button> : null}<button type="button" className="primary" onClick={startCompute}>Start ZKD Compute</button><a href={import.meta.env.VITE_ZKD_COMPUTE_DOWNLOAD_URL || undefined} onClick={(event) => { if (!import.meta.env.VITE_ZKD_COMPUTE_DOWNLOAD_URL) event.preventDefault(); }}>Download ZKD Compute</a></div></section> : <>{error ? <div className="zkd-error"><ErrorNotice error={error} /></div> : null}
+      {isNewInquiry ? <section className="zkd-home"><ZkdWordmark size="hero" /><Composer query={query} modelId={modelId} answerMode={answerMode} pending={Boolean(pendingMessageId)} selectionRequired={selectionRequired} variant="hero" onChange={setQuery} onAnswerModeChange={setAnswerMode} onSubmit={() => void submit()} /></section> : <>
         <header className="zkd-chat-header"><span>Conversation</span></header>
         <div className="zkd-transcript"><div className="zkd-transcript-inner">{messages.map((message) => message.kind === "USER" ? <article className="zkd-message zkd-message--user" key={message.id}><div className="zkd-user-bubble">{message.content}</div></article> : <LocalAnswer key={message.id} message={message} onCitation={setActiveCitation} onRetry={() => retry(message)} />)}</div></div>
-        <div className="zkd-conversation-composer"><Composer query={query} modelId={modelId} pending={Boolean(pendingMessageId)} selectionRequired={selectionRequired} variant="conversation" onChange={setQuery} onSubmit={() => void submit()} /></div>
-      </>}
+        <div className="zkd-conversation-composer"><Composer query={query} modelId={modelId} answerMode={answerMode} pending={Boolean(pendingMessageId)} selectionRequired={selectionRequired} variant="conversation" onChange={setQuery} onAnswerModeChange={setAnswerMode} onSubmit={() => void submit()} /></div>
+      </>}</>}
     </main>
 
     <aside className="zkd-sources" aria-label="Sources" data-active-source={activeCitation?.source_id}>
@@ -128,9 +150,14 @@ export function AskPage({ user, onLogout }: AskPageProps) {
   </div>;
 }
 
-function Composer({ query, modelId, pending, selectionRequired, variant, onChange, onSubmit }: { query: string; modelId: string; pending: boolean; selectionRequired: boolean; variant: "hero" | "conversation"; onChange: (value: string) => void; onSubmit: () => void }) {
+function Composer({ query, modelId, answerMode, pending, selectionRequired, variant, onChange, onAnswerModeChange, onSubmit }: { query: string; modelId: string; answerMode: AnswerMode; pending: boolean; selectionRequired: boolean; variant: "hero" | "conversation"; onChange: (value: string) => void; onAnswerModeChange: (value: AnswerMode) => void; onSubmit: () => void }) {
   const disabled = !query.trim() || pending || selectionRequired;
-  return <div className={`zkd-composer zkd-composer--${variant}`}><textarea aria-label="Question" rows={variant === "hero" ? 3 : 2} value={query} placeholder="Type a command..." onChange={(event) => onChange(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!disabled) onSubmit(); } }} /><div className="zkd-composer-footer"><div className="zkd-model"><span className="zkd-model-dot" /><span>{modelId}</span></div><div className="zkd-composer-actions">{selectionRequired ? <span className="zkd-scope-warning">Select a source</span> : null}<button className="zkd-send" type="button" aria-label="Send message" disabled={disabled} onClick={onSubmit}><ArrowUp size={17} strokeWidth={2.1} /></button></div></div></div>;
+  const [modeOpen, setModeOpen] = useState(false);
+  const modeLabels: Record<AnswerMode, string> = { EXACT: "Exact", BALANCED: "Balanced", EXPLORE: "Explore" };
+  const descriptions: Record<AnswerMode, string> = { EXACT: "Direct evidence only", BALANCED: "Semantic synthesis with strong evidence", EXPLORE: "Broader document reasoning" };
+  const positions: AnswerMode[] = ["EXACT", "BALANCED", "EXPLORE"];
+  const selectMode = (value: AnswerMode) => { onAnswerModeChange(value); setModeOpen(false); };
+  return <div className={`zkd-composer zkd-composer--${variant}`}><textarea aria-label="Question" rows={variant === "hero" ? 3 : 2} value={query} placeholder="Type a command..." onChange={(event) => onChange(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!disabled) onSubmit(); } }} /><div className="zkd-composer-footer"><div className="zkd-model"><span className="zkd-model-dot" /><span>{modelId}</span></div><div className="zkd-composer-actions"><div className="zkd-answer-mode"><button type="button" className="zkd-answer-mode-trigger" aria-label="Answer mode" aria-expanded={modeOpen} title={descriptions[answerMode]} onClick={() => setModeOpen((value) => !value)}>{modeLabels[answerMode]} <span aria-hidden="true">▾</span></button>{modeOpen ? <div className="zkd-answer-mode-popover" role="dialog" aria-label="Choose answer mode"><div className="zkd-answer-mode-labels"><span>Exact</span><span>Balanced</span><span>Explore</span></div><input aria-label="Answer mode slider" type="range" min="0" max="2" step="1" value={positions.indexOf(answerMode)} onChange={(event) => onAnswerModeChange(positions[Number(event.target.value)])} /><div className="zkd-answer-mode-stops">{positions.map((mode) => <button key={mode} type="button" className={mode === answerMode ? "selected" : ""} title={descriptions[mode]} onClick={() => selectMode(mode)}>{descriptions[mode]}</button>)}</div></div> : null}</div>{selectionRequired ? <span className="zkd-scope-warning">Select a source</span> : null}<button className="zkd-send" type="button" aria-label="Send message" disabled={disabled} onClick={onSubmit}><ArrowUp size={17} strokeWidth={2.1} /></button></div></div></div>;
 }
 
 function LocalAnswer({ message, onCitation, onRetry }: { message: LocalAssistantMessage; onCitation: (citation: Citation) => void; onRetry: () => void }) {

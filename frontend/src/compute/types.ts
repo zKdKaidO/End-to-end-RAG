@@ -87,6 +87,7 @@ export interface ComputeClientStatus {
 }
 
 export type JsonObject = Record<string, unknown>;
+export type AnswerMode = "EXACT" | "BALANCED" | "EXPLORE";
 
 /**
  * Browser-facing request for the authenticated local retrieval route. Omit
@@ -98,6 +99,8 @@ export type JsonObject = Record<string, unknown>;
 export interface LocalQueryRequest {
   query_text: string;
   document_ids?: readonly string[] | null;
+  /** A fixed server-owned retrieval/generation profile. */
+  answer_mode?: AnswerMode;
 }
 
 export interface LocalRetrievedCandidate {
@@ -180,6 +183,7 @@ export interface LocalAnswerResponse {
   provider_type: "LOCAL" | "USER_CLOUD";
   provider_config_id: string | null;
   model_id: string;
+  answer_mode?: AnswerMode;
   result: LocalGenerationResult;
   hierarchy: JsonObject;
   timings: Record<string, number | null>;

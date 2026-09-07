@@ -89,12 +89,21 @@ def test_production_mode_fails_closed_without_real_grant_verifier(tmp_path):
     assert response.json()["error"]["code"] == LocalComputeErrorCode.NOT_PAIRED.value
 
 
-def test_allowed_origin_preflight_includes_pna_and_never_wildcard(client):
+def test_answer_preflight_authorizes_the_exact_browser_header_set_and_logs_only_safe_metadata(client, runtime):
+    requested_headers = [
+        "content-type",
+        "x-zkd-local-session",
+        "x-zkd-timestamp",
+        "x-zkd-nonce",
+        "x-zkd-mac",
+        "x-zkd-protocol-version",
+    ]
     response = client.options(
-        "/v1/probe/binary",
+        "/v1/answers",
         headers={
             "Origin": PRODUCT_ORIGIN,
             "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": ", ".join(requested_headers),
             "Access-Control-Request-Private-Network": "true",
         },
     )
@@ -102,6 +111,121 @@ def test_allowed_origin_preflight_includes_pna_and_never_wildcard(client):
     assert response.headers["access-control-allow-origin"] == PRODUCT_ORIGIN
     assert response.headers["access-control-allow-private-network"] == "true"
     assert response.headers["access-control-allow-origin"] != "*"
+    allowed = {
+        name.strip().lower()
+        for name in response.headers["access-control-allow-headers"].split(",")
+    }
+    assert set(requested_headers) <= allowed
+    assert "POST" in {
+        method.strip()
+        for method in response.headers["access-control-allow-methods"].split(",")
+    }
+
+    events = [
+        json.loads(line)
+        for line in (runtime.settings.logs_path / "runtime.jsonl").read_text().splitlines()
+    ]
+    event = next(item for item in events if item.get("event") == "cors_preflight")
+    assert event == {
+        "timestamp": event["timestamp"],
+        "event": "cors_preflight",
+        "path": "/v1/answers",
+        "origin": PRODUCT_ORIGIN,
+        "requested_method": "POST",
+        "requested_headers": requested_headers,
+        "private_network_requested": True,
+        "response_allow_origin": PRODUCT_ORIGIN,
+        "response_allow_methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "response_allow_headers": response.headers["access-control-allow-headers"],
+        "response_allow_private_network": "true",
+        "status_code": 204,
+    }
+
+
+def test_answer_preflight_does_not_reflect_unknown_requested_headers(client):
+    response = client.options(
+        "/v1/answers",
+        headers={
+            "Origin": PRODUCT_ORIGIN,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type, x-arbitrary-untrusted-header",
+            "Access-Control-Request-Private-Network": "true",
+        },
+    )
+    assert response.status_code == 204
+    allowed = response.headers["access-control-allow-headers"].lower()
+    assert "content-type" in allowed
+    assert "x-arbitrary-untrusted-header" not in allowed
+
+
+def test_answer_ingress_and_early_stages_are_logged_without_header_values(client, runtime):
+    session = _session(client)
+    body = b"not-a-loggable-body"
+    response = client.post(
+        "/v1/answers",
+        content=body,
+        headers={
+            **_signed_headers(session, "POST", "/v1/answers", body),
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == 400
+
+    log = (runtime.settings.logs_path / "runtime.jsonl").read_text()
+    events = [json.loads(line) for line in log.splitlines()]
+    stages = [event["event"] for event in events if event.get("event", "").startswith("answers_")]
+    assert stages == [
+        "answers_http_ingress",
+        "answers_auth_begin",
+        "answers_body_received",
+        "answers_auth_accepted",
+        "answers_schema_begin",
+        "answers_schema_rejected:INVALID_REQUEST",
+    ]
+    ingress = next(event for event in events if event.get("event") == "answers_http_ingress")
+    assert ingress["origin"] == PRODUCT_ORIGIN
+    assert ingress["content_type"] == "application/json"
+    assert ingress["content_length"] == len(body)
+    assert "x-zkd-mac" in ingress["request_header_names"]
+    assert session["local_session_id"] not in log
+    assert session["session_key"] not in log
+    assert "X-ZKD-MAC" not in log
+    assert body.decode() not in log
+
+
+def test_authenticated_answer_transport_probe_accepts_only_fixed_tiny_bodies(client):
+    session = _session(client)
+
+    for body, headers in (
+        (b"", {}),
+        (b'{"probe":"p2"}', {"Content-Type": "application/json"}),
+        (b'{"probe":"p3"}', {"Content-Type": "application/json"}),
+    ):
+        response = client.post(
+            "/v1/transport-probe",
+            content=body,
+            headers={
+                **_signed_headers(session, "POST", "/v1/transport-probe", body),
+                **headers,
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["status"] == "ok"
+
+    rejected = client.post(
+        "/v1/transport-probe",
+        content=b'{"probe":"not-allowed"}',
+        headers={
+            **_signed_headers(
+                session,
+                "POST",
+                "/v1/transport-probe",
+                b'{"probe":"not-allowed"}',
+            ),
+            "Content-Type": "application/json",
+        },
+    )
+    assert rejected.status_code == 400
 
 
 def test_foreign_origin_is_denied_without_runtime_metadata(client):

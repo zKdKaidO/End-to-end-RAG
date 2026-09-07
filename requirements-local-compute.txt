@@ -13,4 +13,9 @@ sentence-transformers>=2.6.1
 transformers>=5.0.0
 torch>=2.2.2
 structlog>=24.1.0
+# The production launcher starts WindowsTray after the first control tick.
+# Keep its runtime dependencies explicit so a clean PyInstaller environment
+# cannot silently omit the notification-area backend.
+pystray>=0.19.5
+Pillow>=10.0.0
 PyInstaller>=6.0.0

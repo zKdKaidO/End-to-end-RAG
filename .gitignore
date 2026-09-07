@@ -29,3 +29,8 @@ tmp/
 .venv-browser-acceptance/
 .venv-browser-acceptance311/
 git-checkpoint-report.txt
+.wrangler/
+node_modules/
+cloud/.staging-secrets/
+grant-verification-report.txt
+p2c6-build-report.txt

@@ -227,6 +227,11 @@ class PlatformControlClient:
             headers,
         )
 
+        if not isinstance(response, dict):
+            raise LocalComputeError(
+                LocalComputeErrorCode.CONTROL_CHANNEL_UNAVAILABLE
+            )
+
         if 200 <= status < 300:
             return response
 
@@ -315,11 +320,15 @@ class ControlChannel:
         self._thread: threading.Thread | None = None
 
     def start(self) -> None:
-        if (
-            self._thread is not None
-            or self.paired_state() is None
-        ):
+        if self.paired_state() is None:
             return
+
+        if self._thread is not None:
+            if self._thread.is_alive():
+                return
+            # A previous daemon must never permanently suppress heartbeats.
+            # This can only be reached after that thread has exited.
+            self._thread = None
 
         self._stop_event.clear()
 
@@ -330,6 +339,20 @@ class ControlChannel:
         )
 
         self._thread.start()
+        self._record_event("control_channel_started")
+
+    def is_running(self) -> bool:
+        return self._thread is not None and self._thread.is_alive()
+
+    def should_run(self) -> bool:
+        return (
+            self.paired_state() is not None
+            and self.state
+            not in {
+                ControlChannelState.REVOKED,
+                ControlChannelState.UPDATE_REQUIRED,
+            }
+        )
 
     def stop(self) -> None:
         self._stop_event.set()
@@ -350,7 +373,13 @@ class ControlChannel:
                 ControlChannelState.UPDATE_REQUIRED,
             }
         ):
-            self.tick()
+            try:
+                self.tick()
+            except Exception as exc:
+                # tick() handles expected LocalComputeError values itself.
+                # Keep this final boundary so a future programming/transport
+                # failure cannot silently end the only heartbeat thread.
+                self._schedule_retry(type(exc).__name__)
 
             wait_seconds = min(
                 max(
@@ -364,6 +393,8 @@ class ControlChannel:
             self._stop_event.wait(
                 wait_seconds
             )
+
+        self._record_event("control_channel_stopped")
 
     def paired_state(
         self,
@@ -564,6 +595,8 @@ class ControlChannel:
                 .control_heartbeat_seconds
             )
 
+            self._record_event("presence_published")
+
         except LocalComputeError as exc:
             if exc.code in {
                 LocalComputeErrorCode.DEVICE_REVOKED,
@@ -574,6 +607,7 @@ class ControlChannel:
                 )
 
                 self.runtime.revoke()
+                self._record_event("control_channel_revoked")
                 return
 
             if (
@@ -585,23 +619,49 @@ class ControlChannel:
                 )
 
                 self.runtime.set_update_required()
+                self._record_event("control_channel_update_required")
                 return
 
-            self.state = (
-                ControlChannelState.BACKING_OFF
-            )
+            self._schedule_retry(type(exc).__name__)
 
-            self.next_attempt_at = (
-                self.now()
-                + self.backoff
-                * (
-                    1
-                    + self.jitter()
-                    * 0.2
-                )
-            )
+        except Exception as exc:
+            # Network libraries and local catalog reads can raise exceptions
+            # outside the typed control protocol. They are availability
+            # failures, not authorization decisions: back off and retry while
+            # retaining the existing fail-closed grant/credential boundary.
+            self._schedule_retry(type(exc).__name__)
 
-            self.backoff = min(
-                self.backoff * 2,
-                self.runtime.settings.control_backoff_max_seconds,
+    def _schedule_retry(self, exception_class: str) -> None:
+        self.state = ControlChannelState.BACKING_OFF
+        delay_seconds = self.backoff * (1 + self.jitter() * 0.2)
+        self.next_attempt_at = self.now() + delay_seconds
+        self.backoff = min(
+            self.backoff * 2,
+            self.runtime.settings.control_backoff_max_seconds,
+        )
+        self._record_event(
+            "control_channel_retry_scheduled",
+            delay_seconds=delay_seconds,
+            exception_class=exception_class,
+        )
+
+    def _record_event(
+        self,
+        event_name: str,
+        *,
+        delay_seconds: float | None = None,
+        exception_class: str | None = None,
+    ) -> None:
+        audit_log = getattr(self.runtime, "audit_log", None)
+        if audit_log is None:
+            return
+        try:
+            audit_log.record_control_event(
+                event_name,
+                state=self.state.value,
+                delay_seconds=delay_seconds,
+                exception_class=exception_class,
             )
+        except Exception:
+            # Observability must not affect the control-plane liveness loop.
+            pass

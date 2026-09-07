@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import json
+import threading
 import time
 import uuid
 
@@ -14,7 +15,7 @@ from sqlalchemy import delete
 from app.auth.passwords import hash_password
 from app.compute_control import ComputeControlError, ComputeControlService
 from app.db.database import SessionLocal
-from app.local_compute.control_channel import ControlChannelState
+from app.local_compute.control_channel import ControlChannel, ControlChannelState, PairedDeviceState, PlatformControlClient
 from app.local_compute.credentials import TemporaryFileDeviceCredentialStore, UnavailableDeviceCredentialStore, public_key_b64
 from app.local_compute.errors import LocalComputeError, LocalComputeErrorCode
 from app.local_compute.runtime import LocalComputeRuntime, RuntimeState
@@ -51,6 +52,76 @@ class ServiceTransport:
         except ComputeControlError as exc: return 403,{"detail":{"error_code":exc.code}}
 
 
+class PrimitiveResponseTransport:
+    def send(self, method, path, body, headers):
+        return 200, "OK"
+
+
+class AdvancingClock:
+    def __init__(self):
+        self.value = 0.0
+        self._lock = threading.Lock()
+
+    def __call__(self):
+        with self._lock:
+            return self.value
+
+    def advance(self, seconds):
+        with self._lock:
+            self.value += seconds
+
+
+class AdvancingStopEvent:
+    """Thread-safe Event substitute that deterministically advances time."""
+
+    def __init__(self, clock, stop_after_waits):
+        self.clock = clock
+        self.stop_after_waits = stop_after_waits
+        self.waits = []
+        self.completed = threading.Event()
+        self._set = False
+        self._lock = threading.Lock()
+
+    def clear(self):
+        with self._lock:
+            self._set = False
+
+    def is_set(self):
+        with self._lock:
+            return self._set
+
+    def set(self):
+        with self._lock:
+            self._set = True
+        self.completed.set()
+
+    def wait(self, seconds):
+        with self._lock:
+            self.waits.append(seconds)
+            self.clock.advance(seconds)
+            if len(self.waits) >= self.stop_after_waits:
+                self._set = True
+                self.completed.set()
+            return self._set
+
+
+class HeartbeatTransport:
+    def __init__(self, *, fail_first=False):
+        self.fail_first = fail_first
+        self.presence_attempts = 0
+        self.presence_successes = 0
+
+    def send(self, method, path, body, headers):
+        if path.endswith("presence"):
+            self.presence_attempts += 1
+            if self.fail_first and self.presence_attempts == 1:
+                # This deliberately bypasses LocalComputeError to prove that
+                # an unexpected transient cannot terminate the daemon loop.
+                raise RuntimeError("transient transport failure")
+            self.presence_successes += 1
+        return 200, {}
+
+
 @pytest.fixture
 def platform_db():
     db=SessionLocal(); user=User(email=f"{uuid.uuid4()}@control.invalid",normalized_email=f"{uuid.uuid4()}@control.invalid",password_hash=hash_password("correct horse battery staple"),role=UserRole.USER.value,status=UserStatus.ACTIVE.value); db.add(user); db.commit()
@@ -85,6 +156,86 @@ def test_outbound_presence_manifest_outage_recovery_and_privacy(tmp_path,platfor
 
 def key_private_not_in(catalog_bytes, key_bytes):
     return key_bytes not in catalog_bytes
+
+
+def test_control_client_rejects_non_object_server_response_without_attribute_error():
+    client = PlatformControlClient(
+        PrimitiveResponseTransport(),
+        Ed25519PrivateKey.generate(),
+        PairedDeviceState(
+            device_id=str(uuid.uuid4()),
+            owner_user_id=None,
+            credential_epoch=1,
+            platform_base_url="https://rag.zkd.id.vn",
+            protocol_version="zkd-compute-v1",
+        ),
+    )
+    with pytest.raises(LocalComputeError) as failure:
+        client.publish_presence({"state": "READY"})
+    assert failure.value.code == LocalComputeErrorCode.CONTROL_CHANNEL_UNAVAILABLE
+
+
+def _run_control_loop_with_advancing_clock(runtime, store, transport, *, stop_after_waits):
+    clock = AdvancingClock()
+    channel = ControlChannel(
+        runtime,
+        store,
+        transport=transport,
+        now=clock,
+        jitter=lambda: 0.0,
+    )
+    stop_event = AdvancingStopEvent(clock, stop_after_waits)
+    channel._stop_event = stop_event
+    channel.start()
+    assert stop_event.completed.wait(timeout=1), "control loop did not complete"
+    channel.stop()
+    return channel, stop_event
+
+
+def test_background_control_loop_publishes_three_heartbeats(tmp_path, platform_db):
+    db, user = platform_db
+    runtime, _, _, _, store = paired_runtime(tmp_path, db, user)
+    transport = HeartbeatTransport()
+    try:
+        channel, stop_event = _run_control_loop_with_advancing_clock(
+            runtime,
+            store,
+            transport,
+            stop_after_waits=3,
+        )
+        assert transport.presence_successes == 3
+        assert stop_event.waits == [30, 30, 30]
+        assert channel.state == ControlChannelState.CONNECTED
+        events = [
+            json.loads(line)
+            for line in (runtime.settings.logs_path / "runtime.jsonl").read_text(encoding="utf-8").splitlines()
+        ]
+        assert sum(item.get("event") == "presence_published" for item in events) == 3
+    finally:
+        runtime.shutdown()
+
+
+def test_background_control_loop_recovers_after_unexpected_transient_failure(tmp_path, platform_db):
+    db, user = platform_db
+    runtime, _, _, _, store = paired_runtime(tmp_path, db, user)
+    transport = HeartbeatTransport(fail_first=True)
+    try:
+        channel, stop_event = _run_control_loop_with_advancing_clock(
+            runtime,
+            store,
+            transport,
+            stop_after_waits=3,
+        )
+        assert transport.presence_attempts == 3
+        assert transport.presence_successes == 2
+        assert stop_event.waits == [1.0, 30, 30]
+        assert channel.state == ControlChannelState.CONNECTED
+        control_log = (runtime.settings.logs_path / "runtime.jsonl").read_text(encoding="utf-8")
+        assert '"event":"control_channel_retry_scheduled"' in control_log
+        assert '"exception_class":"RuntimeError"' in control_log
+        assert "transient transport failure" not in control_log
+    finally:
+        runtime.shutdown()
 
 
 def test_revocation_halts_control_but_preserves_local_state(tmp_path,platform_db):

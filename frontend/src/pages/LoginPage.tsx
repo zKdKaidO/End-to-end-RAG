@@ -7,8 +7,10 @@ import type { AuthUser } from "../types";
 
 export function LoginPage({
   onAuthenticated,
+  onGoogleAuthorizationStart = (path: string) => window.location.assign(path),
 }: {
   onAuthenticated: (user: AuthUser) => void;
+  onGoogleAuthorizationStart?: (path: string) => void;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,14 +58,7 @@ export function LoginPage({
   };
 
   const loginWithGoogle = () => {
-    /*
-      Hiện tại mới là UI.
-
-      Khi backend Google OAuth được implement,
-      có thể đổi thành ví dụ:
-
-      window.location.href = "/api/v1/auth/google";
-    */
+    onGoogleAuthorizationStart("/api/v1/auth/google/start");
   };
 
   return (
@@ -217,11 +212,11 @@ export function LoginPage({
             {/* LEGAL */}
             <p className="auth-legal">
               By continuing, you agree to our{" "}
-              <a href="#">
+              <a href="/terms">
                 Terms of Service
               </a>
               {" "}and{" "}
-              <a href="#">
+              <a href="/privacy">
                 Privacy Policy
               </a>.
             </p>
@@ -230,7 +225,11 @@ export function LoginPage({
 
           {/* FOOTER */}
           <footer className="auth-footer">
-            Secure research workspace
+            <span>Secure research workspace</span>
+            <span aria-hidden="true"> · </span>
+            <a href="/privacy">Privacy Policy</a>
+            <span aria-hidden="true"> · </span>
+            <a href="/terms">Terms of Service</a>
           </footer>
 
         </div>

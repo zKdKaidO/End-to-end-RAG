@@ -179,10 +179,12 @@ def test_router_has_no_user_or_platform_cloud_fallback():
 @pytest.mark.asyncio
 async def test_local_answer_uses_canonical_prompt_finalization_and_source_mapping():
     subject, retrieval = service(FakeOllamaClient())
+    stages: list[tuple[str, str]] = []
     response = await subject.answer(
         request_id="local-answer-1",
         query_text="Mức phí là bao nhiêu?",
         document_ids=[str(UUID(int=2))],
+        stage_reporter=lambda stage, boundary: stages.append((stage, boundary)),
     )
     assert retrieval.calls == 1
     assert response.provider == GenerationProviderType.LOCAL
@@ -192,6 +194,16 @@ async def test_local_answer_uses_canonical_prompt_finalization_and_source_mappin
     assert response.result.citations[0].provenance_json["page_start"] == 1
     assert response.result.citation_validation == CitationValidation.PASS
     assert response.timings["prompt_token_count"] == 100.0
+    assert stages == [
+        ("answers_document_resolution_begin", "ANYIO_THREADPOOL"),
+        ("answers_retrieval_begin", "ANYIO_THREADPOOL"),
+        ("answers_document_resolution_done", "ANYIO_THREADPOOL"),
+        ("answers_retrieval_done", "ANYIO_THREADPOOL"),
+        ("answers_context_begin", "ANYIO_THREADPOOL"),
+        ("answers_context_done", "ANYIO_THREADPOOL"),
+        ("answers_generation_begin", "MAIN_EVENT_LOOP"),
+        ("answers_generation_done", "MAIN_EVENT_LOOP"),
+    ]
 
 
 @pytest.mark.asyncio
@@ -266,10 +278,20 @@ def test_answer_protocol_operation_is_additive_and_authenticated(tmp_path, monke
             return {"provider": "LOCAL", "model_id": "qwen3.5:9b", "result": {"status": "COMPLETED"}, "hierarchy": {}, "timings": {}}
 
     class FakeAnswerService:
-        async def answer(self, *, request_id, query_text, document_ids):
+        async def answer(
+            self,
+            *,
+            request_id,
+            query_text,
+            document_ids,
+            stage_reporter=None,
+        ):
             assert request_id
             assert query_text == "Câu hỏi"
             assert document_ids is None
+            if stage_reporter is not None:
+                stage_reporter("answers_retrieval_begin", "ANYIO_THREADPOOL")
+                stage_reporter("answers_retrieval_done", "ANYIO_THREADPOOL")
             return FakeResponse()
 
         def __init__(self, *_args, **_kwargs):
@@ -298,3 +320,173 @@ def test_answer_protocol_operation_is_additive_and_authenticated(tmp_path, monke
         assert response.json()["result"]["status"] == "COMPLETED"
     finally:
         runtime.shutdown()
+
+
+def test_answer_http_route_runs_exact_all_document_shape_through_anyio_context_boundary(
+    tmp_path, monkeypatch
+):
+    """Exercise FastAPI -> AnyIO -> LocalAnswerService without a browser.
+
+    The request byte shape matches the reported production request. The
+    provider and retrieval data are fixed only to keep this a deterministic
+    boundary test; Block 5 is the real context builder used by the service.
+    """
+    runtime = LocalComputeRuntime(
+        LocalComputeSettings(
+            data_root=tmp_path / "Compute",
+            development_mode=True,
+            development_origins=("http://localhost:5173",),
+        )
+    )
+    runtime.start()
+
+    class ExactRequestRetrieval(FakeLocalRetrieval):
+        def query_document_set_with_diagnostics(self, query_text, document_ids, _mode):
+            assert query_text == "các hình thức cập nhật công tác xã hội?"
+            assert document_ids is None
+            return super().query_document_set_with_diagnostics(
+                "Mức phí là bao nhiêu?", [str(UUID(int=2))]
+            )
+
+    actual = LocalAnswerService(
+        runtime.settings,
+        runtime.catalog,
+        GenerationRouter(provider(FakeOllamaClient())),
+        profile=profile(),
+        retrieval_store=ExactRequestRetrieval(),
+        context_builder=ContextBuilderService(CharacterTokenCounter()),
+        prompt_counter=FixedPromptCounter(100),
+    )
+    monkeypatch.setattr(local_api, "LocalAnswerService", lambda *_args, **_kwargs: actual)
+    try:
+        client = TestClient(create_local_compute_app(runtime))
+        session = client.post(
+            "/v1/sessions",
+            headers={
+                "Origin": PRODUCT_ORIGIN,
+                "X-ZKD-Local-Grant": "development-test-grant",
+            },
+        ).json()
+        body = json.dumps(
+            {
+                "query_text": "các hình thức cập nhật công tác xã hội?",
+                "document_ids": None,
+                "answer_mode": "EXPLORE",
+            },
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        assert len(body) == 113
+        timestamp, nonce = str(int(time.time())), str(uuid.uuid4())
+        signed = "|".join(
+            ("POST", "/v1/answers", timestamp, nonce, hashlib.sha256(body).hexdigest())
+        ).encode()
+        response = client.post(
+            "/v1/answers",
+            content=body,
+            headers={
+                "Origin": PRODUCT_ORIGIN,
+                "Content-Type": "application/json",
+                "X-ZKD-Local-Session": session["local_session_id"],
+                "X-ZKD-Timestamp": timestamp,
+                "X-ZKD-Nonce": nonce,
+                "X-ZKD-MAC": hmac.new(
+                    session["session_key"].encode(), signed, hashlib.sha256
+                ).hexdigest(),
+                "X-ZKD-Protocol-Version": "zkd-compute-v1",
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["result"]["status"] == "COMPLETED"
+    finally:
+        runtime.shutdown()
+
+
+def test_unexpected_answer_handler_failure_is_a_safe_http_error(tmp_path, monkeypatch):
+    runtime = LocalComputeRuntime(
+        LocalComputeSettings(
+            data_root=tmp_path / "Compute",
+            development_mode=True,
+            development_origins=("http://localhost:5173",),
+        )
+    )
+    runtime.start()
+
+    class FailingAnswerService:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        async def answer(self, **_kwargs):
+            raise RuntimeError("untrusted failure detail must not be exposed")
+
+    monkeypatch.setattr(local_api, "LocalAnswerService", FailingAnswerService)
+    try:
+        client = TestClient(create_local_compute_app(runtime))
+        session = client.post(
+            "/v1/sessions",
+            headers={
+                "Origin": PRODUCT_ORIGIN,
+                "X-ZKD-Local-Grant": "development-test-grant",
+            },
+        ).json()
+        body = json.dumps({"query_text": "Câu hỏi"}, ensure_ascii=False).encode()
+        timestamp = str(int(time.time()))
+        nonce = str(uuid.uuid4())
+        signed = "|".join(
+            (
+                "POST",
+                "/v1/answers",
+                timestamp,
+                nonce,
+                hashlib.sha256(body).hexdigest(),
+            )
+        ).encode()
+        headers = {
+            "Origin": PRODUCT_ORIGIN,
+            "Content-Type": "application/json",
+            "X-ZKD-Local-Session": session["local_session_id"],
+            "X-ZKD-Timestamp": timestamp,
+            "X-ZKD-Nonce": nonce,
+            "X-ZKD-MAC": hmac.new(
+                session["session_key"].encode(), signed, hashlib.sha256
+            ).hexdigest(),
+            "X-ZKD-Protocol-Version": "zkd-compute-v1",
+        }
+        response = client.post("/v1/answers", content=body, headers=headers)
+        assert response.status_code == 500
+        assert response.json()["error"]["code"] == "INTERNAL_COMPUTE_ERROR"
+        assert "untrusted failure detail" not in response.text
+
+        events = [
+            json.loads(line)
+            for line in (runtime.settings.logs_path / "runtime.jsonl").read_text().splitlines()
+        ]
+        failure = next(event for event in events if event.get("event") == "answers_handler_failed")
+        assert failure["exception_class"] == "RuntimeError"
+        assert failure["stage"] == "answers_handler_begin"
+        assert failure["error_code"] == "INTERNAL_COMPUTE_ERROR"
+        assert failure["boundary"] == "MAIN_EVENT_LOOP"
+        assert failure["failure_module"] == "test_generation.py"
+        assert failure["failure_function"] == "answer"
+        assert isinstance(failure["failure_line"], int)
+        assert failure["failure_frame_chain"][-1] == {
+            "module": "test_generation.py",
+            "line": failure["failure_line"],
+            "function": "answer",
+        }
+        assert "failure_safe_message" not in failure
+    finally:
+        runtime.shutdown()
+
+
+def test_answer_failure_diagnostic_retains_only_weakref_type_error_shape():
+    try:
+        raise TypeError("cannot create weak reference to 'dict' object")
+    except TypeError as exc:
+        details = local_api._safe_exception_location(exc)
+
+    assert details["failure_key_type"] == "dict"
+    assert details["failure_safe_message"] == (
+        "cannot create weak reference to 'dict' object"
+    )
+    assert details["failure_frame_chain"][-1]["module"] == "test_generation.py"

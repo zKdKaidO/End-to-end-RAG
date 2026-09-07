@@ -26,6 +26,7 @@ from app.generation.tokenizers import ContextTokenCounter, PromptTokenCounter
 from .context_adapter import build_local_context
 from .errors import LocalComputeError, LocalComputeErrorCode
 from .retrieval import LocalRetrievalStore
+from .answer_modes import AnswerMode, answer_mode_profile
 
 
 logger = get_logger(__name__)
@@ -456,9 +457,10 @@ class LocalAnswerResponse:
     timings: dict[str, float | None]
     provider_config_id: str | None = None
     routing: dict[str, Any] | None = None
+    answer_mode: str = AnswerMode.BALANCED.value
 
     def as_dict(self) -> dict[str, Any]:
-        return {"provider": self.provider.value, "provider_type": self.provider.value, "provider_config_id": self.provider_config_id, "model_id": self.model_id, "result": self.result.model_dump(mode="json"), "hierarchy": self.hierarchy, "timings": self.timings, "routing": self.routing or {"policy": GenerationRoutingPolicy.LOCAL_ONLY.value, "selected_provider_type": self.provider.value, "fallback_occurred": False, "privacy_boundary": "LOCAL_DEVICE"}}
+        return {"provider": self.provider.value, "provider_type": self.provider.value, "provider_config_id": self.provider_config_id, "model_id": self.model_id, "answer_mode": self.answer_mode, "result": self.result.model_dump(mode="json"), "hierarchy": self.hierarchy, "timings": self.timings, "routing": self.routing or {"policy": GenerationRoutingPolicy.LOCAL_ONLY.value, "selected_provider_type": self.provider.value, "fallback_occurred": False, "privacy_boundary": "LOCAL_DEVICE"}}
 
 
 class LocalAnswerService:
@@ -470,18 +472,51 @@ class LocalAnswerService:
         self.context_builder = context_builder or ContextBuilderService(ContextTokenCounter(self.profile.tokenizer_provider, self.profile.tokenizer_id))
         self.prompt_counter = prompt_counter or PromptTokenCounter(self.profile.tokenizer_provider, self.profile.tokenizer_id, thinking=self.profile.thinking)
 
-    async def answer(self, *, request_id: str, query_text: str, document_ids: list[str] | None, routing: GenerationRoutingRequest | None = None) -> LocalAnswerResponse:
+    async def answer(
+        self,
+        *,
+        request_id: str,
+        query_text: str,
+        document_ids: list[str] | None,
+        routing: GenerationRoutingRequest | None = None,
+        answer_mode: AnswerMode | str | None = None,
+        stage_reporter: Callable[[str, str], None] | None = None,
+    ) -> LocalAnswerResponse:
+        """Run the local answer path with an optional content-free stage hook."""
+        def report(stage: str, boundary: str) -> None:
+            if stage_reporter is None:
+                return
+            try:
+                stage_reporter(stage, boundary)
+            except Exception:
+                # Diagnostics must not become an answer-path dependency.
+                pass
+
         query_text, routing = self._validate_request(query_text, document_ids), routing or GenerationRoutingRequest()
+        mode_profile = answer_mode_profile(answer_mode)
         started, retrieval_started = perf_counter(), perf_counter()
-        local_results, hierarchy = await run_in_threadpool(self.retrieval_store.query_document_set_with_diagnostics, query_text, document_ids)
+        # Keep the V1 call shape when a caller omits the new V2 field; this is
+        # also important for pre-V2 local extensions that implement the
+        # retrieval protocol.
+        retrieval_args = (query_text, document_ids) if answer_mode is None else (query_text, document_ids, mode_profile.mode)
+        report("answers_document_resolution_begin", "ANYIO_THREADPOOL")
+        report("answers_retrieval_begin", "ANYIO_THREADPOOL")
+        local_results, hierarchy = await run_in_threadpool(self.retrieval_store.query_document_set_with_diagnostics, *retrieval_args)
+        report("answers_document_resolution_done", "ANYIO_THREADPOOL")
+        report("answers_retrieval_done", "ANYIO_THREADPOOL")
         retrieval_ms, context_started = (perf_counter() - retrieval_started) * 1000, perf_counter()
-        package = await run_in_threadpool(build_local_context, request_id=request_id, query_text=query_text, local_results=local_results, context_budget_tokens=self.profile.context_budget_tokens, context_builder=self.context_builder)
+        context_budget = min(self.profile.context_budget_tokens, mode_profile.context_budget_tokens)
+        report("answers_context_begin", "ANYIO_THREADPOOL")
+        package = await run_in_threadpool(build_local_context, request_id=request_id, query_text=query_text, local_results=local_results, context_budget_tokens=context_budget, context_builder=self.context_builder)
+        report("answers_context_done", "ANYIO_THREADPOOL")
         timings: dict[str, float | None] = {"retrieval_ms": round(retrieval_ms, 3), "context_build_ms": round((perf_counter() - context_started) * 1000, 3), "prompt_token_count": None, "generation_ms": None, "total_ms": None, "time_to_first_token_ms": None}
         if package.selected_count == 0:
             result = GenerationResult(request_id=request_id, status=GenerationStatus.INSUFFICIENT_EVIDENCE, answer_text=INSUFFICIENT_EVIDENCE_MESSAGE, citations=[], invalid_citations=[], citation_validation=CitationValidation.PASS, model_id=self.profile.model_id, prompt_version=self.profile.prompt_version, finish_reason=None, usage=None, answerability_status=AnswerabilityStatus.INSUFFICIENT_EVIDENCE, answerability_validation=AnswerabilityValidation.NOT_APPLICABLE)
             timings["total_ms"] = round((perf_counter() - started) * 1000, 3)
-            return LocalAnswerResponse(GenerationProviderType.LOCAL, self.profile.model_id, result, hierarchy, timings)
+            return LocalAnswerResponse(GenerationProviderType.LOCAL, self.profile.model_id, result, hierarchy, timings, answer_mode=mode_profile.mode.value)
+        report("answers_generation_begin", "MAIN_EVENT_LOOP")
         messages = assemble_messages(package, self.profile.prompt_version)
+        messages[0]["content"] += "\n\nANSWER MODE (trusted server instruction): " + mode_profile.generation_instruction
         prompt_tokens = self.prompt_counter.count_messages(messages)
         timings["prompt_token_count"] = float(prompt_tokens)
         if prompt_tokens + self.profile.max_output_tokens + self.profile.prompt_token_safety_margin > self.profile.model_context_limit:
@@ -490,9 +525,10 @@ class LocalAnswerService:
         provider_result = await decision.provider.generate(messages)
         timings["generation_ms"] = round((perf_counter() - generation_started) * 1000, 3)
         result = finalize_generation_result(request_id=request_id, package=package, profile=self.profile, provider_text=provider_result.text, finish_reason=provider_result.finish_reason, usage=provider_result.usage, model_id=decision.model_id)
+        report("answers_generation_done", "MAIN_EVENT_LOOP")
         timings["total_ms"] = round((perf_counter() - started) * 1000, 3)
-        logger.info("local_generation_completed", request_id=request_id, provider_type=decision.provider_type.value, provider_config_id=decision.provider_config_id, model_id=decision.model_id, routing_policy=routing.policy.value, fallback_occurred=decision.fallback_occurred, prompt_tokens=prompt_tokens, output_tokens=result.usage.output_tokens if result.usage else None, citation_count=len(result.citations), generation_status=result.status.value, total_ms=timings["total_ms"])
-        return LocalAnswerResponse(decision.provider_type, decision.model_id, result, hierarchy, timings, decision.provider_config_id, decision.metadata())
+        logger.info("local_generation_completed", request_id=request_id, answer_mode=mode_profile.mode.value, provider_type=decision.provider_type.value, provider_config_id=decision.provider_config_id, model_id=decision.model_id, routing_policy=routing.policy.value, fallback_occurred=decision.fallback_occurred, prompt_tokens=prompt_tokens, context_candidate_count=package.selected_count, output_tokens=result.usage.output_tokens if result.usage else None, citation_count=len(result.citations), generation_status=result.status.value, total_ms=timings["total_ms"])
+        return LocalAnswerResponse(decision.provider_type, decision.model_id, result, hierarchy, timings, decision.provider_config_id, decision.metadata(), mode_profile.mode.value)
 
     @staticmethod
     def _validate_request(query_text: str, document_ids: list[str] | None) -> str:

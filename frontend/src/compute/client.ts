@@ -1,6 +1,12 @@
 ﻿import { binaryBodyBytes, canonicalTranscript, createBrowserNonce, exactArrayBuffer, hmacSha256Hex, serializeJsonOnce, sha256Hex } from "./crypto";
 import { BrowserComputeError, isDeviceInvalidatingCode, isSessionInvalidatingCode } from "./errors";
-import { PlatformComputeApi, type PlatformFetch } from "./platform";
+import {
+  PlatformComputeApi,
+  type AnswerRequestPreparationDiagnostic,
+  type LocalFetchDiagnostic,
+  type LocalTransportProbeDiagnostic,
+  type PlatformFetch,
+} from "./platform";
 import { COMPUTE_PROTOCOL_VERSION, type ComputeClientStatus, type ComputeDevice, type ComputeOperation, type JsonObject, type LocalAnswerRequest, type LocalAnswerResponse, type LocalBootstrapResponse, type LocalComputeDocument, type LocalQueryRequest, type LocalQueryResponse, type LocalSession, type LocalSessionSnapshot, type PlatformGrant } from "./types";
 
 export interface BrowserComputeClientOptions {
@@ -110,18 +116,146 @@ function encodeFilenameHeader(filename: string): string {
   }
 }
 
-function mapLocalFetchFailure(error: unknown): BrowserComputeError {
-  if (
-    error instanceof TypeError &&
-    /headers|iso-8859-1|code point/i.test(error.message)
-  ) {
-    return new BrowserComputeError(
-      "INVALID_REQUEST",
-      "Browser rejected a local request header before the request could be sent.",
-    );
+type LocalFetchFailure = {
+  diagnostic: Omit<LocalFetchDiagnostic, "operation" | "host_type" | "method" | "endpoint_path" | "local_session_present" | "browser_nonce_present" | "abort_signal_fired" | "request_timeout_configured" | "frontend_state">;
+  error: BrowserComputeError;
+};
+
+type AnswerHeaderValidity = AnswerRequestPreparationDiagnostic["header_validity"];
+
+const answerHeaderNames = [
+  "origin",
+  "content-type",
+  "x-zkd-local-session",
+  "x-zkd-timestamp",
+  "x-zkd-nonce",
+  "x-zkd-mac",
+  "x-zkd-protocol-version",
+] as const;
+
+function safeHeaderValue(value: string, expression: RegExp): boolean {
+  if (!value || /[\r\n]/.test(value) || !expression.test(value)) return false;
+  try {
+    new Headers({ "X-ZKD-Diagnostic": value });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function answerHeaderValidity(
+  headers: Record<string, string>,
+  origin: string,
+): AnswerHeaderValidity {
+  const values = Object.fromEntries(
+    Object.entries(headers).map(([name, value]) => [name.toLowerCase(), value]),
+  ) as Record<string, string>;
+  return {
+    origin: values.origin === origin && safeHeaderValue(values.origin ?? "", /^https?:\/\/[^\s/]+/),
+    "content-type": values["content-type"] === "application/json" && safeHeaderValue(values["content-type"] ?? "", /^application\/json$/),
+    "x-zkd-local-session": safeHeaderValue(values["x-zkd-local-session"] ?? "", /^[0-9a-f]{8}-[0-9a-f-]{27}$/i),
+    "x-zkd-timestamp": safeHeaderValue(values["x-zkd-timestamp"] ?? "", /^\d{10,13}$/),
+    "x-zkd-nonce": safeHeaderValue(values["x-zkd-nonce"] ?? "", /^[A-Za-z0-9_-]{16,128}$/),
+    "x-zkd-mac": safeHeaderValue(values["x-zkd-mac"] ?? "", /^[0-9a-f]{64}$/i),
+    "x-zkd-protocol-version": values["x-zkd-protocol-version"] === COMPUTE_PROTOCOL_VERSION && safeHeaderValue(values["x-zkd-protocol-version"] ?? "", /^zkd-compute-v1$/),
+  };
+}
+
+function answerRequestPreparation(
+  url: string,
+  init: RequestInit,
+  headers: Record<string, string>,
+  origin: string,
+): AnswerRequestPreparationDiagnostic {
+  const body = init.body;
+  let bodyType: AnswerRequestPreparationDiagnostic["body_type"] = "OTHER";
+  let byteLength = 0;
+  let detached = false;
+
+  if (body === undefined) {
+    bodyType = "NONE";
+  } else if (body instanceof ArrayBuffer) {
+    bodyType = "ArrayBuffer";
+    try {
+      byteLength = body.byteLength;
+      new Uint8Array(body);
+    } catch {
+      detached = true;
+    }
   }
 
-  return new BrowserComputeError("LOCAL_COMPUTE_UNAVAILABLE");
+  const base = {
+    operation: "answer_request_preparation" as const,
+    body_type: bodyType,
+    body_byte_length: byteLength,
+    body_detached: detached,
+    header_validity: answerHeaderValidity(headers, origin),
+  };
+
+  try {
+    new Request(url, init);
+    return {
+      ...base,
+      request_construction: "SUCCEEDED",
+      exception_name: "None",
+      classification: "REQUEST_CONSTRUCTION_SUCCEEDED",
+    };
+  } catch (error) {
+    return {
+      ...base,
+      request_construction: "FAILED",
+      exception_name: browserExceptionName(error),
+      classification: "REQUEST_CONSTRUCTION_FAILED",
+    };
+  }
+}
+
+function browserExceptionName(error: unknown): LocalFetchDiagnostic["exception_name"] {
+  const name = error && typeof error === "object" && "name" in error && typeof error.name === "string"
+    ? error.name
+    : "UnknownError";
+  return ["TypeError", "AbortError", "NetworkError", "NotAllowedError"].includes(name)
+    ? name as LocalFetchDiagnostic["exception_name"]
+    : "UnknownError";
+}
+
+/** Classifies native fetch rejection without retaining or transmitting its raw text. */
+function mapLocalFetchFailure(error: unknown): LocalFetchFailure {
+  const exceptionName = browserExceptionName(error);
+  const rawMessage = error instanceof Error ? error.message : "";
+
+  if (exceptionName === "AbortError") {
+    return {
+      diagnostic: { phase: "abort", exception_name: exceptionName, exception_message: "LOCAL_FETCH_ABORTED", classification: "FETCH_ABORTED" },
+      error: new BrowserComputeError("FETCH_ABORTED", "Local transport diagnostic: AbortError / LOCAL_FETCH_ABORTED. The browser aborted the local Compute request before it reached the service."),
+    };
+  }
+
+  if (exceptionName === "NotAllowedError") {
+    return {
+      diagnostic: { phase: "actual-fetch", exception_name: exceptionName, exception_message: "LOCAL_FETCH_NOT_ALLOWED", classification: "ORIGIN_POLICY_REJECTED" },
+      error: new BrowserComputeError("ORIGIN_POLICY_REJECTED", "Local transport diagnostic: NotAllowedError / LOCAL_FETCH_NOT_ALLOWED. The browser rejected the local Compute request under its origin policy."),
+    };
+  }
+
+  if (exceptionName === "TypeError" && /headers|iso-8859-1|code point|body/i.test(rawMessage)) {
+    return {
+      diagnostic: { phase: "actual-fetch", exception_name: exceptionName, exception_message: "LOCAL_FETCH_BODY_OR_HEADER_REJECTED", classification: "BODY_INIT_INVALID" },
+      error: new BrowserComputeError("INVALID_REQUEST", "Local transport diagnostic: TypeError / LOCAL_FETCH_BODY_OR_HEADER_REJECTED. Browser rejected the local request body or header before it could be sent."),
+    };
+  }
+
+  if (exceptionName === "TypeError" || exceptionName === "NetworkError") {
+    return {
+      diagnostic: { phase: "actual-fetch", exception_name: exceptionName, exception_message: "LOCAL_FETCH_NETWORK_REJECTED", classification: "BROWSER_NETWORK_REJECTED" },
+      error: new BrowserComputeError("BROWSER_NETWORK_REJECTED", `Local transport diagnostic: ${exceptionName} / LOCAL_FETCH_NETWORK_REJECTED. The browser rejected the local Compute network request before a response was received.`),
+    };
+  }
+
+  return {
+    diagnostic: { phase: "actual-fetch", exception_name: exceptionName, exception_message: "LOCAL_FETCH_OTHER_REJECTION", classification: "OTHER_BROWSER_FETCH_FAILURE" },
+    error: new BrowserComputeError("OTHER_BROWSER_FETCH_FAILURE", `Local transport diagnostic: ${exceptionName} / LOCAL_FETCH_OTHER_REJECTION. The browser rejected the local Compute request before a response was received.`),
+  };
 }
 
 async function parseLocalResponse<T>(response: Response): Promise<T> {
@@ -220,6 +354,120 @@ export class BrowserComputeClient {
   private session: LocalSession | null = null;
   private bootstrapInFlight: Promise<LocalSession> | null = null;
   private reconnectInFlight: Promise<boolean> | null = null;
+
+  private async reportAnswerFetchFailure(failure: LocalFetchFailure): Promise<void> {
+    // Diagnostics are intentionally best-effort and never alter the local request result.
+    try {
+      await this.platform.reportLocalFetchDiagnostic({
+        operation: "answers",
+        ...failure.diagnostic,
+        host_type: "loopback",
+        method: "POST",
+        endpoint_path: "/v1/answers",
+        local_session_present: true,
+        browser_nonce_present: false,
+        abort_signal_fired: false,
+        request_timeout_configured: false,
+        frontend_state: "AUTHENTICATED_REQUEST",
+      });
+    } catch {
+      // Never convert a local transport failure into a platform diagnostic failure.
+    }
+  }
+
+  private async reportAnswerRequestPreparation(
+    diagnostic: AnswerRequestPreparationDiagnostic,
+  ): Promise<void> {
+    try {
+      await this.platform.reportAnswerRequestPreparation(diagnostic);
+    } catch {
+      // Diagnostics must never change the answer request's transport result.
+    }
+  }
+
+  private async reportTransportProbe(
+    diagnostic: LocalTransportProbeDiagnostic,
+  ): Promise<void> {
+    try {
+      await this.platform.reportLocalTransportProbeDiagnostic(diagnostic);
+    } catch {
+      // A platform diagnostic outage must not hide the local probe result.
+    }
+  }
+
+  private async runAnswerTransportProbes(): Promise<void> {
+    const probes: Array<{
+      id: LocalTransportProbeDiagnostic["probe_id"];
+      rawBody: Uint8Array;
+      body: BodyInit | undefined;
+      headers: Record<string, string>;
+    }> = [
+      { id: "P1", rawBody: new Uint8Array(), body: undefined, headers: {} },
+      {
+        id: "P2",
+        rawBody: serializeJsonOnce({ probe: "p2" }),
+        body: '{"probe":"p2"}',
+        headers: { "Content-Type": "application/json" },
+      },
+      {
+        id: "P3",
+        rawBody: serializeJsonOnce({ probe: "p3" }),
+        body: exactArrayBuffer(serializeJsonOnce({ probe: "p3" })),
+        headers: { "Content-Type": "application/json" },
+      },
+    ];
+
+    for (const probe of probes) {
+      try {
+        const session = await this.ensureSession("answer");
+        const timestamp = String(Math.floor(this.clock()));
+        const nonce = this.nonceFactory();
+        const mac = await hmacSha256Hex(
+          session.sessionKey,
+          canonicalTranscript(
+            "POST",
+            "/v1/transport-probe",
+            timestamp,
+            nonce,
+            await sha256Hex(probe.rawBody),
+          ),
+        );
+        const response = await this.localFetch(
+          `${session.baseUrl}/v1/transport-probe`,
+          {
+            method: "POST",
+            headers: {
+              Origin: this.origin,
+              "X-ZKD-Local-Session": session.sessionId,
+              "X-ZKD-Timestamp": timestamp,
+              "X-ZKD-Nonce": nonce,
+              "X-ZKD-MAC": mac,
+              "X-ZKD-Protocol-Version": session.protocolVersion,
+              ...probe.headers,
+            },
+            body: probe.body,
+          },
+        );
+        await parseLocalResponse<{ status: string }>(response);
+        await this.reportTransportProbe({
+          operation: "transport_probe",
+          probe_id: probe.id,
+          success: true,
+          exception_name: "None",
+          classification: "PROBE_SUCCEEDED",
+        });
+      } catch (error) {
+        const failure = mapLocalFetchFailure(error);
+        await this.reportTransportProbe({
+          operation: "transport_probe",
+          probe_id: probe.id,
+          success: false,
+          exception_name: failure.diagnostic.exception_name,
+          classification: failure.diagnostic.classification,
+        });
+      }
+    }
+  }
 
   constructor(options: BrowserComputeClientOptions = {}) {
     if (options.origin && options.origin !== window.location.origin) {
@@ -664,30 +912,54 @@ export class BrowserComputeClient {
       let response: Response;
 
       try {
+        const requestHeaders = {
+          Origin: this.origin,
+          "X-ZKD-Local-Session": session.sessionId,
+          "X-ZKD-Timestamp": timestamp,
+          "X-ZKD-Nonce": nonce,
+          "X-ZKD-MAC": mac,
+          "X-ZKD-Protocol-Version": session.protocolVersion,
+          ...headers,
+        };
+        const requestInit: RequestInit = {
+          method,
+          headers: requestHeaders,
+          body: rawBody.length
+            ? exactArrayBuffer(rawBody)
+            : undefined,
+        };
+
+        if (path === "/v1/answers" && method === "POST") {
+          const preparation = answerRequestPreparation(
+            `${session.baseUrl}${path}`,
+            requestInit,
+            requestHeaders,
+            this.origin,
+          );
+          await this.reportAnswerRequestPreparation(preparation);
+          if (preparation.request_construction === "FAILED") {
+            throw new BrowserComputeError(
+              "INVALID_REQUEST",
+              "Local transport diagnostic: request construction failed before the browser could send the answer request.",
+            );
+          }
+        }
+
         response = await this.localFetch(
           `${session.baseUrl}${path}`,
-          {
-            method,
-            headers: {
-              Origin: this.origin,
-              "X-ZKD-Local-Session": session.sessionId,
-              "X-ZKD-Timestamp": timestamp,
-              "X-ZKD-Nonce": nonce,
-              "X-ZKD-MAC": mac,
-              "X-ZKD-Protocol-Version": session.protocolVersion,
-              ...headers,
-            },
-            body: rawBody.length
-              ? exactArrayBuffer(rawBody)
-              : undefined,
-          },
+          requestInit,
         );
       } catch (error) {
-        const mapped = mapLocalFetchFailure(error);
+        const failure = mapLocalFetchFailure(error);
+
+        if (path === "/v1/answers" && method === "POST") {
+          await this.reportAnswerFetchFailure(failure);
+          await this.runAnswerTransportProbes();
+        }
 
         if (
           attempt === 0 &&
-          mapped.code === "LOCAL_COMPUTE_UNAVAILABLE"
+          failure.error.code === "LOCAL_COMPUTE_UNAVAILABLE"
         ) {
           const recovered =
             await this.reconnectAfterTransportFailure(
@@ -700,7 +972,7 @@ export class BrowserComputeClient {
           }
         }
 
-        throw mapped;
+        throw failure.error;
       }
 
       try {

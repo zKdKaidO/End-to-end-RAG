@@ -20,4 +20,22 @@ describe("PlatformComputeApi", () => {
     await expect(api.listDevices()).resolves.toHaveLength(1);
     await expect(api.listLocalManifests()).resolves.toHaveLength(1);
   });
+
+  it("sends only the allowlisted local-fetch diagnostic envelope", async () => {
+    const request = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    const api = new PlatformComputeApi(request);
+    await api.reportLocalFetchDiagnostic({
+      operation: "answers", phase: "actual-fetch", exception_name: "TypeError",
+      exception_message: "LOCAL_FETCH_NETWORK_REJECTED", host_type: "loopback",
+      method: "POST", endpoint_path: "/v1/answers", local_session_present: true,
+      browser_nonce_present: false, abort_signal_fired: false,
+      request_timeout_configured: false, frontend_state: "AUTHENTICATED_REQUEST",
+      classification: "BROWSER_NETWORK_REJECTED",
+    });
+    const [path, init] = request.mock.calls[0] as [string, RequestInit];
+    expect(path).toBe("/api/v1/diagnostics/local-fetch");
+    expect(init).toMatchObject({ method: "POST", credentials: "include" });
+    expect(init.headers).toMatchObject({ Origin: window.location.origin, "Content-Type": "application/json" });
+    expect(init.body).toBe('{"operation":"answers","phase":"actual-fetch","exception_name":"TypeError","exception_message":"LOCAL_FETCH_NETWORK_REJECTED","host_type":"loopback","method":"POST","endpoint_path":"/v1/answers","local_session_present":true,"browser_nonce_present":false,"abort_signal_fired":false,"request_timeout_configured":false,"frontend_state":"AUTHENTICATED_REQUEST","classification":"BROWSER_NETWORK_REJECTED"}');
+  });
 });

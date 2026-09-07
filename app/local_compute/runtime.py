@@ -13,6 +13,7 @@ from .grants import PlatformGrantVerifier, PlatformGrantVerificationKeyProvider
 from .settings import LocalComputeSettings
 from .credentials import DeviceCredentialStore, UnavailableDeviceCredentialStore
 from .errors import LocalComputeError, LocalComputeErrorCode
+from .runtime_logging import configure_local_compute_logging
 
 
 class RuntimeState(str, Enum):
@@ -52,6 +53,7 @@ class LocalComputeRuntime:
         self.settings.config_path.mkdir(parents=True, exist_ok=True)
         self.settings.models_path.mkdir(parents=True, exist_ok=True)
         self.settings.logs_path.mkdir(parents=True, exist_ok=True)
+        configure_local_compute_logging(self.settings.logs_path)
         self.settings.tmp_path.mkdir(parents=True, exist_ok=True)
         self.settings.documents_path.mkdir(parents=True, exist_ok=True)
         self.settings.artifacts_path.mkdir(parents=True, exist_ok=True)
