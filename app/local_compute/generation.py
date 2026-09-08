@@ -27,6 +27,12 @@ from .context_adapter import build_local_context
 from .errors import LocalComputeError, LocalComputeErrorCode
 from .retrieval import LocalRetrievalStore
 from .answer_modes import AnswerMode, answer_mode_profile
+from .query_plan import plan_query
+from .structured_claims import (
+    StructuredClaimError,
+    render_provider_text as render_structured_claims,
+    response_schema as structured_claim_schema,
+)
 
 
 logger = get_logger(__name__)
@@ -166,7 +172,7 @@ class InMemoryUserCloudCredentialStore:
 
 class _OllamaClient(Protocol):
     async def health(self, profile: GenerationProfile) -> None: ...
-    async def generate(self, messages: list[dict[str, Any]], profile: GenerationProfile) -> LLMResult: ...
+    async def generate(self, messages: list[dict[str, Any]], profile: GenerationProfile, response_format: dict[str, Any] | None = None) -> LLMResult: ...
     async def close(self) -> None: ...
 
 
@@ -268,12 +274,17 @@ class LocalGenerationProvider:
     def model_info(self) -> dict[str, str]:
         return {"provider": self.provider_type.value, "model_id": self.profile.model_id}
 
-    async def generate(self, messages: list[dict[str, Any]]) -> LLMResult:
+    async def generate(self, messages: list[dict[str, Any]], response_format: dict[str, Any] | None = None) -> LLMResult:
         availability = await self.availability()
         if availability.state != GenerationProviderState.READY:
             raise LocalComputeError(LocalComputeErrorCode.MODEL_UNAVAILABLE if availability.state == GenerationProviderState.MODEL_UNAVAILABLE else LocalComputeErrorCode.GENERATION_UNAVAILABLE)
         try:
-            result = await self._client.generate(messages, self.profile)
+            if response_format is None:
+                result = await self._client.generate(messages, self.profile)
+            else:
+                result = await self._client.generate(
+                    messages, self.profile, response_format
+                )
         except GenerationTimeoutError as exc:
             raise LocalComputeError(LocalComputeErrorCode.GENERATION_TIMEOUT) from exc
         except GenerationDependencyError as exc:
@@ -494,22 +505,38 @@ class LocalAnswerService:
 
         query_text, routing = self._validate_request(query_text, document_ids), routing or GenerationRoutingRequest()
         mode_profile = answer_mode_profile(answer_mode)
-        started, retrieval_started = perf_counter(), perf_counter()
+        started = perf_counter()
+        planning_started = perf_counter()
+        plan = plan_query(query_text)
+        planning_ms = (perf_counter() - planning_started) * 1000
+        retrieval_started = perf_counter()
         # Keep the V1 call shape when a caller omits the new V2 field; this is
         # also important for pre-V2 local extensions that implement the
         # retrieval protocol.
         retrieval_args = (query_text, document_ids) if answer_mode is None else (query_text, document_ids, mode_profile.mode)
+        if len(plan.retrieval_queries) > 1 and isinstance(
+            self.retrieval_store, LocalRetrievalStore
+        ):
+            retrieval_args = (*retrieval_args, plan.retrieval_queries)
         report("answers_document_resolution_begin", "ANYIO_THREADPOOL")
         report("answers_retrieval_begin", "ANYIO_THREADPOOL")
         local_results, hierarchy = await run_in_threadpool(self.retrieval_store.query_document_set_with_diagnostics, *retrieval_args)
         report("answers_document_resolution_done", "ANYIO_THREADPOOL")
         report("answers_retrieval_done", "ANYIO_THREADPOOL")
         retrieval_ms, context_started = (perf_counter() - retrieval_started) * 1000, perf_counter()
+        hierarchy = {
+            **hierarchy,
+            "query_plan": {
+                "query_kind": plan.query_kind.value,
+                "retrieval_query_count": len(plan.retrieval_queries),
+                "planner_used": plan.planner_used,
+            },
+        }
         context_budget = min(self.profile.context_budget_tokens, mode_profile.context_budget_tokens)
         report("answers_context_begin", "ANYIO_THREADPOOL")
         package = await run_in_threadpool(build_local_context, request_id=request_id, query_text=query_text, local_results=local_results, context_budget_tokens=context_budget, context_builder=self.context_builder)
         report("answers_context_done", "ANYIO_THREADPOOL")
-        timings: dict[str, float | None] = {"retrieval_ms": round(retrieval_ms, 3), "context_build_ms": round((perf_counter() - context_started) * 1000, 3), "prompt_token_count": None, "generation_ms": None, "total_ms": None, "time_to_first_token_ms": None}
+        timings: dict[str, float | None] = {"planning_ms": round(planning_ms, 3), "retrieval_ms": round(retrieval_ms, 3), "rerank_ms": None, "context_build_ms": round((perf_counter() - context_started) * 1000, 3), "prompt_token_count": None, "generation_ms": None, "total_ms": None, "time_to_first_token_ms": None}
         if package.selected_count == 0:
             result = GenerationResult(request_id=request_id, status=GenerationStatus.INSUFFICIENT_EVIDENCE, answer_text=INSUFFICIENT_EVIDENCE_MESSAGE, citations=[], invalid_citations=[], citation_validation=CitationValidation.PASS, model_id=self.profile.model_id, prompt_version=self.profile.prompt_version, finish_reason=None, usage=None, answerability_status=AnswerabilityStatus.INSUFFICIENT_EVIDENCE, answerability_validation=AnswerabilityValidation.NOT_APPLICABLE)
             timings["total_ms"] = round((perf_counter() - started) * 1000, 3)
@@ -517,14 +544,54 @@ class LocalAnswerService:
         report("answers_generation_begin", "MAIN_EVENT_LOOP")
         messages = assemble_messages(package, self.profile.prompt_version)
         messages[0]["content"] += "\n\nANSWER MODE (trusted server instruction): " + mode_profile.generation_instruction
+        decision = await self.router.resolve(routing)
+        structured_output = bool(
+            getattr(self.settings, "generation_structured_output", False)
+            and decision.provider_type == GenerationProviderType.LOCAL
+        )
+        if structured_output:
+            messages[0]["content"] += (
+                "\n\nOUTPUT CONTRACT (trusted): return one JSON object matching the supplied schema. "
+                "Do not emit the public status marker yourself. Every claim must list only supplied S ids. "
+                "For CATEGORY_MEMBERSHIP select only a legal_category_key supplied by the evidence group. "
+                "For insufficient evidence return no claims."
+            )
         prompt_tokens = self.prompt_counter.count_messages(messages)
         timings["prompt_token_count"] = float(prompt_tokens)
         if prompt_tokens + self.profile.max_output_tokens + self.profile.prompt_token_safety_margin > self.profile.model_context_limit:
             raise LocalComputeError(LocalComputeErrorCode.INVALID_REQUEST, "The final prompt exceeds the configured model context limit.")
-        decision, generation_started = await self.router.resolve(routing), perf_counter()
-        provider_result = await decision.provider.generate(messages)
+        generation_started = perf_counter()
+        if structured_output:
+            provider_result = await decision.provider.generate(messages, structured_claim_schema())
+        else:
+            provider_result = await decision.provider.generate(messages)
         timings["generation_ms"] = round((perf_counter() - generation_started) * 1000, 3)
-        result = finalize_generation_result(request_id=request_id, package=package, profile=self.profile, provider_text=provider_result.text, finish_reason=provider_result.finish_reason, usage=provider_result.usage, model_id=decision.model_id)
+        structured_failure = False
+        if structured_output:
+            try:
+                provider_text = render_structured_claims(provider_result.text, package)
+            except StructuredClaimError:
+                structured_failure = True
+                provider_text = ""
+        else:
+            provider_text = provider_result.text
+        if structured_failure:
+            result = GenerationResult(
+                request_id=request_id,
+                status=GenerationStatus.COMPLETED_WITH_WARNINGS,
+                answer_text="Không thể xác minh cấu trúc bằng chứng của phản hồi.",
+                citations=[],
+                invalid_citations=[],
+                citation_validation=CitationValidation.MISSING_CITATIONS,
+                model_id=decision.model_id,
+                prompt_version=self.profile.prompt_version,
+                finish_reason=provider_result.finish_reason,
+                usage=provider_result.usage,
+                answerability_status=None,
+                answerability_validation=AnswerabilityValidation.STRUCTURED_OUTPUT_INVALID,
+            )
+        else:
+            result = finalize_generation_result(request_id=request_id, package=package, profile=self.profile, provider_text=provider_text, finish_reason=provider_result.finish_reason, usage=provider_result.usage, model_id=decision.model_id)
         report("answers_generation_done", "MAIN_EVENT_LOOP")
         timings["total_ms"] = round((perf_counter() - started) * 1000, 3)
         logger.info("local_generation_completed", request_id=request_id, answer_mode=mode_profile.mode.value, provider_type=decision.provider_type.value, provider_config_id=decision.provider_config_id, model_id=decision.model_id, routing_policy=routing.policy.value, fallback_occurred=decision.fallback_occurred, prompt_tokens=prompt_tokens, context_candidate_count=package.selected_count, output_tokens=result.usage.output_tokens if result.usage else None, citation_count=len(result.citations), generation_status=result.status.value, total_ms=timings["total_ms"])

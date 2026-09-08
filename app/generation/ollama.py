@@ -64,9 +64,17 @@ class OllamaAdapter:
         except (httpx.HTTPError, ValueError) as exc:
             raise GenerationDependencyError("LLM_REQUEST", "PROVIDER_UNAVAILABLE", "Generation provider is unavailable") from exc
 
-    async def generate(self, messages: list[dict[str, Any]], profile: GenerationProfile) -> LLMResult:
+    async def generate(
+        self,
+        messages: list[dict[str, Any]],
+        profile: GenerationProfile,
+        response_format: dict[str, Any] | None = None,
+    ) -> LLMResult:
         try:
-            response = await self._client.post("/api/chat", json=self._payload(messages, profile, False))
+            payload = self._payload(messages, profile, False)
+            if response_format is not None:
+                payload["format"] = response_format
+            response = await self._client.post("/api/chat", json=payload)
             response.raise_for_status()
             data = response.json()
             return LLMResult(

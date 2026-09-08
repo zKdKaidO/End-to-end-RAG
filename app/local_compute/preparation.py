@@ -78,6 +78,8 @@ class LocalPreparationService:
         self,
         document_id: str,
         job_id: str | None = None,
+        *,
+        activate: bool = True,
     ) -> dict:
         """Prepare a local document.
 
@@ -91,12 +93,15 @@ class LocalPreparationService:
             return self._prepare_locked(
                 document_id,
                 job_id=job_id,
+                activate=activate,
             )
 
     def _prepare_locked(
         self,
         document_id: str,
         job_id: str | None = None,
+        *,
+        activate: bool = True,
     ) -> dict:
         document = self.documents.get(document_id)
 
@@ -149,10 +154,11 @@ class LocalPreparationService:
         )
 
         try:
-            self._update_doc(
-                document_id,
-                "PROCESSING",
-            )
+            if activate:
+                self._update_doc(
+                    document_id,
+                    "PROCESSING",
+                )
 
             self._update_job(
                 job_id,
@@ -244,10 +250,11 @@ class LocalPreparationService:
 
             self._cancel_if_requested(job_id)
 
-            self._update_doc(
-                document_id,
-                "CHUNKING",
-            )
+            if activate:
+                self._update_doc(
+                    document_id,
+                    "CHUNKING",
+                )
 
             self._update_job(
                 job_id,
@@ -316,10 +323,11 @@ class LocalPreparationService:
 
             self._cancel_if_requested(job_id)
 
-            self._update_doc(
-                document_id,
-                "VALIDATING",
-            )
+            if activate:
+                self._update_doc(
+                    document_id,
+                    "VALIDATING",
+                )
 
             self._update_job(
                 job_id,
@@ -416,21 +424,22 @@ class LocalPreparationService:
                     ),
                 )
 
-                db.execute(
-                    """
-                    UPDATE local_documents
-                    SET active_artifact_id=?,
-                        preparation_state='PREPARED_NOT_INDEXED',
-                        last_error_code=NULL,
-                        updated_at=?
-                    WHERE document_id=?
-                    """,
-                    (
-                        artifact_id,
-                        now,
-                        document_id,
-                    ),
-                )
+                if activate:
+                    db.execute(
+                        """
+                        UPDATE local_documents
+                        SET active_artifact_id=?,
+                            preparation_state='PREPARED_NOT_INDEXED',
+                            last_error_code=NULL,
+                            updated_at=?
+                        WHERE document_id=?
+                        """,
+                        (
+                            artifact_id,
+                            now,
+                            document_id,
+                        ),
+                    )
 
             if pipeline_job:
                 self.jobs.update(

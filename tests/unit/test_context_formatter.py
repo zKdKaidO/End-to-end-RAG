@@ -3,6 +3,7 @@ from uuid import UUID
 from app.context.formatter import (
     MISSING_LEGAL_IDENTITY,
     format_evidence_block,
+    format_grouped_evidence,
     format_legal_identity,
 )
 from app.retrieval.schemas import RetrievedCandidate
@@ -75,3 +76,61 @@ def test_content_text_is_preserved_exactly():
     content = "  Khoản 1.\nNội  dung không bị sửa.  "
     block = format_evidence_block(candidate({}, content), "S1")
     assert block.endswith(content)
+
+
+def test_formatter_binds_evidence_to_authoritative_legal_hierarchy():
+    block = format_evidence_block(
+        candidate(
+            {
+                "authoritative_legal_path": {
+                    "path_source": "LEGAL_UNIT_REPOSITORY",
+                    "ancestor_display_labels": [
+                        "Chương II — Cập nhật kiến thức",
+                        "Điều 8 — Hình thức cập nhật",
+                        "Khoản 2",
+                    ],
+                    "category_root_id": "unit-8",
+                }
+            }
+        ),
+        "S1",
+    )
+    assert "Vị trí pháp lý:" in block
+    assert "Chương II — Cập nhật kiến thức" in block
+    assert "Điều 8 — Hình thức cập nhật" in block
+    assert "Quan hệ: Căn cứ được truy xuất trực tiếp" in block
+
+
+def test_formatter_never_invents_a_hierarchy_from_neighbor_metadata():
+    block = format_evidence_block(candidate({"title": "Tên văn bản"}), "S1")
+    assert "Vị trí pháp lý:" in block
+    assert "Chương II" not in block
+    assert "Điều 8" not in block
+
+
+def test_formatter_rejects_untrusted_legacy_path_metadata():
+    block = format_evidence_block(
+        candidate({"legal_hierarchy_path": ["Phần l — ý thuyết: 17:03:43"]}), "S1"
+    )
+    assert "17:03:43" not in block
+
+
+def test_same_authoritative_unit_is_grouped_without_losing_source_ids():
+    metadata = {
+        "authoritative_legal_path": {
+            "path_source": "LEGAL_UNIT_REPOSITORY",
+            "legal_unit_id": "unit-8-2",
+            "category_root_id": "unit-8",
+            "ancestor_display_labels": ["Điều 8", "Khoản 2"],
+        }
+    }
+    result = format_grouped_evidence([(candidate(metadata, "A"), "S1"), (candidate(metadata, "B"), "S2")])
+    assert result.count("Điều 8") == 1
+    assert "[Evidence S1]" in result and "[Evidence S2]" in result
+
+
+def test_sibling_units_are_not_grouped():
+    first = {"authoritative_legal_path": {"path_source": "LEGAL_UNIT_REPOSITORY", "legal_unit_id": "clause-1", "ancestor_display_labels": ["Điều 8", "Khoản 1"]}}
+    second = {"authoritative_legal_path": {"path_source": "LEGAL_UNIT_REPOSITORY", "legal_unit_id": "clause-2", "ancestor_display_labels": ["Điều 8", "Khoản 2"]}}
+    result = format_grouped_evidence([(candidate(first, "A"), "S1"), (candidate(second, "B"), "S2")])
+    assert "[Legal Group" not in result

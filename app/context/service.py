@@ -12,7 +12,11 @@ from app.context.exceptions import (
     ContextValidationError,
     TokenCounterDependencyError,
 )
-from app.context.formatter import EVIDENCE_SEPARATOR, format_evidence_block
+from app.context.formatter import (
+    EVIDENCE_SEPARATOR,
+    format_evidence_block,
+    format_grouped_evidence,
+)
 from app.context.schemas import ContextPackage, SelectedEvidence, StopReason
 from app.context.token_counter import TokenCounter
 from app.core.logging import get_logger
@@ -67,8 +71,10 @@ class ContextBuilderService:
             raise ContextBuilderError(
                 "DEDUPLICATION", "Unexpected context deduplication error"
             ) from exc
+        deduplicated = self._with_category_keys(deduplicated)
 
         selected: list[SelectedEvidence] = []
+        selected_candidates: list[RetrievedCandidate] = []
         context_pieces: list[str] = []
         accumulated_tokens = 0
         stop_reason = StopReason.NONE
@@ -132,14 +138,34 @@ class ContextBuilderService:
                     token_count=block_token_count,
                 )
             )
+            selected_candidates.append(candidate)
 
-        context_text = "".join(context_pieces)
-        exact_context_count = self._count(context_text)
-        if exact_context_count != accumulated_tokens:
+        ungrouped_context_text = "".join(context_pieces)
+        ungrouped_context_count = self._count(ungrouped_context_text)
+
+        # Validate token accounting against the exact representation used
+        # during evidence selection, before any presentation grouping.
+        if ungrouped_context_count != accumulated_tokens:
             raise ContextBuilderError(
                 "FINALIZE",
                 "TokenCounter produced inconsistent counts for identical context text",
             )
+
+        context_text = ungrouped_context_text
+        exact_context_count = ungrouped_context_count
+
+        # Group only after stable source IDs and budget selection are known.
+        # If grouping produces an equal or smaller representation, its token
+        # count becomes the authoritative final context count.
+        if len(selected_candidates) > 1:
+            grouped_context = format_grouped_evidence(
+                list(zip(selected_candidates, [item.source_id for item in selected]))
+            )
+            grouped_context_count = self._count(grouped_context)
+            if grouped_context_count <= ungrouped_context_count:
+                context_text = grouped_context
+                exact_context_count = grouped_context_count
+
         if exact_context_count > context_budget_tokens:
             raise ContextBuilderError(
                 "FINALIZE", "Final context exceeds the injected token budget"
@@ -182,6 +208,33 @@ class ContextBuilderService:
             tokenizer_id=tokenizer_id,
         )
         return package
+
+    @staticmethod
+    def _with_category_keys(candidates: list[RetrievedCandidate]) -> list[RetrievedCandidate]:
+        """Expose short, server-owned category keys to the local model.
+
+        The key is not legal truth: it is a compact handle for an opaque
+        authoritative unit ID. Validation later resolves it back to the
+        repository path and checks graph ancestry.
+        """
+        keys: dict[str, str] = {}
+        output: list[RetrievedCandidate] = []
+        for candidate in candidates:
+            metadata = dict(candidate.metadata_json)
+            resolved = metadata.get("authoritative_legal_path")
+            if not isinstance(resolved, dict) or resolved.get("path_source") not in {
+                "LEGAL_UNIT_REPOSITORY", "REPAIRED_LEGAL_UNIT_REPOSITORY"
+            }:
+                output.append(candidate)
+                continue
+            category_id = resolved.get("category_root_id")
+            if not isinstance(category_id, str) or not category_id:
+                output.append(candidate)
+                continue
+            key = keys.setdefault(category_id, f"K{len(keys) + 1}")
+            metadata["authoritative_legal_path"] = {**resolved, "category_key": key}
+            output.append(candidate.model_copy(update={"metadata_json": metadata}))
+        return output
 
     def _count(self, text: str) -> int:
         try:

@@ -35,6 +35,10 @@ class LocalIndexService:
         self,
         document_id: str,
         job_id: str | None = None,
+        *,
+        artifact_id: str | None = None,
+        activate: bool = True,
+        reusable_artifact_id: str | None = None,
     ) -> dict:
         """Index one prepared document.
 
@@ -49,12 +53,64 @@ class LocalIndexService:
             return self._index_document_locked(
                 document_id,
                 job_id=job_id,
+                artifact_id=artifact_id,
+                activate=activate,
+                reusable_artifact_id=reusable_artifact_id,
             )
+
+    def activate_indexed_artifact(
+        self,
+        document_id: str,
+        artifact_id: str,
+    ) -> None:
+        """Atomically promote an already validated replacement artifact."""
+        with self.catalog.document_lock(document_id):
+            self._require_artifact_owner(artifact_id, document_id)
+            artifact_path = self.settings.data_root / self._artifact_path(artifact_id)
+            with sqlite3.connect(artifact_path) as artifact:
+                row = artifact.execute(
+                    """
+                    SELECT value
+                    FROM artifact_metadata
+                    WHERE key='index_state'
+                    """
+                ).fetchone()
+            if row is None or row[0] != "INDEX_READY":
+                raise LocalComputeError(
+                    LocalComputeErrorCode.CAPABILITY_UNAVAILABLE,
+                    "Replacement artifact is not index-ready.",
+                )
+
+            now = int(time.time())
+            with self.catalog._connect() as connection:
+                connection.execute(
+                    """
+                    UPDATE local_artifacts
+                    SET state='INDEX_READY', promoted_at=?
+                    WHERE artifact_id=?
+                    """,
+                    (now, artifact_id),
+                )
+                connection.execute(
+                    """
+                    UPDATE local_documents
+                    SET active_artifact_id=?,
+                        preparation_state='INDEX_READY',
+                        last_error_code=NULL,
+                        updated_at=?
+                    WHERE document_id=?
+                    """,
+                    (artifact_id, now, document_id),
+                )
 
     def _index_document_locked(
         self,
         document_id: str,
         job_id: str | None = None,
+        *,
+        artifact_id: str | None = None,
+        activate: bool = True,
+        reusable_artifact_id: str | None = None,
     ) -> dict:
         document = self._document(
             document_id
@@ -71,7 +127,7 @@ class LocalIndexService:
                 "Document is not prepared for indexing.",
             )
 
-        artifact_id = document[
+        artifact_id = artifact_id or document[
             "active_artifact_id"
         ]
 
@@ -79,6 +135,17 @@ class LocalIndexService:
             raise LocalComputeError(
                 LocalComputeErrorCode.CAPABILITY_UNAVAILABLE,
                 "Prepared document has no active artifact.",
+            )
+
+        self._require_artifact_owner(
+            artifact_id,
+            document_id,
+        )
+
+        if reusable_artifact_id is not None:
+            self._require_artifact_owner(
+                reusable_artifact_id,
+                document_id,
             )
 
         pipeline_job = (
@@ -133,20 +200,21 @@ class LocalIndexService:
                 artifact_id,
             )
 
-        with self.catalog._connect() as connection:
-            connection.execute(
-                """
-                UPDATE local_documents
-                SET preparation_state='INDEXING',
-                    last_error_code=NULL,
-                    updated_at=?
-                WHERE document_id=?
-                """,
-                (
-                    int(time.time()),
-                    document_id,
-                ),
-            )
+        if activate:
+            with self.catalog._connect() as connection:
+                connection.execute(
+                    """
+                    UPDATE local_documents
+                    SET preparation_state='INDEXING',
+                        last_error_code=NULL,
+                        updated_at=?
+                    WHERE document_id=?
+                    """,
+                    (
+                        int(time.time()),
+                        document_id,
+                    ),
+                )
 
         try:
             self._cancel_if_requested(
@@ -187,6 +255,12 @@ class LocalIndexService:
                     artifact_id
                 )
             )
+
+            reusable_vectors = self._reusable_vectors(
+                reusable_artifact_id,
+            )
+            reused_embedding_count = 0
+            generated_embedding_count = 0
 
             db = sqlite3.connect(
                 artifact_path
@@ -255,36 +329,48 @@ class LocalIndexService:
                     if not rows:
                         break
 
-                    chunks_with_ids = [
-                        (
-                            row[0],
-                            row[1],
-                        )
-                        for row in rows
-                    ]
+                    vectors_by_chunk_id = {}
+                    chunks_to_embed = []
+                    for row in rows:
+                        reused = reusable_vectors.get(row[1])
+                        if reused is None:
+                            chunks_to_embed.append((row[0], row[1]))
+                        else:
+                            vectors_by_chunk_id[row[0]] = reused
 
-                    try:
-                        vectors = (
-                            embedder.encode_batch(
-                                chunks_with_ids
+                    if chunks_to_embed:
+                        try:
+                            generated_vectors = (
+                                embedder.encode_batch(
+                                    chunks_to_embed
+                                )
+                            )
+                        except LocalComputeError:
+                            raise
+                        except Exception as exc:
+                            raise LocalComputeError(
+                                LocalComputeErrorCode.PREPARATION_FAILED,
+                                "E5 embedding batch failed.",
+                            ) from exc
+
+                        if (
+                            len(generated_vectors)
+                            != len(chunks_to_embed)
+                        ):
+                            raise LocalComputeError(
+                                LocalComputeErrorCode.PREPARATION_FAILED,
+                                "Embedding batch size mismatch.",
+                            )
+
+                        vectors_by_chunk_id.update(
+                            zip(
+                                (chunk_id for chunk_id, _ in chunks_to_embed),
+                                generated_vectors,
                             )
                         )
-                    except LocalComputeError:
-                        raise
-                    except Exception as exc:
-                        raise LocalComputeError(
-                            LocalComputeErrorCode.PREPARATION_FAILED,
-                            "E5 embedding batch failed.",
-                        ) from exc
 
-                    if (
-                        len(vectors)
-                        != len(rows)
-                    ):
-                        raise LocalComputeError(
-                            LocalComputeErrorCode.PREPARATION_FAILED,
-                            "Embedding batch size mismatch.",
-                        )
+                    reused_embedding_count += len(rows) - len(chunks_to_embed)
+                    generated_embedding_count += len(chunks_to_embed)
 
                     self._cancel_if_requested(
                         job_id
@@ -297,12 +383,10 @@ class LocalIndexService:
                     try:
                         fts_rows = []
 
-                        for row, vector in zip(
-                            rows,
-                            vectors,
-                        ):
+                        for row in rows:
                             chunk_id = row[0]
                             content_text = row[2]
+                            vector = vectors_by_chunk_id[chunk_id]
 
                             normalized_vector = (
                                 self._validated_vector(
@@ -438,17 +522,28 @@ class LocalIndexService:
             with self.catalog._connect() as connection:
                 connection.execute(
                     """
-                    UPDATE local_documents
-                    SET preparation_state='INDEX_READY',
-                        last_error_code=NULL,
-                        updated_at=?
-                    WHERE document_id=?
+                    UPDATE local_artifacts
+                    SET state='INDEX_READY'
+                    WHERE artifact_id=?
                     """,
-                    (
-                        now,
-                        document_id,
-                    ),
+                    (artifact_id,),
                 )
+                if activate:
+                    connection.execute(
+                        """
+                        UPDATE local_documents
+                        SET active_artifact_id=?,
+                            preparation_state='INDEX_READY',
+                            last_error_code=NULL,
+                            updated_at=?
+                        WHERE document_id=?
+                        """,
+                        (
+                            artifact_id,
+                            now,
+                            document_id,
+                        ),
+                    )
 
             self.jobs.update(
                 job_id,
@@ -468,6 +563,8 @@ class LocalIndexService:
                     "INDEX_READY",
                 "embedding_count":
                     total,
+                "reused_embedding_count": reused_embedding_count,
+                "generated_embedding_count": generated_embedding_count,
             }
 
         except LocalComputeError as exc:
@@ -475,6 +572,7 @@ class LocalIndexService:
                 artifact_id,
                 document_id,
                 exc.diagnostic_code or exc.code.value,
+                update_document=activate,
             )
 
             if (
@@ -508,6 +606,7 @@ class LocalIndexService:
                 artifact_id,
                 document_id,
                 error_code,
+                update_document=activate,
             )
 
             self.jobs.update(
@@ -771,6 +870,8 @@ class LocalIndexService:
         artifact_id: str,
         document_id: str,
         error_code: str,
+        *,
+        update_document: bool,
     ) -> None:
         try:
             path = (
@@ -805,21 +906,63 @@ class LocalIndexService:
             # queryability gate.
             pass
 
-        with self.catalog._connect() as connection:
-            connection.execute(
-                """
-                UPDATE local_documents
-                SET preparation_state='PREPARED_NOT_INDEXED',
-                    last_error_code=?,
-                    updated_at=?
-                WHERE document_id=?
-                """,
-                (
-                    error_code,
-                    int(time.time()),
-                    document_id,
-                ),
+        if update_document:
+            with self.catalog._connect() as connection:
+                connection.execute(
+                    """
+                    UPDATE local_documents
+                    SET preparation_state='PREPARED_NOT_INDEXED',
+                        last_error_code=?,
+                        updated_at=?
+                    WHERE document_id=?
+                    """,
+                    (
+                        error_code,
+                        int(time.time()),
+                        document_id,
+                    ),
+                )
+
+    def _reusable_vectors(
+        self,
+        artifact_id: str | None,
+    ) -> dict[str, np.ndarray]:
+        """Return validated vectors keyed by their exact E5 input text.
+
+        Replacement artifacts get new chunk ids.  Reusing only a byte-for-byte
+        identical embedding input preserves the frozen embedding contract and
+        avoids recomputing vectors for unaffected chunk boundaries.
+        """
+        if artifact_id is None:
+            return {}
+
+        path = self.settings.data_root / self._artifact_path(artifact_id)
+        if not path.is_file():
+            raise LocalComputeError(
+                LocalComputeErrorCode.CAPABILITY_UNAVAILABLE,
+                "Reusable local artifact is unavailable.",
             )
+
+        with sqlite3.connect(path) as source:
+            rows = source.execute(
+                """
+                SELECT c.embedding_text, e.vector
+                FROM chunks AS c
+                JOIN chunk_embeddings AS e ON e.chunk_id=c.id
+                WHERE e.dimension=?
+                  AND e.normalized=1
+                  AND e.index_version=?
+                """,
+                (EMBEDDING_DIMENSION, INDEX_VERSION),
+            ).fetchall()
+
+        reusable = {}
+        for embedding_text, blob in rows:
+            vector = self._validated_vector(
+                np.frombuffer(blob, dtype=np.float32).copy(),
+            )
+            reusable.setdefault(embedding_text, vector)
+        return reusable
 
     def _document(
         self,
@@ -882,3 +1025,23 @@ class LocalIndexService:
             row[0]
             + "/artifact.sqlite3"
         )
+
+    def _require_artifact_owner(
+        self,
+        artifact_id: str,
+        document_id: str,
+    ) -> None:
+        with self.catalog._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT 1
+                FROM local_artifacts
+                WHERE artifact_id=? AND document_id=?
+                """,
+                (artifact_id, document_id),
+            ).fetchone()
+        if row is None:
+            raise LocalComputeError(
+                LocalComputeErrorCode.CAPABILITY_UNAVAILABLE,
+                "Local artifact does not belong to the document.",
+            )

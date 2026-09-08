@@ -98,6 +98,12 @@ class LocalComputeSettings:
     generation_top_p: float = 0.9
     generation_top_k: int = 20
     generation_prompt_version: str = "legal-rag-v2"
+    # Local-only support contract: Ollama JSON schema output is validated and
+    # rendered back into the stable public Block 6 response shape.
+    generation_structured_output: bool = False
+    reranker_enabled: bool = False
+    reranker_device: str = "cpu"
+    reranker_max_candidates: int = 50
     generation_request_timeout_seconds: float = 180.0
     platform_base_url: str = PRODUCT_ORIGIN
 

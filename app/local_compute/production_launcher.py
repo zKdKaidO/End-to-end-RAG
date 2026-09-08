@@ -25,25 +25,105 @@ from pathlib import Path
 _NO_CONSOLE_STREAM_HANDLES: list[object] = []
 
 
-def _ensure_standard_streams_for_windowed_runtime() -> None:
-    """Supply inert streams only for a frozen Windows no-console process.
+class _DiscardTextStream:
+    """Last-resort text sink for a frozen Windows process with no console."""
 
-    PyInstaller's ``console=False`` mode can set both standard streams to
-    ``None``. ZKD configures its own file-backed structured logger below, but
-    this early compatibility guard also protects third-party libraries that
-    unavoidably inspect the standard streams.
+    closed = False
+    encoding = "utf-8"
+    errors = "replace"
+
+    def write(self, value: str) -> int:
+        return len(value)
+
+    def flush(self) -> None:
+        return None
+
+    def isatty(self) -> bool:
+        return False
+
+    def writable(self) -> bool:
+        return True
+
+
+def _stream_is_usable(stream: object | None) -> bool:
+    """Check the operations used by tqdm/logging without emitting output."""
+    if stream is None or bool(getattr(stream, "closed", False)):
+        return False
+    try:
+        stream.write("")
+        stream.flush()
+        isatty = getattr(stream, "isatty", None)
+        if callable(isatty):
+            isatty()
+        fileno = getattr(stream, "fileno", None)
+        if callable(fileno):
+            fileno()
+    except (AttributeError, OSError, TypeError, ValueError):
+        return False
+    return True
+
+
+def _safe_no_console_stream() -> object:
+    try:
+        handle = open(os.devnull, "w", encoding="utf-8")
+    except OSError:
+        return _DiscardTextStream()
+    _NO_CONSOLE_STREAM_HANDLES.append(handle)
+    return handle
+
+
+def _ensure_standard_streams_for_windowed_runtime() -> None:
+    """Supply usable streams only for a frozen Windows no-console process.
+
+    PyInstaller's ``console=False`` mode can expose streams as ``None`` *or*
+    as objects backed by invalid Windows handles.  ZKD configures file-backed
+    structured logging below; this early guard protects dependencies such as
+    tqdm/transformers before they can probe or write an unusable console.
     """
 
     if not getattr(sys, "frozen", False) or sys.platform != "win32":
         return
     for attribute in ("stdout", "stderr"):
-        if getattr(sys, attribute, None) is None:
-            handle = open(os.devnull, "w", encoding="utf-8")
-            setattr(sys, attribute, handle)
-            _NO_CONSOLE_STREAM_HANDLES.append(handle)
+        if not _stream_is_usable(getattr(sys, attribute, None)):
+            setattr(sys, attribute, _safe_no_console_stream())
+
+
+def _disable_frozen_model_progress() -> None:
+    """Disable progress rendering before any embedding-model import path."""
+    if not getattr(sys, "frozen", False) or sys.platform != "win32":
+        return
+
+    # Set before importing model packages: tqdm reads this configuration when
+    # it creates a progress bar, and Hugging Face honors its dedicated flag.
+    os.environ.setdefault("TQDM_DISABLE", "1")
+    os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+
+    try:
+        from huggingface_hub.utils import disable_progress_bars
+    except ImportError:
+        disable_progress_bars = None
+    if disable_progress_bars is not None:
+        disable_progress_bars()
+
+    try:
+        from transformers.utils import logging as transformers_logging
+    except ImportError:
+        transformers_logging = None
+    if transformers_logging is not None:
+        transformers_logging.disable_progress_bar()
+
+
+def _report_fatal_error(message: str) -> None:
+    """Best-effort console diagnostic that can never mask the original error."""
+    try:
+        sys.stderr.write(message + "\n")
+        sys.stderr.flush()
+    except (AttributeError, OSError, TypeError, ValueError):
+        pass
 
 
 _ensure_standard_streams_for_windowed_runtime()
+_disable_frozen_model_progress()
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
@@ -62,6 +142,7 @@ from app.local_compute.tray import WindowsTray
 
 
 USER_AGENT = "ZKD-Compute/0.1.0"
+_DIAGNOSTIC_PAYLOAD_ENV = "ZKD_COMPUTE_DIAGNOSTIC_PAYLOAD_B64"
 _active_profile = get_profile()
 
 
@@ -204,7 +285,7 @@ def run_developer_answer_pipeline() -> int:
     execution surface.
     """
 
-    raw_payload = sys.stdin.buffer.read(8 * 1024 + 1)
+    raw_payload = _read_developer_diagnostic_payload()
     if not raw_payload or len(raw_payload) > 8 * 1024:
         raise RuntimeError("DIAGNOSTIC_PAYLOAD_REQUIRED")
     try:
@@ -270,6 +351,29 @@ def run_developer_answer_pipeline() -> int:
         )
     )
     return 0
+
+
+def _read_developer_diagnostic_payload() -> bytes:
+    """Read the hidden diagnostic payload without requiring a visible console."""
+    raw_payload = b""
+    stdin_buffer = getattr(getattr(sys, "stdin", None), "buffer", None)
+    if stdin_buffer is not None:
+        raw_payload = stdin_buffer.read(8 * 1024 + 1)
+    if not raw_payload:
+        # A PyInstaller windowed executable has no usable stdin.  This is a
+        # hidden developer-only acceptance path, so a bounded, process-local
+        # payload may be supplied by the release harness instead.  Consume it
+        # immediately so it cannot propagate to child processes or logs.
+        encoded_payload = os.environ.pop(_DIAGNOSTIC_PAYLOAD_ENV, "")
+        if encoded_payload:
+            try:
+                raw_payload = base64.b64decode(
+                    encoded_payload,
+                    validate=True,
+                )
+            except (ValueError, UnicodeError):
+                raise RuntimeError("DIAGNOSTIC_PAYLOAD_INVALID") from None
+    return raw_payload
 
 
 def pair(pairing_request_id: str, pairing_token: str) -> int:
@@ -434,14 +538,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     except PairingUriError as exc:
         bootstrap_log("pairing_uri_error", exc)
-        print(f"ZKD_COMPUTE_ERROR:{exc}", file=sys.stderr)
+        _report_fatal_error(f"ZKD_COMPUTE_ERROR:{exc}")
         return 2
     except KeyboardInterrupt:
         return 0
     except Exception as exc:
         bootstrap_log("launcher_failed", exc)
         # Never include URI, request body, grant, pairing token, or key data.
-        print(f"ZKD_COMPUTE_ERROR:{type(exc).__name__}", file=sys.stderr)
+        _report_fatal_error(f"ZKD_COMPUTE_ERROR:{type(exc).__name__}")
         return 1
 
 

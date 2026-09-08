@@ -50,6 +50,36 @@ def test_accept_prepare_promote_and_restart(runtime):
     results=LocalRetrievalStore(runtime.settings,runtime.catalog).query_document_set('doanh nghiệp áp dụng', [doc_id])
     assert results and results[0]['document_id']==doc_id and results[0]['provenance_json']['document_id']==doc_id
 
+
+def test_replacement_artifact_is_indexed_before_atomic_promotion_and_reuses_vectors(runtime):
+    source = pdf_bytes(
+        "PHỤ LỤC 04\n1 Hoạt động đào tạo\nNội dung đào tạo.\n"
+        "2 Hoạt động biên soạn\nNội dung biên soạn."
+    )
+    doc_id = str(uuid.uuid4())
+    store = LocalDocumentStore(runtime.settings, runtime.catalog)
+    store.accept_document(doc_id, [source], "appendix.pdf", "application/pdf")
+    preparation = LocalPreparationService(runtime.settings, runtime.catalog)
+    indexer = LocalIndexService(runtime.settings, runtime.catalog)
+    original = preparation.prepare(doc_id)
+    indexer.index_document(doc_id)
+
+    replacement = preparation.prepare(doc_id, activate=False)
+    assert store.get(doc_id)["active_artifact_id"] == original["artifact_id"]
+    indexed = indexer.index_document(
+        doc_id,
+        artifact_id=replacement["artifact_id"],
+        activate=False,
+        reusable_artifact_id=original["artifact_id"],
+    )
+    assert indexed["generated_embedding_count"] == 0
+    assert indexed["reused_embedding_count"] == indexed["embedding_count"]
+    assert store.get(doc_id)["active_artifact_id"] == original["artifact_id"]
+
+    indexer.activate_indexed_artifact(doc_id, replacement["artifact_id"])
+    assert store.get(doc_id)["active_artifact_id"] == replacement["artifact_id"]
+    assert store.get(doc_id)["preparation_state"] == "INDEX_READY"
+
 def test_rejects_invalid_conflicting_and_textless_sources(runtime):
     store=LocalDocumentStore(runtime.settings,runtime.catalog); doc_id=str(uuid.uuid4())
     with pytest.raises(LocalComputeError): store.accept_document(doc_id,[b"not-a-pdf"],"x.pdf","application/pdf")

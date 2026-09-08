@@ -200,20 +200,118 @@ def test_developer_answer_pipeline_uses_stdin_all_document_shape_and_never_print
     assert captured["query_text"] == payload["query_text"]
 
 
-def test_windowed_launcher_replaces_only_missing_standard_streams(monkeypatch):
+def test_developer_answer_pipeline_accepts_windowed_process_local_payload(monkeypatch):
+    import base64
+    import app.local_compute.production_launcher as launcher
+
+    payload = b'{"query_text":"q","document_ids":null,"answer_mode":"EXACT"}'
+    monkeypatch.setattr(launcher.sys, "stdin", None)
+    monkeypatch.setenv(
+        launcher._DIAGNOSTIC_PAYLOAD_ENV,
+        base64.b64encode(payload).decode("ascii"),
+    )
+
+    assert launcher._read_developer_diagnostic_payload() == payload
+    assert launcher._DIAGNOSTIC_PAYLOAD_ENV not in os.environ
+
+
+class _BrokenConsoleStream:
+    closed = False
+
+    def write(self, _value):
+        raise OSError(22, "Invalid argument")
+
+    def flush(self):
+        raise OSError(22, "Invalid argument")
+
+    def isatty(self):
+        raise OSError(22, "Invalid argument")
+
+    def fileno(self):
+        raise OSError(22, "Invalid argument")
+
+
+@pytest.mark.parametrize("attribute", ("stdout", "stderr"))
+def test_windowed_launcher_replaces_missing_standard_streams(monkeypatch, attribute):
     import app.local_compute.production_launcher as launcher
 
     original_count = len(launcher._NO_CONSOLE_STREAM_HANDLES)
     with monkeypatch.context() as patch:
         patch.setattr(launcher.sys, "frozen", True, raising=False)
         patch.setattr(launcher.sys, "platform", "win32")
-        patch.setattr(launcher.sys, "stdout", None)
-        patch.setattr(launcher.sys, "stderr", None)
+        patch.setattr(launcher.sys, attribute, None)
         launcher._ensure_standard_streams_for_windowed_runtime()
-        assert launcher.sys.stdout is not None
-        assert launcher.sys.stderr is not None
+        replacement = getattr(launcher.sys, attribute)
+        assert replacement is not None
+        assert launcher._stream_is_usable(replacement)
 
     added = launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]
     for handle in added:
         handle.close()
     del launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]
+
+
+def test_windowed_launcher_replaces_existing_invalid_console_handles(monkeypatch):
+    import app.local_compute.production_launcher as launcher
+
+    original_count = len(launcher._NO_CONSOLE_STREAM_HANDLES)
+    with monkeypatch.context() as patch:
+        patch.setattr(launcher.sys, "frozen", True, raising=False)
+        patch.setattr(launcher.sys, "platform", "win32")
+        patch.setattr(launcher.sys, "stdout", _BrokenConsoleStream())
+        patch.setattr(launcher.sys, "stderr", _BrokenConsoleStream())
+        launcher._ensure_standard_streams_for_windowed_runtime()
+        assert launcher._stream_is_usable(launcher.sys.stdout)
+        assert launcher._stream_is_usable(launcher.sys.stderr)
+        assert launcher.sys.stdout is not launcher.sys.stderr
+
+    added = launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]
+    for handle in added:
+        handle.close()
+    del launcher._NO_CONSOLE_STREAM_HANDLES[original_count:]
+
+
+def test_frozen_model_progress_is_disabled_before_tqdm_can_write(monkeypatch):
+    import huggingface_hub.utils as hf_utils
+    from tqdm import tqdm
+    from transformers.utils import logging as transformers_logging
+    import app.local_compute.production_launcher as launcher
+
+    called = {"hf": False, "transformers": False}
+    with monkeypatch.context() as patch:
+        patch.setattr(launcher.sys, "frozen", True, raising=False)
+        patch.setattr(launcher.sys, "platform", "win32")
+        patch.setattr(launcher.sys, "stdout", _BrokenConsoleStream())
+        patch.setattr(launcher.sys, "stderr", _BrokenConsoleStream())
+        patch.setattr(hf_utils, "disable_progress_bars", lambda: called.__setitem__("hf", True))
+        patch.setattr(transformers_logging, "disable_progress_bar", lambda: called.__setitem__("transformers", True))
+        launcher._ensure_standard_streams_for_windowed_runtime()
+        launcher._disable_frozen_model_progress()
+        list(tqdm(range(1), file=launcher.sys.stderr))
+
+    assert called == {"hf": True, "transformers": True}
+    assert os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] == "1"
+    assert os.environ["TQDM_DISABLE"] == "1"
+
+
+def test_fatal_launcher_reporting_survives_unusable_standard_error(monkeypatch):
+    import app.local_compute.production_launcher as launcher
+
+    recorded = []
+    with monkeypatch.context() as patch:
+        patch.setattr(launcher.sys, "stderr", _BrokenConsoleStream())
+        patch.setattr(launcher, "bootstrap_log", lambda stage, error=None, **_: recorded.append((stage, type(error).__name__)))
+        assert launcher.main(["--pair-uri", "not-a-pairing-uri"]) == 2
+
+    assert recorded == [("launcher_enter", "NoneType"), ("pairing_uri_error", "PairingUriError")]
+
+
+def test_standard_stream_guard_leaves_normal_development_streams_unchanged(monkeypatch):
+    import app.local_compute.production_launcher as launcher
+
+    original_stdout, original_stderr = launcher.sys.stdout, launcher.sys.stderr
+    with monkeypatch.context() as patch:
+        patch.setattr(launcher.sys, "frozen", False, raising=False)
+        launcher._ensure_standard_streams_for_windowed_runtime()
+    assert launcher.sys.stdout is original_stdout
+    assert launcher.sys.stderr is original_stderr

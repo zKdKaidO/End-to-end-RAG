@@ -74,7 +74,10 @@ def _safe_exception_location(error: BaseException) -> dict[str, object]:
         return {}
     safe_frames = [
         {
-            "module": Path(frame.filename).name,
+            # Tracebacks can carry Windows source paths even when a focused
+            # regression runs inside the Linux API container. Normalize both
+            # separators before retaining the basename only.
+            "module": Path(frame.filename.replace("\\", "/")).name,
             "line": frame.lineno,
             "function": frame.name,
         }

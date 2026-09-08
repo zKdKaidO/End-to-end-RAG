@@ -48,18 +48,16 @@ class AnswerModeProfile:
 
 
 _PROFILES = {
-    # Exact is intentionally narrow: direct, highly-ranked evidence only.
-    # The hierarchy contract is frozen at a 10-anchor / 4-child envelope.
-    # Exact remains narrower through its eight-result RRF window and context
-    # budget; it must not request an incompatible hierarchy configuration.
-    AnswerMode.EXACT: AnswerModeProfile(AnswerMode.EXACT, 35, 35, 8, 1.35, 0.65, 10, 4, 2_048,
-        "Answer only direct propositions supported by the supplied evidence. Do not add inferences."),
+    # Retrieval correctness is shared by all modes. Modes differ only in
+    # synthesis breadth and inference permission, never in their ability to
+    # find required evidence. The global generation cap is 4096, so advertising
+    # a larger Explore context budget was misleading and is removed.
+    AnswerMode.EXACT: AnswerModeProfile(AnswerMode.EXACT, 50, 50, 10, 1.20, 0.80, 10, 4, 4_096,
+        "Answer only propositions directly supported by the supplied evidence. You may combine directly supported facts and deterministic calculations, but do not add inferences."),
     # V1-compatible pool sizes remain the safe default for an omitted mode.
     AnswerMode.BALANCED: AnswerModeProfile(AnswerMode.BALANCED, 50, 50, 10, 1.20, 0.80, 10, 4, 4_096,
         "Synthesize the supplied evidence faithfully. Prefer the language used in the user's question."),
-    # Explore broadens candidate pools and context, but its final RRF window
-    # remains compatible with the frozen ten-rank hierarchy contract.
-    AnswerMode.EXPLORE: AnswerModeProfile(AnswerMode.EXPLORE, 60, 60, 10, 1.15, 0.85, 10, 4, 6_144,
+    AnswerMode.EXPLORE: AnswerModeProfile(AnswerMode.EXPLORE, 50, 50, 10, 1.20, 0.80, 10, 4, 4_096,
         "You may provide clearly labeled 'Inference from the document:' reasoning, but never add unsupported facts. Prefer the language used in the user's question."),
 }
 

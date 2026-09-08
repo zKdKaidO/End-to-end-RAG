@@ -28,9 +28,11 @@ def test_arbitrary_browser_tuning_names_are_rejected(value):
         answer_mode_profile(value)
 
 
-def test_profiles_increase_semantic_recall_without_removing_lexical_retrieval():
+def test_profiles_share_required_evidence_recall_contract():
     exact, balanced, explore = (answer_mode_profile(mode) for mode in AnswerMode)
-    assert exact.top_dense < balanced.top_dense < explore.top_dense
-    assert exact.top_lexical < balanced.top_lexical < explore.top_lexical
-    assert exact.dense_rrf_weight > balanced.dense_rrf_weight > explore.dense_rrf_weight
-    assert exact.lexical_rrf_weight < balanced.lexical_rrf_weight < explore.lexical_rrf_weight
+    assert {profile.top_dense for profile in (exact, balanced, explore)} == {50}
+    assert {profile.top_lexical for profile in (exact, balanced, explore)} == {50}
+    assert {profile.top_final for profile in (exact, balanced, explore)} == {10}
+    assert {profile.context_budget_tokens for profile in (exact, balanced, explore)} == {4_096}
+    assert {profile.dense_rrf_weight for profile in (exact, balanced, explore)} == {1.20}
+    assert {profile.lexical_rrf_weight for profile in (exact, balanced, explore)} == {0.80}
